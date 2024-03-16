@@ -1,1 +1,1 @@
-Install Node, Nginx, postgres
+Install Node, Nginx, PostgreSQL
