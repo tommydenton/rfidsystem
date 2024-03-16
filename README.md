@@ -1,1 +1,7 @@
-Install Node, Nginx, PostgreSQL
+## Install the Timer
+- python
+
+## Install Base
+- Node
+- Nginx
+- PostgreSQL
