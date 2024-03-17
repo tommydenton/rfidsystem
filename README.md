@@ -1,5 +1,3 @@
-Certainly! Below is a formatted `README.md` file for your RFID project that you can use on GitHub:
-
 ```markdown
 # RFID Project Setup Guide
 
