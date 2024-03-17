@@ -19,6 +19,8 @@ port 8997
 https://dev.to/andrenbrandao/terminal-setup-with-zsh-tmux-dracula-theme-48lm
 https://github.com/ohmyzsh/ohmyzsh
 download .files
+setup log2ram
+setup nala
 
 ## Install the Timer
 - python
