@@ -5,3 +5,6 @@
 - Node
 - Nginx
 - PostgreSQL
+- npm
+
+- npm install ntp express
