@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Display</title>
+</head>
+<body>
+    <h1>Time Display</h1>
+    <p>Cloud Time: <%= new Date(cloudTime).toLocaleString("en-US") %> - Timezone: UTC</p>
+    <p>Local Computer Time: <%= new Date(localTime).toLocaleString("en-US") %> - Timezone: <%= Intl.DateTimeFormat().resolvedOptions().timeZone %></p>
+</body>
+</html>
