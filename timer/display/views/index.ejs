@@ -3,11 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Display</title>
+    <title>Time Display and Data Entry</title>
 </head>
 <body>
     <h1>Time Display</h1>
     <p>Cloud Time: <%= new Date(cloudTime).toLocaleString("en-US") %> - Timezone: UTC</p>
     <p>Local Computer Time: <%= new Date(localTime).toLocaleString("en-US") %> - Timezone: <%= Intl.DateTimeFormat().resolvedOptions().timeZone %></p>
+
+    <h2>Enter DEMODATA</h2>
+    <form action="/insert-demo-data" method="post">
+        <label for="fname">First Name:</label>
+        <input type="text" id="fname" name="fname" required><br><br>
+
+        <label for="lname">Last Name:</label>
+        <input type="text" id="lname" name="lname" required><br><br>
+
+        <label for="district">District:</label>
+        <input type="text" id="district" name="district" required><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+
+        <label for="team">Team:</label>
+        <input type="text" id="team" name="team" required><br><br>
+
+        <label for="bibnumber">Bib Number:</label>
+        <input type="number" id="bibnumber" name="bibnumber" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
