@@ -3,30 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Display and Data Entry</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>Data Entry</title>
 </head>
+<script>
+    // Function to toggle dark mode
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    }
+
+    // Apply the saved theme on page load
+    window.onload = () => {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    };
+</script>
+<script>
+    function searchTable() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+    
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
+        // Get the columns you want to search
+        tdFname = tr[i].getElementsByTagName("td")[0];
+        tdLname = tr[i].getElementsByTagName("td")[1];
+        tdTeam = tr[i].getElementsByTagName("td")[4];
+        tdBibNumber = tr[i].getElementsByTagName("td")[5];
+        
+        if (tdFname || tdLname || tdTeam || tdBibNumber) {
+          txtValueFname = tdFname.textContent || tdFname.innerText;
+          txtValueLname = tdLname.textContent || tdLname.innerText;
+          txtValueTeam = tdTeam.textContent || tdTeam.innerText;
+          txtValueBibNumber = tdBibNumber.textContent || tdBibNumber.innerText;
+          
+          // Check if the row should be displayed
+          if (txtValueFname.toUpperCase().indexOf(filter) > -1 || 
+              txtValueLname.toUpperCase().indexOf(filter) > -1 || 
+              txtValueTeam.toUpperCase().indexOf(filter) > -1 || 
+              txtValueBibNumber.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+    </script>
 <body>
+    <div style="position: fixed; top: 0; right: 0; padding: 10px;">
+        <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
+    </div>
     <h2>Enter DEMODATA</h2>
     <form action="/insert-demo-data" method="post">
-        <label for="fname">First Name:</label>
-        <input type="text" id="fname" name="fname" required><br><br>
-
-        <label for="lname">Last Name:</label>
-        <input type="text" id="lname" name="lname" required><br><br>
-
-        <label for="district">District:</label>
-        <input type="text" id="district" name="district" required><br><br>
-
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required><br><br>
-
-        <label for="team">Team:</label>
-        <input type="text" id="team" name="team" required><br><br>
-
-        <label for="bibnumber">Bib Number:</label>
-        <input type="number" id="bibnumber" name="bibnumber" required><br><br>
-
-        <input type="submit" value="Submit">
+        <table>
+            <tr>
+                <th><label for="fname">First Name:</label></th>
+                <td><input type="text" id="fname" name="fname" required></td>
+            </tr>
+            <tr>
+                <th><label for="lname">Last Name:</label></th>
+                <td><input type="text" id="lname" name="lname" required></td>
+            </tr>
+            <tr>
+                <th><label for="district">District:</label></td>
+                <td><input type="text" id="district" name="district" required></td>
+            </tr>
+            <tr>
+                <th><label for="age">Age:</label></tH>
+                <td><input type="number" id="age" name="age" required></td>
+            </tr>
+            <tr>
+                <th><label for="team">Team:</label></td>
+                <td><input type="text" id="team" name="team" required></td>
+            </tr>
+            <tr>
+                <th><label for="bibnumber">Bib Number:</label></td>
+                <td><input type="number" id="bibnumber" name="bibnumber" required></td>
+            </tr>
+            <tr class="submit-row">
+                <td colspan="2"><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
     </form>
+    <h3>DEMODATA Table Contents</h3>
+    <table id="myTable" border="1">
+        <tr>
+            <!-- Create a separate row for the search input field -->
+            <th colspan="7">
+                <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
+            </th>
+        </tr>
+        <tr>
+            <!-- Column headers -->
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>District</th>
+            <th>Age</th>
+            <th>Team</th>
+            <th>Bib Number</th>
+            <th>Edit</th>
+        </tr>
+        <% demoData.forEach(function(row) { %>
+            <tr>
+                <td><%= row.fname %></td>
+                <td><%= row.lname %></td>
+                <td><%= row.district %></td>
+                <td><%= row.age %></td>
+                <td><%= row.team %></td>
+                <td><%= row.bibnumber %></td>
+                <td><a href="/edit-demo-data?uid=<%= row.uid %>" class="edit-button">Edit</a></td>
+            </tr>
+        <% }); %>
+    </table>
 </body>
 </html>

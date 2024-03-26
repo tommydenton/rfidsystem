@@ -5,55 +5,113 @@ const { Pool } = require('pg');
 
 // Initialize the Express application
 const app = express();
-const PORT = 3000; // Ensure this is different from your API's port
+const PORT = 3000;
 
 // PostgreSQL pool configuration
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'rfid_system',
-    password: 'r0ckkrush3r', // Make sure to set your password
+    password: 'r0ckkrush3r',
     port: 5432,
 });
 
-// Set the view engine to ejs
+// Set the view engine to EJS and the views directory
 app.set('view engine', 'ejs');
-
-// Set the views directory
 app.set('views', path.join(__dirname, 'views'));
 
-// Use express.urlencoded middleware to parse URL-encoded form data
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded({ extended: true }));
 
-// Serve the index page with time data
-app.get('/', async (req, res) => {
+// Route for the homepage
+app.get('/', (req, res) => {
+    res.render('index');
+});
+
+// Route for displaying time
+app.get('/time', async (req, res) => {
     try {
         const response = await axios.get('http://192.168.1.22:3001/time');
         const cloudTime = response.data.ntpTime;
         const localTime = new Date().toISOString();
-
-        // Render the index.ejs template with the cloudTime and localTime variables
-        res.render('index', { cloudTime, localTime });
+        res.render('time', { cloudTime, localTime });
     } catch (error) {
         console.error('Error fetching time data:', error);
         res.send('Error fetching time data');
     }
 });
 
-// POST endpoint to handle form submission and insert data into DEMODATA
+// Route for the data entry form
+app.get('/dataentry', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM DEMODATA');
+        res.render('dataentry', { demoData: result.rows });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.render('dataentry', { demoData: [] });
+    }
+});
+
+// Route for inserting data into the database
 app.post('/insert-demo-data', async (req, res) => {
     const { fname, lname, district, age, team, bibnumber } = req.body;
-
     try {
-        const result = await pool.query(
+        // Check if bibnumber already exists
+        const checkResult = await pool.query(
+            'SELECT * FROM DEMODATA WHERE BibNumber = $1',
+            [bibnumber]
+        );
+        if (checkResult.rows.length > 0) {
+            // BibNumber already exists, handle accordingly
+            return res.status(400).send('BibNumber already exists. Please use a unique BibNumber.');
+        }
+
+        // Proceed with insertion if bibnumber is unique
+        const insertResult = await pool.query(
             'INSERT INTO DEMODATA (FName, LName, District, Age, Team, BibNumber) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [fname, lname, district, age, team, bibnumber]
         );
-        // Redirect back to the home page or render a success message
-        res.redirect('/');
+        res.redirect('/dataentry');
     } catch (error) {
         console.error('Error inserting data:', error);
         res.status(500).send('Error inserting data');
+    }
+});
+
+// Route for displaying the edit form
+app.get('/edit-demo-data', async (req, res) => {
+    const { uid } = req.query; // Get the UID from the query parameter
+
+    try {
+        const result = await pool.query('SELECT * FROM DEMODATA WHERE uid = $1', [uid]);
+        if (result.rows.length > 0) {
+            // Render an edit form with the data pre-populated
+            res.render('edit-demo-data', { rowData: result.rows[0] });
+        } else {
+            res.send('Row not found');
+        }
+    } catch (error) {
+        console.error('Error fetching row:', error);
+        res.status(500).send('Error fetching row');
+    }
+});
+
+// Route for updating data in the database
+app.post('/update-demo-data', async (req, res) => {
+    const { uid, fname, lname, district, age, team, bibnumber } = req.body;
+
+    try {
+        await pool.query(
+            'UPDATE DEMODATA SET fname = $1, lname = $2, district = $3, age = $4, team = $5, bibnumber = $6 WHERE uid = $7',
+            [fname, lname, district, age, team, bibnumber, uid]
+        );
+        res.redirect('/dataentry');
+    } catch (error) {
+        console.error('Error updating data:', error);
+        res.status(500).send('Error updating data');
     }
 });
 

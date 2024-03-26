@@ -1,0 +1,100 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    table {
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+    }
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    input[type="text"],
+    input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        box-sizing: border-box;
+    }
+    input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    .submit-row {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+    .edit-button {
+    display: inline-block; /* Allows padding and width to be set */
+    background-color: #4CAF50; /* Button color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Mouse pointer changes to hand icon */
+    text-decoration: none; /* Removes underline from links */
+    }
+    .edit-button:hover {
+        background-color: #45a049; /* Darker shade on hover */
+    }
+    body.dark-mode {
+        background-color: #333;
+        color: #fff;
+    }
+    
+    body.dark-mode table, body.dark-mode th, body.dark-mode td {
+        border-color: #777;
+    }
+    
+    body.dark-mode th {
+        background-color: #555;
+    }
+    
+    body.dark-mode input[type="submit"] {
+        background-color: #666;
+        color: #fff;
+    }
+    
+    body.dark-mode .edit-button {
+        background-color: #666;
+    }
+    
+    body.dark-mode .edit-button:hover {
+        background-color: #777;
+    }
+    body.dark-mode {
+        background-color: #333;
+        color: #fff;
+        /* ... other dark mode styles ... */
+    }
+    
+    /* Add this to change link colors in dark mode */
+    body.dark-mode a {
+        color: #c792ea; /* A light purple color for better visibility */
+    }
+    
+    body.dark-mode a:visited {
+        color: #ae81ff; /* A different shade for visited links */
+    }
+    
+    body.dark-mode a:hover {
+        color: #ff79c6; /* A pink color for hover state */
+    }
+</style>
