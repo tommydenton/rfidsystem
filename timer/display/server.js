@@ -1,3 +1,4 @@
+// server.ejs
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
@@ -57,7 +58,7 @@ app.get('/dataentry', async (req, res) => {
 
 // Route for inserting data into the database
 app.post('/insert-demo-data', async (req, res) => {
-    const { fname, lname, district, age, team, bibnumber } = req.body;
+    const { fname, lname, age, gender, district, team, bibnumber } = req.body;
     try {
         // Check if bibnumber already exists
         const checkResult = await pool.query(
@@ -71,8 +72,8 @@ app.post('/insert-demo-data', async (req, res) => {
 
         // Proceed with insertion if bibnumber is unique
         const insertResult = await pool.query(
-            'INSERT INTO DEMODATA (FName, LName, District, Age, Team, BibNumber) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [fname, lname, district, age, team, bibnumber]
+            'INSERT INTO DEMODATA (fname, lname, age, gender, district, team, bibnumber) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [fname, lname, age, gender, district, team, bibnumber]
         );
         res.redirect('/dataentry');
     } catch (error) {
@@ -101,12 +102,12 @@ app.get('/edit-demo-data', async (req, res) => {
 
 // Route for updating data in the database
 app.post('/update-demo-data', async (req, res) => {
-    const { uid, fname, lname, district, age, team, bibnumber } = req.body;
+    const { uid, fname, lname, age, gender, district, team, bibnumber } = req.body;
 
     try {
         await pool.query(
-            'UPDATE DEMODATA SET fname = $1, lname = $2, district = $3, age = $4, team = $5, bibnumber = $6 WHERE uid = $7',
-            [fname, lname, district, age, team, bibnumber, uid]
+            'UPDATE DEMODATA SET fname = $1, lname = $2, age = $3, gender = $4, district = $5, team = $6, bibnumber = $7 WHERE uid = $8',
+            [fname, lname, age, gender, district, team, bibnumber, uid]
         );
         res.redirect('/dataentry');
     } catch (error) {

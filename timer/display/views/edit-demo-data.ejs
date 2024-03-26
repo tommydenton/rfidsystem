@@ -1,3 +1,4 @@
+<!-- edit-demo-data.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,6 @@
         document.body.classList.toggle('dark-mode');
         localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
     }
-
     // Apply the saved theme on page load
     window.onload = () => {
         if (localStorage.getItem('theme') === 'dark') {
@@ -27,26 +27,21 @@
     <h2>Edit DEMODATA</h2>
     <form action="/update-demo-data" method="post">
         <input type="hidden" name="uid" value="<%= rowData.uid %>"> <!-- Hidden field for UID -->
-        
         <label for="fname">First Name:</label>
         <input type="text" id="fname" name="fname" value="<%= rowData.fname %>" required><br><br>
-        
         <label for="lname">Last Name:</label>
         <input type="text" id="lname" name="lname" value="<%= rowData.lname %>" required><br><br>
-        
-        <label for="district">District:</label>
-        <input type="text" id="district" name="district" value="<%= rowData.district %>" required><br><br>
-        
         <label for="age">Age:</label>
         <input type="number" id="age" name="age" value="<%= rowData.age %>" required><br><br>
-        
+        <label for="gender">Gender:</label>
+        <input type="text" id="gender" name="gender" value="<%= rowData.gender %>" required><br><br>
+        <label for="district">District:</label>
+        <input type="text" id="district" name="district" value="<%= rowData.district %>" required><br><br>
         <label for="team">Team:</label>
         <input type="text" id="team" name="team" value="<%= rowData.team %>" required><br><br>
-        
         <label for="bibnumber">Bib Number:</label>
         <input type="number" id="bibnumber" name="bibnumber" value="<%= rowData.bibnumber %>" required><br><br>
-        
-        <input type="submit" value="Update">
+        <input type="submit" value="Update"> <input type="button" value="Cancel" onclick="window.history.back();">
     </form>
 </body>
 </html>

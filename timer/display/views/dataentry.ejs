@@ -1,3 +1,4 @@
+<!-- dataentry.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,63 +7,112 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <title>Data Entry</title>
 </head>
-<script>
-    // Function to toggle dark mode
-    function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-    }
+    <script>
+        // Function to toggle dark mode
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
 
-    // Apply the saved theme on page load
-    window.onload = () => {
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
+        // Apply the saved theme on page load
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        };
+    </script>
+    <script>
+        function searchTable() {
+        // Declare variables
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("editData");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
+            tr[i].style.display = "none"; // Hide the row initially
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) { // Loop through all cells in the row
+            if (td[j]) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = ""; // Show the row if the query matches any cell
+                break; // Stop searching through cells once a match is found
+                }
+            }
+            }
         }
-    };
-</script>
-<script>
-    function searchTable() {
-      // Declare variables
-      var input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("myInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("myTable");
-      tr = table.getElementsByTagName("tr");
-    
-      // Loop through all table rows, and hide those who don't match the search query
-      for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
-        // Get the columns you want to search
-        tdFname = tr[i].getElementsByTagName("td")[0];
-        tdLname = tr[i].getElementsByTagName("td")[1];
-        tdTeam = tr[i].getElementsByTagName("td")[4];
-        tdBibNumber = tr[i].getElementsByTagName("td")[5];
-        
-        if (tdFname || tdLname || tdTeam || tdBibNumber) {
-          txtValueFname = tdFname.textContent || tdFname.innerText;
-          txtValueLname = tdLname.textContent || tdLname.innerText;
-          txtValueTeam = tdTeam.textContent || tdTeam.innerText;
-          txtValueBibNumber = tdBibNumber.textContent || tdBibNumber.innerText;
-          
-          // Check if the row should be displayed
-          if (txtValueFname.toUpperCase().indexOf(filter) > -1 || 
-              txtValueLname.toUpperCase().indexOf(filter) > -1 || 
-              txtValueTeam.toUpperCase().indexOf(filter) > -1 || 
-              txtValueBibNumber.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
         }
-      }
-    }
+    </script>
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("editData");
+            switching = true;
+            dir = "asc"; // Set the sorting direction to ascending initially
+            // Remove the sorting class from all headers
+            var headers = table.getElementsByTagName("TH");
+            for (i = 0; i < headers.length; i++) {
+                headers[i].classList.remove("sort-asc", "sort-desc");
+            }
+            
+            while (switching) {
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                
+                // Loop through all table rows (except the first, which contains table headers)
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    
+                    if (x && y) {
+                        if (dir == "asc") {
+                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            // Add the sorting class to the header that was clicked
+            if (dir === "asc") {
+                headers[n].classList.add("sort-asc");
+            } else {
+                headers[n].classList.add("sort-desc");
+            }
+        }
     </script>
 <body>
     <div style="position: fixed; top: 0; right: 0; padding: 10px;">
         <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
     </div>
-    <h2>Enter DEMODATA</h2>
     <form action="/insert-demo-data" method="post">
-        <table>
+        <table id="enterData">
+            <tr>
+                <th colspan="2">
+                    <center><h2>Enter Demographic Data</h2></center>
+                </th>
+            </tr>
             <tr>
                 <th><label for="fname">First Name:</label></th>
                 <td><input type="text" id="fname" name="fname" required></td>
@@ -72,12 +122,16 @@
                 <td><input type="text" id="lname" name="lname" required></td>
             </tr>
             <tr>
-                <th><label for="district">District:</label></td>
-                <td><input type="text" id="district" name="district" required></td>
-            </tr>
-            <tr>
                 <th><label for="age">Age:</label></tH>
                 <td><input type="number" id="age" name="age" required></td>
+            </tr>
+            <tr>
+                <th><label for="gender">Gender:</label></tH>
+                <td><input type="text" id="gender" name="gender" required></td>
+            </tr>
+            <tr>
+                <th><label for="district">District:</label></td>
+                <td><input type="text" id="district" name="district" required></td>
             </tr>
             <tr>
                 <th><label for="team">Team:</label></td>
@@ -92,30 +146,35 @@
             </tr>
         </table>
     </form>
-    <h3>DEMODATA Table Contents</h3>
-    <table id="myTable" border="1">
+    <table id="editData" border="1">
         <tr>
-            <!-- Create a separate row for the search input field -->
-            <th colspan="7">
+            <th colspan="8">
+                <center><h2>Edit Demographic Data</h2></center>
+            </th>
+        </tr>
+        <tr>
+            <th colspan="8">
                 <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
             </th>
         </tr>
         <tr>
             <!-- Column headers -->
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>District</th>
-            <th>Age</th>
-            <th>Team</th>
-            <th>Bib Number</th>
+            <th onclick="sortTable(2)">First Name</th>
+            <th onclick="sortTable(3)">Last Name</th>
+            <th onclick="sortTable(4)">Age</th>
+            <th onclick="sortTable(5)">Gender</th>
+            <th onclick="sortTable(6)">District</th>
+            <th onclick="sortTable(7)">Team</th>
+            <th onclick="sortTable(8)">Bib Number</th>
             <th>Edit</th>
         </tr>
         <% demoData.forEach(function(row) { %>
             <tr>
                 <td><%= row.fname %></td>
                 <td><%= row.lname %></td>
-                <td><%= row.district %></td>
                 <td><%= row.age %></td>
+                <td><%= row.gender %></td>
+                <td><%= row.district %></td>
                 <td><%= row.team %></td>
                 <td><%= row.bibnumber %></td>
                 <td><a href="/edit-demo-data?uid=<%= row.uid %>" class="edit-button">Edit</a></td>
