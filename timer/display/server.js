@@ -58,7 +58,7 @@ app.get('/dataentry', async (req, res) => {
 
 // Route for inserting data into the database
 app.post('/insert-demo-data', async (req, res) => {
-    const { fname, lname, age, gender, district, team, bibnumber } = req.body;
+    const { fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber } = req.body;
     try {
         // Check if bibnumber already exists
         const checkResult = await pool.query(
@@ -72,8 +72,8 @@ app.post('/insert-demo-data', async (req, res) => {
 
         // Proceed with insertion if bibnumber is unique
         const insertResult = await pool.query(
-            'INSERT INTO DEMODATA (fname, lname, age, gender, district, team, bibnumber) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [fname, lname, age, gender, district, team, bibnumber]
+            'INSERT INTO DEMODATA (fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+            [fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber]
         );
         res.redirect('/dataentry');
     } catch (error) {
@@ -102,12 +102,12 @@ app.get('/editdata', async (req, res) => {
 
 // Route for updating data in the database
 app.post('/update-demo-data', async (req, res) => {
-    const { uid, fname, lname, age, gender, district, team, bibnumber } = req.body;
+    const { uid, fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber } = req.body;
 
     try {
         await pool.query(
-            'UPDATE DEMODATA SET fname = $1, lname = $2, age = $3, gender = $4, district = $5, team = $6, bibnumber = $7 WHERE uid = $8',
-            [fname, lname, age, gender, district, team, bibnumber, uid]
+            'UPDATE DEMODATA SET fname = $1, lname = $2, gender = $3, age = $4, council = $5, district = $6, unittype = $7, unitnumber = $8, race = $9, boat = $10, bibnumber = $11 WHERE uid = $12',
+            [fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber, uid]
         );
         res.redirect('/dataentry');
     } catch (error) {

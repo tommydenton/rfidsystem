@@ -103,9 +103,10 @@
         }
     </script>
 <body>
-    <div style="position: fixed; top: 0; right: 0; padding: 10px;">
+    <div class="theme-toggle">
         <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
     </div>
+    
     <form action="/insert-demo-data" method="post">
         <table id="enterData">
             <tr>
@@ -115,31 +116,108 @@
             </tr>
             <tr>
                 <th><label for="fname">First Name:</label></th>
-                <td><input type="text" id="fname" name="fname" required></td>
+                <td><input type="text" id="fname" name="fname" required placeholder="First Name"></td>
             </tr>
             <tr>
                 <th><label for="lname">Last Name:</label></th>
-                <td><input type="text" id="lname" name="lname" required></td>
+                <td><input type="text" id="lname" name="lname" required placeholder="Last Name"></td>
+            </tr>
+            <th><label for="gender">Gender:</label></th>
+                <td>
+                    <select id="gender" name="gender" required>
+                        <option value="">Gender</option>
+                        <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="pnts">Perfer not to say</option>    
+                </select>
+                </td>
             </tr>
             <tr>
-                <th><label for="age">Age:</label></tH>
-                <td><input type="number" id="age" name="age" required></td>
+                <th><label for="age">Age Bracket:</label></th>
+                <td>
+                    <select id="age" name="age" required>
+                    <option value="">Age Bracket?</option>
+                    <option value="Age 11-14">Age 11-14</option>
+                    <option value="Age 15-17">Age 15-17</option>
+                    <option value="Age 18-20">Age 18-20</option>
+                    <option value="Adult">Adult</option>
+                    </select>
+                </td>
             </tr>
             <tr>
-                <th><label for="gender">Gender:</label></tH>
-                <td><input type="text" id="gender" name="gender" required></td>
+                <th><label for="council">Council:</label></th>
+                    <td>
+                        <select id="council" name="council" required>
+                            <option value="">Select Council</option>
+                            <option value="Longhorn">Longhorn</option>
+                            <option value="Circle Ten">Circle Ten</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
             </tr>
             <tr>
-                <th><label for="district">District:</label></td>
-                <td><input type="text" id="district" name="district" required></td>
+                <th><label for="district">District:</label></th>
+                    <td>
+                        <select id="district" name="district" required>
+                            <option value="">Select District</option>
+                            <option value="Arrowhead (#46)">Arrowhead (#46)</option>
+                            <option value="Brazos Valley (#44)">Brazos Valley (#44)</option>
+                            <option value="Chisholm Trail (#52)">Chisholm Trail (#52)</option>
+                            <option value="Frontier Trails (#41)">Frontier Trails (#41)</option>
+                            <option value="Heart O' Texas (#50)">Heart O' Texas (#50)</option>
+                            <option value="Leon Valley (#51)">Leon Valley (#51)</option>
+                            <option value="Lone Star (#48)">Lone Star (#48)</option>
+                            <option value="Mustang (#43)">Mustang (#43)</option>
+                            <option value="Pathfinder (#45)">Pathfinder (#45)</option>
+                            <option value="Orion (#42)">Orion (#42)</option>
+                            <option value="Santa Fe (#49)">Santa Fe (#49)</option>
+                            <option value="Trinity Trails (#47)">Trinity Trails (#47)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
             </tr>
             <tr>
-                <th><label for="team">Team:</label></td>
-                <td><input type="text" id="team" name="team" required></td>
+                <th><label for="unittype">Unit Type:</label></th>
+                <td>
+                    <select id="unittype" name="unittype" required>
+                        <option value="">Select Unit Type</option>
+                        <option value="Troop-Boys">Troop-Boys</option>
+                        <option value="Troop-Girls">Troop-Girls</option>
+                        <option value="Troop B&G">Troop B&G</option>
+                        <option value="Crew">Crew</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="unitnumber">Unit Number:</label></th>
+                <td><input type="number" id="unitnumber" name="unitnumber" required placeholder="Unit Number"></td>
+            </tr>
+            <tr>
+                <th><label for="race">Race Type:</label></th>
+                <td>
+                    <select id="race" name="race" required>
+                        <option value="">Race Length?</option>
+                        <option value="6-Mile">6-Mile</option>
+                        <option value="14-Mile">14-Mile</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="boat">Boat Type:</label></th>
+                <td>
+                    <select id="boat" name="boat" required>
+                        <option value="">Select Boat Type</option>
+                        <option value="Canoe">Canoe</option>
+                        <option value="Kayak">Kayak</option>
+                        <option value="Canoe-Personal">Canoe - Personal</option>
+                        <option value="Kayak-Personal">Kayak Personal</option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <th><label for="bibnumber">Bib Number:</label></td>
-                <td><input type="number" id="bibnumber" name="bibnumber" required></td>
+                <td><input type="number" id="bibnumber" name="bibnumber" required placeholder="Bib Number"></td>
             </tr>
             <tr>
                 <td colspan="2" class="submit-cell"><input type="submit" value="Submit"></td>
@@ -161,23 +239,31 @@
     <table id="editData" border="1">
         <tr>
             <!-- Column headers -->
-            <th onclick="sortTable(2)">First Name</th>
-            <th onclick="sortTable(3)">Last Name</th>
-            <th onclick="sortTable(4)">Age</th>
-            <th onclick="sortTable(5)">Gender</th>
-            <th onclick="sortTable(6)">District</th>
-            <th onclick="sortTable(7)">Team</th>
-            <th onclick="sortTable(8)">Bib Number</th>
+            <th onclick="sortTable(0)">First Name</th>
+            <th onclick="sortTable(1)">Last Name</th>
+            <th onclick="sortTable(2)">Gender</th>
+            <th onclick="sortTable(3)">Age Bracket</th>
+            <th onclick="sortTable(4)">Council</th>
+            <th onclick="sortTable(5)">District</th>
+            <th onclick="sortTable(6)">Unit Type</th>
+            <th onclick="sortTable(7)">Unit Number</th>
+            <th onclick="sortTable(8)">Race Type</th>
+            <th onclick="sortTable(9)">Boat Type</th>
+            <th onclick="sortTable(10)">Bib Number</th>
             <th>Edit</th>
         </tr>
         <% demoData.forEach(function(row) { %>
             <tr>
                 <td><%= row.fname %></td>
                 <td><%= row.lname %></td>
-                <td><%= row.age %></td>
                 <td><%= row.gender %></td>
+                <td><%= row.age %></td>
+                <td><%= row.council %></td>
                 <td><%= row.district %></td>
-                <td><%= row.team %></td>
+                <td><%= row.unittype %></td>
+                <td><%= row.unitnumber %></td>
+                <td><%= row.race %></td>
+                <td><%= row.boat %></td>
                 <td><%= row.bibnumber %></td>
                 <td><a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a></td>
             </tr>
