@@ -35,10 +35,8 @@
     input[type="submit"]:hover {
         background-color: #45a049;
     }
-    .submit-row {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
+    .submit-cell {
+        text-align: right; /* Aligns content to the right */
     }
     input[type="button"] {
         background-color: #ff0000;

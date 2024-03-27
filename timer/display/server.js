@@ -83,14 +83,14 @@ app.post('/insert-demo-data', async (req, res) => {
 });
 
 // Route for displaying the edit form
-app.get('/edit-demo-data', async (req, res) => {
+app.get('/editdata', async (req, res) => {
     const { uid } = req.query; // Get the UID from the query parameter
 
     try {
         const result = await pool.query('SELECT * FROM DEMODATA WHERE uid = $1', [uid]);
         if (result.rows.length > 0) {
             // Render an edit form with the data pre-populated
-            res.render('edit-demo-data', { rowData: result.rows[0] });
+            res.render('editdata', { rowData: result.rows[0] });
         } else {
             res.send('Row not found');
         }

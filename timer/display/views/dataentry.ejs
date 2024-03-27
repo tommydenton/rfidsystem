@@ -141,12 +141,12 @@
                 <th><label for="bibnumber">Bib Number:</label></td>
                 <td><input type="number" id="bibnumber" name="bibnumber" required></td>
             </tr>
-            <tr class="submit-row">
-                <td colspan="2"><input type="submit" value="Submit"></td>
+            <tr>
+                <td colspan="2" class="submit-cell"><input type="submit" value="Submit"></td>
             </tr>
         </table>
     </form>
-    <table id="editData" border="1">
+    <table id="Data" border="1">
         <tr>
             <th colspan="8">
                 <center><h2>Edit Demographic Data</h2></center>
@@ -157,6 +157,8 @@
                 <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
             </th>
         </tr>
+    </table>
+    <table id="editData" border="1">
         <tr>
             <!-- Column headers -->
             <th onclick="sortTable(2)">First Name</th>
@@ -177,7 +179,7 @@
                 <td><%= row.district %></td>
                 <td><%= row.team %></td>
                 <td><%= row.bibnumber %></td>
-                <td><a href="/edit-demo-data?uid=<%= row.uid %>" class="edit-button">Edit</a></td>
+                <td><a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a></td>
             </tr>
         <% }); %>
     </table>
