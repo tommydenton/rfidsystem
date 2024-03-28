@@ -25,7 +25,16 @@ sudo apt upgrade
 Install the necessary packages for your terminal and development environment:
 
 ```bash
-sudo apt install zsh exa fzf ripgrep neovim tmux git zsh-syntax-highlighting
+sudo apt update
+sudo apt install nala
+
+sudo nala install zsh exa fzf ripgrep neovim tmux git zsh-syntax-highlighting nginx nodejs npm postgresql postgresql-contrib tmux zsh-autosuggestions thefuck lm-sensors
+
+echo "deb [signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian/ bookworm main" | sudo tee /etc/apt/sources.list.d/azlux.list
+sudo wget -O /usr/share/keyrings/azlux-archive-keyring.gpg  https://azlux.fr/repo.gpg
+sudo apt update
+sudo apt install log2ram
+
 ```
 
 Change your default shell to Zsh:
@@ -87,7 +96,7 @@ fc-cache -f -v
 sudo npm install gg
 npm install body-parser
 
-apt postgres postgres-contrib
+apt install postgres postgres-contrib
 
 Configure your shell prompt with Starship:
 
