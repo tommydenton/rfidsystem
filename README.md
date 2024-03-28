@@ -110,7 +110,7 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g pm2 gg body-parcer ntp express ntp-client express ejs axios ntp-time
+sudo npm install -g pm2 gg ntp express ntp-client express ejs axios ntp-time body-parser
 ```
 ```zsh
 create the node project
