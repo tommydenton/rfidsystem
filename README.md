@@ -112,6 +112,57 @@ Install NPM Packages
 ```zsh
 sudo npm install -g pm2 gg body-parcer ntp express ntp-client express ejs axios ntp-time
 ```
+```zsh
+create the node project
+npm init -y
+```
+
+To initiate a Node.js project, you'll need to follow a series of steps that involve creating a project directory, initializing the project with a package.json file, and installing any necessary dependencies. Here's a step-by-step guide to get you started:
+Create a Project Directory:
+First, create a directory for your new application and navigate into it using your terminal or command prompt.
+bash
+mkdir myapp
+cd myapp
+
+Initialize the Project:
+Use the npm init command to create a package.json file for your application. This file will include metadata about your project such as the name, version, description, and dependencies. You can either answer the prompts that appear to customize your package.json or use npm init -y to accept the defaults.
+bash
+npm init -y
+
+Install Dependencies:
+If your project requires any libraries or frameworks, such as Express for building web applications, you can install them using npm. For example, to install Express and save it as a dependency in your package.json file, run:
+bash
+npm install express --save
+
+Create Your Main Application File:
+Create a file named index.js (or another entry point if you specified a different file name during initialization) in the root of your project directory. This file will serve as the starting point for your application.
+bash
+echo 'console.log("Hello World!");' > index.js
+
+Run Your Application:
+You can run your application using Node.js by executing the following command in your terminal:
+bash
+node index.js
+
+(Optional) Use nodemon for Development:
+For a better development experience, you can install nodemon globally. nodemon will automatically restart your application whenever you make changes to your files.
+bash
+npm install -g nodemon
+
+Then, you can start your application with nodemon instead of node:
+bash
+nodemon index.js
+
+(Optional) Git Initialization:
+It's a good practice to use version control for your project. Initialize a Git repository and create a .gitignore file to exclude node_modules or other non-essential files:
+bash
+git init
+echo "node_modules/" > .gitignore
+git add .
+git commit -m "Initial commit"
+
+This guide provides a basic setup for a Node.js project. Depending on your project's requirements, you may need to install additional packages or configure other tools
+
 Reference Documents
 - https://gist.github.com/dogrocker/1efb8fd9427779c827058f873b94df95
 - https://dev.to/andrenbrandao/terminal-setup-with-zsh-tmux-dracula-theme-48lm
