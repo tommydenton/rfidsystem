@@ -55,7 +55,7 @@ Install log2ram and other packages required to edit, configure, and monitor
 echo "deb [signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian/ bookworm main" | sudo tee /etc/apt/sources.list.d/azlux.list
 sudo wget -O /usr/share/keyrings/azlux-archive-keyring.gpg  https://azlux.fr/repo.gpg
 sudo nala update
-sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram
+sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram samba atop htop
 ```
 
 Install Bottom
@@ -84,6 +84,22 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 change to agnoster
 ```
 
+Setup up SAMBA
+Now that Samba is installed, we need to create a directory for it to share:
+
+```zsh
+mkdir /home/<username>/sambashare/
+sudo nano /etc/samba/smb.conf
+sudo smbpasswd -a pi
+```
+```vi
+
+[sambashare]
+    comment = Samba on Ubuntu
+    path = /home/username/sambashare
+    read only = no
+    browsable = yes
+```
 Update and Upgrade again
 
 ```zsh
