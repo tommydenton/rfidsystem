@@ -148,3 +148,35 @@
     font-size: 0.7em;
     margin-left: 5px;
 }
+.breadcrumb {
+    list-style: none;
+    padding: 0;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .breadcrumb-item {
+    display: inline;
+    font-size: 0.875rem;
+  }
+  
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    padding: 0 0.5rem;
+    color: #6c757d;
+  }
+  
+  .breadcrumb-item a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .breadcrumb-item a:hover {
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-item.active {
+    color: #6c757d;
+    pointer-events: none;
+  }

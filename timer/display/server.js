@@ -28,17 +28,34 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
 // Route for the homepage
-app.get('/', (req, res) => {
-    res.render('index');
+app.get('/display', (req, res) => {
+    // Define the breadcrumb path
+const breadcrumbPath = [
+    { text: 'Time Display', href: '/time' },
+    { text: 'Data Entry', href: '/dataentry' },
+    { text: 'Home', href: '/display' },
+    // Add more breadcrumb items as needed
+  ];
+    // Pass the breadcrumb path to the EJS template
+    res.render('index', {
+      breadcrumbPath: breadcrumbPath
+    });
 });
 
 // Route for displaying time
 app.get('/time', async (req, res) => {
     try {
-        const response = await axios.get('http://192.168.1.22:3001/time');
+        const response = await axios.get('http://localhost:3001/time');
         const cloudTime = response.data.ntpTime;
         const localTime = new Date().toISOString();
-        res.render('time', { cloudTime, localTime });
+        const breadcrumbPath = [
+            { text: 'Home', href: '/display' },
+            { text: 'Data Entry', href: '/dataentry' },
+            { text: 'Time Display', href: '/time' },
+            // Add more breadcrumb items as needed
+          ];
+        res.render('time', { cloudTime, localTime, breadcrumbPath });
+        
     } catch (error) {
         console.error('Error fetching time data:', error);
         res.send('Error fetching time data');
@@ -49,10 +66,23 @@ app.get('/time', async (req, res) => {
 app.get('/dataentry', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM DEMODATA');
-        res.render('dataentry', { demoData: result.rows });
+        const breadcrumbPath = [
+            { text: 'Home', href: '/display' },
+            { text: 'Time Display', href: '/time' },
+            { text: 'Data Entry', href: '/dataentry' },
+            // Add more breadcrumb items as needed
+          ];
+        // Pass the breadcrumb path to the EJS template along with other data
+        res.render('dataentry', { 
+          demoData: result.rows,
+          breadcrumbPath: breadcrumbPath // Include the breadcrumb path here
+        });
     } catch (error) {
         console.error('Error fetching data:', error);
-        res.render('dataentry', { demoData: [] });
+        res.render('dataentry', { 
+          demoData: [],
+          breadcrumbPath: breadcrumbPath // Include the breadcrumb path here
+        });
     }
 });
 

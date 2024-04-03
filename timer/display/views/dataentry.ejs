@@ -103,6 +103,17 @@
         }
     </script>
 <body>
+    <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <% breadcrumbPath.forEach(function(crumb, index) { %>
+            <% if(index < breadcrumbPath.length - 1) { %>
+              <!-- Only render breadcrumb items that are not the last one -->
+              <li class="breadcrumb-item"><a href="<%= crumb.href %>"><%= crumb.text %></a></li>
+            <% } %>
+          <% }); %>
+        </ol>
+      </nav>
+
     <div class="theme-toggle">
         <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
     </div>
