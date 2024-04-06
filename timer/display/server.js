@@ -32,19 +32,6 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-// Route for displaying time
-app.get('/time', async (req, res) => {
-    try {
-        const response = await axios.get('http://192.168.1.22:3001/time');
-        const cloudTime = response.data.ntpTime;
-        const localTime = new Date().toISOString();
-        res.render('time', { cloudTime, localTime });
-    } catch (error) {
-        console.error('Error fetching time data:', error);
-        res.send('Error fetching time data');
-    }
-});
-
 // Route for the data entry form
 app.get('/dataentry', async (req, res) => {
     try {
@@ -119,4 +106,18 @@ app.post('/update-demo-data', async (req, res) => {
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+//Info APIs
+// Route for displaying time
+app.get('/time', async (req, res) => {
+    try {
+        const response = await axios.get('http://localhost:3001/time');
+        const cloudTime = response.data.ntpTime;
+        const localTime = new Date().toISOString();
+        res.render('time', { cloudTime, localTime });
+    } catch (error) {
+        console.error('Error fetching time data:', error);
+        res.send('Error fetching time data');
+    }
 });
