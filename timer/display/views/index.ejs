@@ -27,15 +27,7 @@
     </div>
     
     <h1>Welcome to Our Time Display and Data Entry App</h1>
-    <nav aria-label="Breadcrumb">
-      <ol class="breadcrumb">
-        <% breadcrumbPath.forEach(function(crumb, index) { %>
-          <% if(index < breadcrumbPath.length - 1) { %>
-            <!-- Only render breadcrumb items that are not the last one -->
-            <li class="breadcrumb-item"><a href="<%= crumb.href %>"><%= crumb.text %></a></li>
-          <% } %>
-        <% }); %>
-      </ol>
-    </nav>
+    <p><a href="/time">View Time</a></p>
+    <p><a href="/dataentry">Enter Data</a></p>
 </body>
 </html>
