@@ -1,0 +1,21 @@
+[01;34m.[0m
+├── [01;34mconfigfiles[0m
+│   ├── nginx.conf
+│   └── tree.txt
+├── [01;34mdisplay[0m
+│   ├── [01;32mserver.js[0m
+│   └── [01;34mviews[0m
+│       ├── [01;32mdataentry.ejs[0m
+│       ├── [01;32meditdata.ejs[0m
+│       ├── index.ejs
+│       └── [01;32mtime.ejs[0m
+├── [01;32mindex.html[0m
+├── [01;34mntpapi[0m
+│   └── [01;32mntpapi.mjs[0m
+├── [01;34mpublic[0m
+│   └── [01;34mcss[0m
+│       └── [01;32mstyle.css[0m
+└── [01;34mstamp[0m
+    └── [01;32mstamper.py[0m
+
+8 directories, 11 files
