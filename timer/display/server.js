@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
 // Route for the homepage
-app.get('/', (req, res) => {
+app.get('/display', (req, res) => {
     res.render('index');
 });
 
