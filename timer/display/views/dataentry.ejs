@@ -1,28 +1,29 @@
 <!-- dataentry.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <title>Data Entry</title>
 </head>
-    <script>
-        // Function to toggle dark mode
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
+<script>
+    // Function to toggle dark mode
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    }
 
-        // Apply the saved theme on page load
-        window.onload = () => {
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-        };
-    </script>
-    <script>
-        function searchTable() {
+    // Apply the saved theme on page load
+    window.onload = () => {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    };
+</script>
+<script>
+    function searchTable() {
         // Declare variables
         var input, filter, table, tr, td, i, j, txtValue;
         input = document.getElementById("myInput");
@@ -35,121 +36,140 @@
             tr[i].style.display = "none"; // Hide the row initially
             td = tr[i].getElementsByTagName("td");
             for (j = 0; j < td.length; j++) { // Loop through all cells in the row
-            if (td[j]) {
-                txtValue = td[j].textContent || td[j].innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = ""; // Show the row if the query matches any cell
-                break; // Stop searching through cells once a match is found
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = ""; // Show the row if the query matches any cell
+                        break; // Stop searching through cells once a match is found
+                    }
                 }
             }
-            }
         }
+    }
+</script>
+<script>
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("editData");
+        switching = true;
+        dir = "asc"; // Set the sorting direction to ascending initially
+        // Remove the sorting class from all headers
+        var headers = table.getElementsByTagName("TH");
+        for (i = 0; i < headers.length; i++) {
+            headers[i].classList.remove("sort-asc", "sort-desc");
         }
-    </script>
-    <script>
-        function sortTable(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("editData");
-            switching = true;
-            dir = "asc"; // Set the sorting direction to ascending initially
-            // Remove the sorting class from all headers
-            var headers = table.getElementsByTagName("TH");
-            for (i = 0; i < headers.length; i++) {
-                headers[i].classList.remove("sort-asc", "sort-desc");
-            }
-            
-            while (switching) {
-                switching = false;
-                rows = table.getElementsByTagName("TR");
-                
-                // Loop through all table rows (except the first, which contains table headers)
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[n];
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-                    
-                    if (x && y) {
-                        if (dir == "asc") {
-                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        } else if (dir == "desc") {
-                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
+
+        while (switching) {
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+
+            // Loop through all table rows (except the first, which contains table headers)
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                if (x && y) {
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
                         }
                     }
                 }
-                
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
                     switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
                 }
             }
-            // Add the sorting class to the header that was clicked
-            if (dir === "asc") {
-                headers[n].classList.add("sort-asc");
-            } else {
-                headers[n].classList.add("sort-desc");
-            }
         }
-    </script>
+        // Add the sorting class to the header that was clicked
+        if (dir === "asc") {
+            headers[n].classList.add("sort-asc");
+        } else {
+            headers[n].classList.add("sort-desc");
+        }
+    }
+</script>
+
 <body>
-    <div class="theme-toggle">
-        <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
+    <div id="TOPNAV">
+        <!-- Breadcrumb navigation -->
+        <nav id="breadcrumbNav" aria-label="Breadcrumb">
+            <ol>
+                <% breadcrumbPath.forEach(function(crumb, index) { %>
+                <li>
+                    <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                    <% if (index < breadcrumbPath.length - 1) { %>
+                    <span> &gt; </span>
+                    <% } %>
+                </li>
+                <% }); %>
+            </ol>
+        </nav>
+        <!-- light/dark toggle link -->
+        <div class="theme-toggle">
+            <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+        </div>
     </div>
-    
-    <form action="/insert-demo-data" method="post">
-        <table id="enterData">
-            <tr>
-                <th colspan="3">
-                    <center><h2>Enter Demographic Data</h2></center>
-                </th>
-            </tr>
-            <tr>
-                <th class="dethsize"><label for="fname">First Name:</label></th>
-                <td class="detdsize"><input type="text" id="fname" name="fname" required placeholder="First Name"></td>
-                <td> </td>
-            </tr>
-            <tr>
-                <th><label for="lname">Last Name:</label></th>
-                <td><input type="text" id="lname" name="lname" required placeholder="Last Name"></td>
-                <td> </td>
-            </tr>
-            <th><label for="gender">Gender:</label></th>
+    <div id="mainContent">
+        <form action="/insert-demo-data" method="post">
+            <table id="enterData">
+                <tr>
+                    <th colspan="3">
+                        <center>
+                            <h2>Enter Demographic Data</h2>
+                        </center>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="fname">First Name:</label></th>
+                    <td class="detdsize"><input type="text" id="fname" name="fname" required placeholder="First Name"></td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <th><label for="lname">Last Name:</label></th>
+                    <td><input type="text" id="lname" name="lname" required placeholder="Last Name"></td>
+                    <td> </td>
+                </tr>
+                <th><label for="gender">Gender:</label></th>
                 <td>
                     <select id="gender" name="gender" required>
                         <option value="">Gender</option>
                         <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="pnts">Perfer not to say</option>    
-                </select>
-                </td>
-                <td> </td>
-            </tr>
-            <tr>
-                <th><label for="age">Age Bracket:</label></th>
-                <td>
-                    <select id="age" name="age" required>
-                    <option value="">Age Bracket?</option>
-                    <option value="Age 11-14">Age 11-14</option>
-                    <option value="Age 15-17">Age 15-17</option>
-                    <option value="Age 18-20">Age 18-20</option>
-                    <option value="Adult">Adult</option>
+                        <option value="Female">Female</option>
+                        <option value="pnts">Perfer not to say</option>
                     </select>
                 </td>
                 <td> </td>
-            </tr>
-            <tr>
-                <th><label for="council">Council:</label></th>
+                </tr>
+                <tr>
+                    <th><label for="age">Age Bracket:</label></th>
+                    <td>
+                        <select id="age" name="age" required>
+                            <option value="">Age Bracket?</option>
+                            <option value="Age 11-14">Age 11-14</option>
+                            <option value="Age 15-17">Age 15-17</option>
+                            <option value="Age 18-20">Age 18-20</option>
+                            <option value="Adult">Adult</option>
+                        </select>
+                    </td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <th><label for="council">Council:</label></th>
                     <td>
                         <select id="council" name="council" required>
                             <option value="">Select Council</option>
@@ -159,9 +179,9 @@
                         </select>
                     </td>
                     <td> </td>
-            </tr>
-            <tr>
-                <th><label for="district">District:</label></th>
+                </tr>
+                <tr>
+                    <th><label for="district">District:</label></th>
                     <td>
                         <select id="district" name="district" required>
                             <option value="">Select District</option>
@@ -181,88 +201,90 @@
                         </select>
                     </td>
                     <td> </td>
+                </tr>
+                <tr>
+                    <th><label for="unittype">Unit Type:</label></th>
+                    <td>
+                        <select id="unittype" name="unittype" required>
+                            <option value="">Select Unit Type</option>
+                            <option value="Troop-Boys">Troop-Boys</option>
+                            <option value="Troop-Girls">Troop-Girls</option>
+                            <option value="Troop B&G">Troop B&G</option>
+                            <option value="Crew">Crew</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <th><label for="unitnumber">Unit Number:</label></th>
+                    <td><input type="number" id="unitnumber" name="unitnumber" required placeholder="Unit Number"></td>
+                </tr>
+                <tr>
+                    <th><label for="race">Race Type:</label></th>
+                    <td>
+                        <select id="race" name="race" required>
+                            <option value="">Race Length?</option>
+                            <option value="6-Mile">6-Mile</option>
+                            <option value="14-Mile">14-Mile</option>
+                        </select>
+                    </td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <th><label for="boat">Boat Type:</label></th>
+                    <td>
+                        <select id="boat" name="boat" required>
+                            <option value="">Select Boat Type</option>
+                            <option value="Canoe">Canoe</option>
+                            <option value="Kayak">Kayak</option>
+                            <option value="Canoe-Personal">Canoe - Personal</option>
+                            <option value="Kayak-Personal">Kayak Personal</option>
+                        </select>
+                    </td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <th><label for="bibnumber">Bib Number:</label></td>
+                    <td><input type="number" id="bibnumber" name="bibnumber" required placeholder="Bib Number"></td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="submit-cell"><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+        <table id="Data" border="1">
+            <tr>
+                <th colspan="8">
+                    <center>
+                        <h2>Edit Demographic Data</h2>
+                    </center>
+                </th>
             </tr>
             <tr>
-                <th><label for="unittype">Unit Type:</label></th>
-                <td>
-                    <select id="unittype" name="unittype" required>
-                        <option value="">Select Unit Type</option>
-                        <option value="Troop-Boys">Troop-Boys</option>
-                        <option value="Troop-Girls">Troop-Girls</option>
-                        <option value="Troop B&G">Troop B&G</option>
-                        <option value="Crew">Crew</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </td>
-                <td> </td>
-            </tr>
-            <tr>
-                <th><label for="unitnumber">Unit Number:</label></th>
-                <td><input type="number" id="unitnumber" name="unitnumber" required placeholder="Unit Number"></td>
-            </tr>
-            <tr>
-                <th><label for="race">Race Type:</label></th>
-                <td>
-                    <select id="race" name="race" required>
-                        <option value="">Race Length?</option>
-                        <option value="6-Mile">6-Mile</option>
-                        <option value="14-Mile">14-Mile</option>
-                    </select>
-                </td>
-                <td> </td>
-            </tr>
-            <tr>
-                <th><label for="boat">Boat Type:</label></th>
-                <td>
-                    <select id="boat" name="boat" required>
-                        <option value="">Select Boat Type</option>
-                        <option value="Canoe">Canoe</option>
-                        <option value="Kayak">Kayak</option>
-                        <option value="Canoe-Personal">Canoe - Personal</option>
-                        <option value="Kayak-Personal">Kayak Personal</option>
-                    </select>
-                </td>
-                <td> </td>
-            </tr>
-            <tr>
-                <th><label for="bibnumber">Bib Number:</label></td>
-                <td><input type="number" id="bibnumber" name="bibnumber" required placeholder="Bib Number"></td>
-                <td> </td>
-            </tr>
-            <tr>
-                <td colspan="3" class="submit-cell"><input type="submit" value="Submit"></td>
+                <th colspan="8">
+                    <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
+                </th>
             </tr>
         </table>
-    </form>
-    <table id="Data" border="1">
-        <tr>
-            <th colspan="8">
-                <center><h2>Edit Demographic Data</h2></center>
-            </th>
-        </tr>
-        <tr>
-            <th colspan="8">
-                <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
-            </th>
-        </tr>
-    </table>
-    <table id="editData" border="1">
-        <tr>
-            <!-- Column headers -->
-            <th onclick="sortTable(0)">First Name</th>
-            <th onclick="sortTable(1)">Last Name</th>
-            <th onclick="sortTable(2)">Gender</th>
-            <th onclick="sortTable(3)">Age Bracket</th>
-            <th onclick="sortTable(4)">Council</th>
-            <th onclick="sortTable(5)">District</th>
-            <th onclick="sortTable(6)">Unit Type</th>
-            <th onclick="sortTable(7)">Unit Number</th>
-            <th onclick="sortTable(8)">Race Type</th>
-            <th onclick="sortTable(9)">Boat Type</th>
-            <th onclick="sortTable(10)">Bib Number</th>
-            <th>Edit</th>
-        </tr>
-        <% demoData.forEach(function(row) { %>
+        <table id="editData" border="1">
+            <tr>
+                <!-- Column headers -->
+                <th onclick="sortTable(0)">First Name</th>
+                <th onclick="sortTable(1)">Last Name</th>
+                <th onclick="sortTable(2)">Gender</th>
+                <th onclick="sortTable(3)">Age Bracket</th>
+                <th onclick="sortTable(4)">Council</th>
+                <th onclick="sortTable(5)">District</th>
+                <th onclick="sortTable(6)">Unit Type</th>
+                <th onclick="sortTable(7)">Unit Number</th>
+                <th onclick="sortTable(8)">Race Type</th>
+                <th onclick="sortTable(9)">Boat Type</th>
+                <th onclick="sortTable(10)">Bib Number</th>
+                <th>Edit</th>
+            </tr>
+            <% demoData.forEach(function(row) { %>
             <tr>
                 <td><%= row.fname %></td>
                 <td><%= row.lname %></td>
@@ -277,7 +299,9 @@
                 <td><%= row.bibnumber %></td>
                 <td><a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a></td>
             </tr>
-        <% }); %>
-    </table>
+            <% }); %>
+        </table>
+    </div>
 </body>
+
 </html>

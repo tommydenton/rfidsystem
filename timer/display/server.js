@@ -2,7 +2,9 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
-const { Pool } = require('pg');
+const {
+    Pool
+} = require('pg');
 
 // Initialize the Express application
 const app = express();
@@ -17,6 +19,25 @@ const pool = new Pool({
     port: 5432,
 });
 
+// Breadcrumb middleware
+app.use((req, res, next) => {
+    res.locals.breadcrumbPath = [{
+            text: 'Home',
+            href: '/display'
+        },
+        {
+            text: 'Time Display',
+            href: '/time'
+        },
+        {
+            text: 'Data Entry',
+            href: '/dataentry'
+        },
+        // Add or remove breadcrumb items as needed
+    ];
+    next();
+});
+
 // Set the view engine to EJS and the views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -25,7 +46,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended: true
+}));
 
 // Route for the homepage
 app.get('/display', (req, res) => {
@@ -36,16 +59,32 @@ app.get('/display', (req, res) => {
 app.get('/dataentry', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM DEMODATA');
-        res.render('dataentry', { demoData: result.rows });
+        res.render('dataentry', {
+            demoData: result.rows
+        });
     } catch (error) {
         console.error('Error fetching data:', error);
-        res.render('dataentry', { demoData: [] });
+        res.render('dataentry', {
+            demoData: []
+        });
     }
 });
 
 // Route for inserting data into the database
 app.post('/insert-demo-data', async (req, res) => {
-    const { fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber } = req.body;
+    const {
+        fname,
+        lname,
+        gender,
+        age,
+        council,
+        district,
+        unittype,
+        unitnumber,
+        race,
+        boat,
+        bibnumber
+    } = req.body;
     try {
         // Check if bibnumber already exists
         const checkResult = await pool.query(
@@ -71,13 +110,17 @@ app.post('/insert-demo-data', async (req, res) => {
 
 // Route for displaying the edit form
 app.get('/editdata', async (req, res) => {
-    const { uid } = req.query; // Get the UID from the query parameter
+    const {
+        uid
+    } = req.query; // Get the UID from the query parameter
 
     try {
         const result = await pool.query('SELECT * FROM DEMODATA WHERE uid = $1', [uid]);
         if (result.rows.length > 0) {
             // Render an edit form with the data pre-populated
-            res.render('editdata', { rowData: result.rows[0] });
+            res.render('editdata', {
+                rowData: result.rows[0]
+            });
         } else {
             res.send('Row not found');
         }
@@ -89,7 +132,20 @@ app.get('/editdata', async (req, res) => {
 
 // Route for updating data in the database
 app.post('/update-demo-data', async (req, res) => {
-    const { uid, fname, lname, gender, age, council, district, unittype, unitnumber, race, boat, bibnumber } = req.body;
+    const {
+        uid,
+        fname,
+        lname,
+        gender,
+        age,
+        council,
+        district,
+        unittype,
+        unitnumber,
+        race,
+        boat,
+        bibnumber
+    } = req.body;
 
     try {
         await pool.query(
@@ -115,7 +171,10 @@ app.get('/time', async (req, res) => {
         const response = await axios.get('http://localhost:3001/time');
         const cloudTime = response.data.ntpTime;
         const localTime = new Date().toISOString();
-        res.render('time', { cloudTime, localTime });
+        res.render('time', {
+            cloudTime,
+            localTime
+        });
     } catch (error) {
         console.error('Error fetching time data:', error);
         res.send('Error fetching time data');

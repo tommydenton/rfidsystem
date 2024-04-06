@@ -1,150 +1,193 @@
-    body {
-        font-family: Arial, sans-serif;
-    }
-    table {
-        width: 100%;
-        max-width: 1500px;
-        margin-bottom: 20px;
-        border-collapse: collapse;
-    }
-    table, th, td {
-        border: 1px solid #ddd;
-    }
-    th, td {
-        padding: 10px;
-        text-align: left;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-    .theme-toggle {
-        position: fixed;
-        top: 0;
-        right: 0;
-        padding: 10px;
-    }
-    .dethsize {
-        width: 250px;
-    }
-    
-    .detdsize {
-        width: 300px;
-    }
-    input[type="text"],
-    input[type="number"] {
-        width: 100%;
-        padding: 8px;
-        margin: 5px 0;
-        box-sizing: border-box;
-    }
-    input[type="submit"] {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    input[type="submit"]:hover {
-        background-color: #45a049;
-    }
-    .submit-cell {
-        text-align: right; /* Aligns content to the right */
-    }
-    input[type="button"] {
-        background-color: #ff0000;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    input[type="button"]:hover {
-        background-color: #ff6a00;
-    }
-    .edit-button {
-    display: inline-block; /* Allows padding and width to be set */
-    background-color: #4CAF50; /* Button color */
-    color: white; /* Text color */
-    padding: 10px 20px; /* Button padding */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Mouse pointer changes to hand icon */
-    text-decoration: none; /* Removes underline from links */
-    }
-    .edit-button:hover {
-        background-color: #45a049; /* Darker shade on hover */
-    }
-    body.dark-mode {
-        background-color: #333;
-        color: #fff;
-    }
-    
-    body.dark-mode table, body.dark-mode th, body.dark-mode td {
-        border-color: #777;
-    }
-    
-    body.dark-mode th {
-        background-color: #555;
-    }
-    
-    body.dark-mode input[type="submit"] {
-        background-color: #666;
-        color: #fff;
-    }
-    
-    body.dark-mode input[type="button"] {
-        background-color: #640202;
-        color: #fff;
-    }
-    
-    body.dark-mode .edit-button {
-        background-color: #666;
-    }
-    
-    body.dark-mode .edit-button:hover {
-        background-color: #777;
-    }
-    body.dark-mode {
-        background-color: #333;
-        color: #fff;
-        /* ... other dark mode styles ... */
-    }
-    
-    /* Add this to change link colors in dark mode */
-    body.dark-mode a {
-        color: #c792ea; /* A light purple color for better visibility */
-    }
-    
-    body.dark-mode a:visited {
-        color: #ae81ff; /* A different shade for visited links */
-    }
-    
-    body.dark-mode a:hover {
-        color: #ff79c6; /* A pink color for hover state */
-    }
-/* The switch - the box around the slider */
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-    }
-  /* Hide default HTML checkbox */
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-/* Add this to your style.css file or within a <style> tag in the head of your HTML */
+body {
+    font-family: Arial, sans-serif;
+}
+table {
+    width: 100%;
+    max-width: 1500px;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+table, th, td {
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+.theme-toggle {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}
+.dethsize {
+    width: 250px;
+}
+.detdsize {
+    width: 300px;
+}
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+.submit-cell {
+    text-align: right;
+}
+input[type="button"] {
+    background-color: #ff0000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+input[type="button"]:hover {
+    background-color: #ff6a00;
+}
+.edit-button {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.edit-button:hover {
+    background-color: #45a049;
+}
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+body.dark-mode table, body.dark-mode th, body.dark-mode td {
+    border-color: #777;
+}
+body.dark-mode th {
+    background-color: #555;
+}
+body.dark-mode input[type="submit"] {
+    background-color: #666;
+    color: #fff;
+}
+body.dark-mode input[type="button"] {
+    background-color: #640202;
+    color: #fff;
+}
+body.dark-mode .edit-button {
+    background-color: #666;
+}
+body.dark-mode .edit-button:hover {
+    background-color: #777;
+}
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+body.dark-mode a {
+    color: #c792ea;
+}
+body.dark-mode a:visited {
+    color: #ae81ff;
+}
+body.dark-mode a:hover {
+    color: #ff79c6;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
 .sort-asc::after {
     content: "▲";
     font-size: 0.7em;
     margin-left: 5px;
 }
-
 .sort-desc::after {
     content: "▼";
     font-size: 0.7em;
     margin-left: 5px;
+}
+#breadcrumbNav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0;
+}
+#breadcrumbNav ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+#breadcrumbNav li {
+    margin-right: 5px;
+}
+#breadcrumbNav li a {
+    text-decoration: none;
+    color: inherit;
+}
+#breadcrumbNav li span {
+    margin-right: 5px;
+}
+body:not(.dark-mode) #breadcrumbNav {
+}
+body.dark-mode #breadcrumbNav {
+}
+.theme-toggle {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}
+#TOPNAV {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f2f2f2;
+    z-index: 1000;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#breadcrumbNav {
+    display: inline-block;
+    margin-left: 10px;
+}
+body:not(.dark-mode) #TOPNAV {
+}
+body.dark-mode #TOPNAV {
+    background-color: #333;
+}
+.theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+#mainContent {
+    padding-top: 60px;
 }

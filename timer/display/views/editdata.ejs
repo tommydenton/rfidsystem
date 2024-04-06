@@ -1,6 +1,7 @@
 <!-- editdata.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +21,12 @@
         }
     };
 </script>
+
 <body>
     <div class="theme-toggle">
         <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
     </div>
-    
+
     <h2>Edit Demographic Data</h2>
     <form action="/update-demo-data" method="post">
         <input type="hidden" name="uid" value="<%= rowData.uid %>"> <!-- Hidden field for UID -->
@@ -101,4 +103,5 @@
         <input type="submit" value="Update"> <input type="button" value="Cancel" onclick="window.history.back();">
     </form>
 </body>
+
 </html>

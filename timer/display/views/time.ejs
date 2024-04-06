@@ -1,6 +1,7 @@
 <!-- time.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,14 +22,32 @@
         }
     };
 </script>
-<body>
-    <div class="theme-toggle">
-        <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
-    </div>
-    
-    <h1>Time Display</h1>
-    <p>Cloud Time: <%= new Date(cloudTime).toLocaleString("en-US") %> - Timezone: UTC</p>
-    <p>Local Computer Time: <%= new Date(localTime).toLocaleString("en-US") %> - Timezone: <%= Intl.DateTimeFormat().resolvedOptions().timeZone %></p>
 
+<body>
+    <div id="TOPNAV">
+        <!-- Breadcrumb navigation -->
+        <nav id="breadcrumbNav" aria-label="Breadcrumb">
+            <ol>
+                <% breadcrumbPath.forEach(function(crumb, index) { %>
+                <li>
+                    <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                    <% if (index < breadcrumbPath.length - 1) { %>
+                    <span> &gt; </span>
+                    <% } %>
+                </li>
+                <% }); %>
+            </ol>
+        </nav>
+        <!-- light/dark toggle link -->
+        <div class="theme-toggle">
+            <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+        </div>
+    </div>
+    <div id="mainContent">
+        <h1>Time Display</h1>
+        <p>Cloud Time: <%= new Date(cloudTime).toLocaleString("en-US") %> - Timezone: UTC</p>
+        <p>Local Computer Time: <%= new Date(localTime).toLocaleString("en-US") %> - Timezone: <%= Intl.DateTimeFormat().resolvedOptions().timeZone %></p>
+    </div>
 </body>
+
 </html>
