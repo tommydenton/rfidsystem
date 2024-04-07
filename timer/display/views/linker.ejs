@@ -1,0 +1,188 @@
+<!-- linker.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>Link RFID to BIBNumber</title>
+    </head>
+</head>
+<script>
+    // Function to toggle dark mode
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    }
+
+    // Apply the saved theme on page load
+    window.onload = () => {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    };
+</script>
+<script>
+    function searchTable() {
+        // Declare variables
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("editData");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
+            tr[i].style.display = "none"; // Hide the row initially
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) { // Loop through all cells in the row
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = ""; // Show the row if the query matches any cell
+                        break; // Stop searching through cells once a match is found
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("editData");
+        switching = true;
+        dir = "asc"; // Set the sorting direction to ascending initially
+        // Remove the sorting class from all headers
+        var headers = table.getElementsByTagName("TH");
+        for (i = 0; i < headers.length; i++) {
+            headers[i].classList.remove("sort-asc", "sort-desc");
+        }
+
+        while (switching) {
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+
+            // Loop through all table rows (except the first, which contains table headers)
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                if (x && y) {
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+        // Add the sorting class to the header that was clicked
+        if (dir === "asc") {
+            headers[n].classList.add("sort-asc");
+        } else {
+            headers[n].classList.add("sort-desc");
+        }
+    }
+</script>
+<body>
+    <div id="TOPNAV">
+        <!-- Breadcrumb navigation -->
+        <nav id="breadcrumbNav" aria-label="Breadcrumb">
+            <ol>
+                <% breadcrumbPath.forEach(function(crumb, index) { %>
+                <li>
+                    <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                    <% if (index < breadcrumbPath.length - 1) { %>
+                    <span> &gt; </span>
+                    <% } %>
+                </li>
+                <% }); %>
+            </ol>
+        </nav>
+        <!-- light/dark toggle link -->
+        <div class="theme-toggle">
+            <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+        </div>
+    </div>
+    <div id="mainContent">
+        <form action="/link-rfid" method="POST">
+            <table id="enterData">
+                <tr>
+                    <th colspan="2">
+                        <center>
+                            <h2>Link Bib to RFID Tag</h2>
+                        </center>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="bibnumber">BIBNumber:</label></th>
+                    <td class="detdsize"><select id="bibnumber" name="bibnumber" required>
+                        <% demoData.forEach(function(row) { %>
+                            <option value="<%= row.demobibnumber %>"><%= row.demobibnumber %></option>
+                        <% }); %>
+                    </select></td>
+            </tr>
+            <tr>
+                <th class="dethsize"><label for="rfid">RFID Tag:</label></th>
+                <td class="detdsize"><input type="text" id="rfid" name="rfidtag" required placeholder="Enter RFID Tag"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="submit-cell"><button type="submit">Link RFID</button></td>
+            </tr>
+            </table>
+        </form>
+        <table id="Data" border="1">
+            <tr>
+                <th colspan="8">
+                    <center>
+                        <h2>Display BIB to RFID Tag</h2>
+                    </center>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="8">
+                    <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
+                </th>
+            </tr>
+        </table>
+        <table id="editData" border="1">
+            <tr>
+                <!-- Column headers -->
+                <th onclick="sortTable(0)">First Name</th>
+                <th onclick="sortTable(1)">Last Name</th>
+                <th onclick="sortTable(2)">Bib Number</th>
+                <th onclick="sorttable(3)">RFID Tag</th>
+                <th><!-- Edit --></th>
+            </tr>
+            <% demoData.forEach(function(row) { %>
+            <tr>
+                <td><%= row.fname %></td>
+                <td><%= row.lname %></td>
+                <td><%= row.demobibnumber %></td>
+                <td><%= row.rfidtag %></td>
+                <td><!-- <a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a> --></td>
+            </tr>
+            <% }); %>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// server.ejs
+// server.js
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
@@ -32,6 +32,10 @@ app.use((req, res, next) => {
         {
             text: 'Data Entry',
             href: '/dataentry'
+        },
+        {
+            text: 'RFID Linker',
+            href: '/link-rfid'
         },
         // Add or remove breadcrumb items as needed
     ];
@@ -156,6 +160,41 @@ app.post('/update-demo-data', async (req, res) => {
     } catch (error) {
         console.error('Error updating data:', error);
         res.status(500).send('Error updating data');
+    }
+});
+
+app.get('/link-rfid', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT d.fname, d.lname, d.bibnumber AS demobibnumber, l.bibnumber AS linkerbibnumber, l.rfidtag, l.uid
+            FROM DEMODATA d
+            LEFT JOIN LINKER l ON d.bibnumber = l.bibnumber
+        `);
+        res.render('linker', {
+            demoData: result.rows
+        });
+    } catch (error) {
+        console.error('Error fetching BIBNumbers:', error);
+        res.send('Error fetching BIBNumbers');
+    }
+});
+
+app.post('/link-rfid', async (req, res) => {
+    const { bibnumber, rfidtag } = req.body;
+    try {
+        // Check if a record with the given bibnumber already exists in the LINKER table
+        const checkResult = await pool.query('SELECT * FROM LINKER WHERE bibnumber = $1', [bibnumber]);
+        if (checkResult.rows.length > 0) {
+            // Update the existing record with the new RFID tag
+            await pool.query('UPDATE LINKER SET rfidtag = $1 WHERE bibnumber = $2', [rfidtag, bibnumber]);
+        } else {
+            // Insert a new record if it doesn't exist
+            await pool.query('INSERT INTO LINKER (bibnumber, rfidtag) VALUES ($1, $2)', [bibnumber, rfidtag]);
+        }
+        res.redirect('/link-rfid');
+    } catch (error) {
+        console.error('Error linking RFID tag:', error);
+        res.status(500).send('Error linking RFID tag');
     }
 });
 

@@ -3,7 +3,7 @@ import binascii
 import time
 
 # Configure the serial port based on your RFID reader's configuration
-SERIAL_PORT = '/dev/ttyS0'
+SERIAL_PORT = '/dev/ttyUSB0'
 BAUD_RATE = 57600
 DWELL_TIME = 1  # Dwell time in seconds, configurable
 

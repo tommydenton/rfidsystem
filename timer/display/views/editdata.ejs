@@ -29,7 +29,7 @@
 
     <h2>Edit Demographic Data</h2>
     <form action="/update-demo-data" method="post">
-        <input type="hidden" name="uid" value="<%= rowData.uid %>"> <!-- Hidden field for UID -->
+        <input type="hidden" name="uid" value="<%= rowData.uid %>">
         <label for="fname">First Name:</label>
         <input type="text" id="fname" name="fname" value="<%= rowData.fname %>" required><br><br>
         <label for="lname">Last Name:</label>
