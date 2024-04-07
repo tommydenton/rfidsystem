@@ -55,7 +55,7 @@ Install log2ram and other packages required to edit, configure, and monitor
 echo "deb [signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian/ bookworm main" | sudo tee /etc/apt/sources.list.d/azlux.list
 sudo wget -O /usr/share/keyrings/azlux-archive-keyring.gpg  https://azlux.fr/repo.gpg
 sudo nala update
-sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram samba atop htop
+sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram samba atop htop python3-neovim
 ```
 
 Install Bottom
@@ -126,7 +126,7 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g pm2 gg ntp express ntp-client express ejs axios ntp-time body-parser
+sudo npm install -g uuid@latest express axios serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io
 ```
 ```zsh
 create the node project
@@ -179,6 +179,9 @@ git add .
 git commit -m "Initial commit"
 ```
 
+Run server.js and netapi.js with PM2 then type 'pm2 save' then 'pm2 startup' follow the instructions then reboot
+
+
 Reference Documents
 - https://gist.github.com/dogrocker/1efb8fd9427779c827058f873b94df95
 - https://dev.to/andrenbrandao/terminal-setup-with-zsh-tmux-dracula-theme-48lm
@@ -189,3 +192,122 @@ Reference Documents
 - https://github.com/Unitech/pm2
 
 ### This README is part of the RFID project documentation. For more information, visit the [project repository](#).
+
+
+Setup the database
+
+sudo -i -u postgres
+psql
+ALTER USER postgres WITH PASSWORD 'new_password';
+CREATE DATABASE rfid_system;
+exit
+psql -U postgres -d rfid_system
+CREATE TABLE DEMODATA (
+    uid SERIAL PRIMARY KEY,
+    fname VARCHAR(255),
+    lname VARCHAR(255),
+    gender VARCHAR(255),
+    age VARCHAR(255),
+    council VARCHAR(255),
+    district VARCHAR(255),
+    unittype VARCHAR(255),
+    unitnumber INT,
+    race VARCHAR(255),
+    boat VARCHAR(255),
+    bibnumber INT UNIQUE
+);
+COMMIT;
+
+CREATE TABLE LINKER (
+    uid SERIAL PRIMARY KEY,
+    bibnumber INT UNIQUE,
+    rfidtag VARCHAR(255) UNIQUE
+);
+COMMIT;
+
+
+Environment:
+> uname -a
+  Linux unsccybercom 6.6.20+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.6.20-1+rpt1 (2024-03-07) aarch64 GNU/Linux
+> python --version
+  Python 3.11.2
+> npm -v
+  9.2.0
+> node -v
+  v18.19.0
+> sudo nginx -v
+  nginx version: nginx/1.22.1
+> psql -v
+psql (15.6 (Debian 15.6-0+deb12u1))
+> npm list
+  timer@ /var/www/html/timer
+  ├── axios@1.6.8
+  ├── body-parser@1.20.2
+  ├── debug@4.3.4
+  ├── ejs@3.1.9
+  ├── express@4.19.2
+  ├── gg@0.1.3
+  ├── ntp-client@0.5.3
+  ├── ntp-time@2.0.4
+  ├── ntp@0.0.5
+  ├── pg@8.11.5
+  ├── pm2@5.3.1
+  ├── serialport@12.0.0
+  └── uuid@9.0.1
+
+> tree
+├── configfiles
+│   ├── nginx.conf
+│   └── tree.txt
+├── display
+│   ├── server.js
+│   ├── stamper.js
+│   ├── views
+│   │   ├── dataentry.ejs
+│   │   ├── editdata.ejs
+│   │   ├── index.ejs
+│   │   ├── linker.ejs
+│   │   └── time.ejs
+│   └── workingstamper.js
+├── index.html
+├── ntpapi
+│   └── ntpapi.mjs
+├── public
+│   └── css
+│       └── style.css
+└── stamp
+    └── stamper.py
+
+> rfid_system=# \d+ DEMODATA
+                                                                 Table "public.demodata"
+   Column   |          Type          | Collation | Nullable |                Default                | Storage  | Compression | Stats target | Description
+------------+------------------------+-----------+----------+---------------------------------------+----------+-------------+--------------+-------------
+ uid        | integer                |           | not null | nextval('demodata_uid_seq'::regclass) | plain    |             |              |
+ fname      | character varying(255) |           |          |                                       | extended |             |              |
+ lname      | character varying(255) |           |          |                                       | extended |             |              |
+ gender     | character varying(255) |           |          |                                       | extended |             |              |
+ age        | character varying(255) |           |          |                                       | extended |             |              |
+ council    | character varying(255) |           |          |                                       | extended |             |              |
+ district   | character varying(255) |           |          |                                       | extended |             |              |
+ unittype   | character varying(255) |           |          |                                       | extended |             |              |
+ unitnumber | integer                |           |          |                                       | plain    |             |              |
+ race       | character varying(255) |           |          |                                       | extended |             |              |
+ boat       | character varying(255) |           |          |                                       | extended |             |              |
+ bibnumber  | integer                |           |          |                                       | plain    |             |              |
+Indexes:
+    "demodata_pkey" PRIMARY KEY, btree (uid)
+    "demodata_bibnumber_key" UNIQUE CONSTRAINT, btree (bibnumber)
+Access method: heap
+
+> rfid_system=# \d+ LINKER
+                                                                 Table "public.linker"
+  Column   |          Type          | Collation | Nullable |               Default               | Storage  | Compression | Stats target | Description
+-----------+------------------------+-----------+----------+-------------------------------------+----------+-------------+--------------+-------------
+ uid       | integer                |           | not null | nextval('linker_uid_seq'::regclass) | plain    |             |              |
+ bibnumber | integer                |           |          |                                     | plain    |             |              |
+ rfidtag   | character varying(255) |           |          |                                     | extended |             |              |
+Indexes:
+    "linker_pkey" PRIMARY KEY, btree (uid)
+    "linker_bibnumber_key" UNIQUE CONSTRAINT, btree (bibnumber)
+    "linker_rfidtag_key" UNIQUE CONSTRAINT, btree (rfidtag)
+Access method: heap
