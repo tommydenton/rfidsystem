@@ -2,6 +2,8 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ noServer: true });
 const rfidEmitter = require('./stamper.js');
 const {
     Pool
@@ -166,10 +168,14 @@ app.post('/update-demo-data', async (req, res) => {
 
 // Listen for RFID tag scanned event
 rfidEmitter.on('tagScanned', (rfidTag) => {
-    // Logic to handle the scanned RFID tag
-    // For example, you can store it in a variable that will be accessible in your routes
-    app.locals.scannedRFIDTag = rfidTag;
-  });
+    // Broadcast the RFID tag to all connected clients
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ rfidTag: rfidTag }));
+        }
+    });
+});
+
 
   app.get('/link-rfid', async (req, res) => {
     try {
@@ -227,6 +233,12 @@ app.get('/time', async (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+    });
 });
