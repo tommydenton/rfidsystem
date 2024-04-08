@@ -177,24 +177,23 @@ rfidEmitter.on('tagScanned', (rfidTag) => {
 });
 
 
-  app.get('/link-rfid', async (req, res) => {
+app.get('/link-rfid', async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT d.fname, d.lname, d.bibnumber AS demobibnumber, l.bibnumber AS linkerbibnumber, l.rfidtag, l.uid
-            FROM DEMODATA d
-            LEFT JOIN LINKER l ON d.bibnumber = l.bibnumber
+            SELECT bibnumber AS linkerbibnumber, rfidtag
+            FROM LINKER
         `);
-        // Ensure scannedRFIDTag is always defined by providing a default value if not set
         const scannedRFIDTag = app.locals.scannedRFIDTag || '';
         res.render('linker', {
-            demoData: result.rows,
-            scannedRFIDTag: scannedRFIDTag // Pass scannedRFIDTag to the EJS template
+            demoData: result.rows, // The key here is 'demoData'
+            scannedRFIDTag: scannedRFIDTag
         });
     } catch (error) {
-        console.error('Error fetching BIBNumbers:', error);
-        res.send('Error fetching BIBNumbers');
+        console.error('Error fetching data from LINKER table:', error);
+        res.send('Error fetching data from LINKER table');
     }
 });
+
 
 // Route for linking RFID tag to bibnumber
 app.post('/link-rfid', async (req, res) => {

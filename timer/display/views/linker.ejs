@@ -51,19 +51,15 @@
                 </th>
             </tr>
         </table>
-        <table id="editData" border="1">
+        <table id="displayData" border="1">
             <tr>
                 <!-- Column headers -->
-                <th onclick="sortTable(0)">First Name</th>
-                <th onclick="sortTable(1)">Last Name</th>
-                <th onclick="sortTable(2)">Bib Number</th>
-                <th onclick="sortTable(3)">RFID Tag</th>
+                <th onclick="sortTable(0)">Linker Bib Number</th>
+                <th onclick="sortTable(1)">RFID Tag</th>
             </tr>
             <% demoData.forEach(function(row) { %>
             <tr>
-                <td><%= row.fname %></td>
-                <td><%= row.lname %></td>
-                <td><%= row.demobibnumber %></td>
+                <td><%= row.linkerbibnumber %></td>
                 <td><%= row.rfidtag %></td>
             </tr>
             <% }); %>
@@ -110,7 +106,7 @@
             var input, filter, table, tr, td, i, j, txtValue;
             input = document.getElementById("myInput");
             filter = input.value.toUpperCase();
-            table = document.getElementById("editData");
+            table = document.getElementById("displayData");
             tr = table.getElementsByTagName("tr");
 
             // Loop through all table rows, and hide those who don't match the search query
@@ -132,7 +128,7 @@
     <script>
         function sortTable(n) {
             var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("editData");
+            table = document.getElementById("displayData");
             switching = true;
             dir = "asc"; // Set the sorting direction to ascending initially
             // Remove the sorting class from all headers
