@@ -1,12 +1,13 @@
 <!-- linker.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <title>Link RFID to BIBNumber</title>
-    </head>
+</head>
 </head>
 <script>
     // Function to toggle dark mode
@@ -103,6 +104,7 @@
         }
     }
 </script>
+
 <body>
     <div id="TOPNAV">
         <!-- Breadcrumb navigation -->
@@ -124,32 +126,6 @@
         </div>
     </div>
     <div id="mainContent">
-        <form action="/link-rfid" method="POST">
-            <table id="enterData">
-                <tr>
-                    <th colspan="2">
-                        <center>
-                            <h2>Link Bib to RFID Tag</h2>
-                        </center>
-                    </th>
-                </tr>
-                <tr>
-                    <th class="dethsize"><label for="bibnumber">BIBNumber:</label></th>
-                    <td class="detdsize"><select id="bibnumber" name="bibnumber" required>
-                        <% demoData.forEach(function(row) { %>
-                            <option value="<%= row.demobibnumber %>"><%= row.demobibnumber %></option>
-                        <% }); %>
-                    </select></td>
-            </tr>
-            <tr>
-                <th class="dethsize"><label for="rfid">RFID Tag:</label></th>
-                <td class="detdsize"><input type="text" id="rfid" name="rfidtag" required placeholder="Enter RFID Tag"></td>
-            </tr>
-            <tr>
-                <td colspan="2" class="submit-cell"><button type="submit">Link RFID</button></td>
-            </tr>
-            </table>
-        </form>
         <table id="Data" border="1">
             <tr>
                 <th colspan="8">
@@ -171,7 +147,9 @@
                 <th onclick="sortTable(1)">Last Name</th>
                 <th onclick="sortTable(2)">Bib Number</th>
                 <th onclick="sorttable(3)">RFID Tag</th>
-                <th><!-- Edit --></th>
+                <th>
+                    <!-- Edit -->
+                </th>
             </tr>
             <% demoData.forEach(function(row) { %>
             <tr>
@@ -179,10 +157,13 @@
                 <td><%= row.lname %></td>
                 <td><%= row.demobibnumber %></td>
                 <td><%= row.rfidtag %></td>
-                <td><!-- <a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a> --></td>
+                <td>
+                    <!-- <a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a> -->
+                </td>
             </tr>
             <% }); %>
         </table>
     </div>
 </body>
+
 </html>

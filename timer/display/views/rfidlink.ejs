@@ -1,0 +1,71 @@
+<!-- rfidlink.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>RFID and BibNumber Linking</title>
+</head>
+<script>
+    // Function to toggle dark mode
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    }
+
+    // Apply the saved theme on page load
+    window.onload = () => {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    };
+</script>
+
+<body>
+    <div id="TOPNAV">
+        <!-- Breadcrumb navigation -->
+        <nav id="breadcrumbNav" aria-label="Breadcrumb">
+            <ol>
+                <% breadcrumbPath.forEach(function(crumb, index) { %>
+                <li>
+                    <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                    <% if (index < breadcrumbPath.length - 1) { %>
+                    <span> &gt; </span>
+                    <% } %>
+                </li>
+                <% }); %>
+            </ol>
+        </nav>
+        <!-- light/dark toggle link -->
+        <div class="theme-toggle">
+            <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+        </div>
+    </div>
+    <div id="mainContent">
+        <h1>Link RFID Tags to BibNumbers</h1>
+        <form id="rfid-link-form" action="/link-rfid" method="post">
+            <label for="rfidtag">RFID Tag:</label>
+            <input type="text" id="rfidtag" name="rfidtag" readonly>
+            <label for="bibnumber">BibNumber:</label>
+            <input type="number" id="bibnumber" name="bibnumber">
+            <button type="submit">Link</button>
+        </form>
+        <script>
+            // Function to update the RFID tag input field
+            function updateRFIDTag() {
+                const rfidTagInput = document.getElementById('rfidtag');
+                // Assuming `scannedRFIDTag` is a global variable set in your server.js
+                rfidTagInput.value = '<%= scannedRFIDTag %>';
+            }
+
+            // Call the update function on page load
+            window.onload = () => {
+                updateRFIDTag();
+            };
+        </script>
+    </div>
+</body>
+
+</html>

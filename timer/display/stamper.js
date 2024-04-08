@@ -1,4 +1,6 @@
+// stamper.js
 const { SerialPort } = require('serialport');
+const { EventEmitter } = require('events');
 
 const SERIAL_PORT = '/dev/ttyUSB0';
 const BAUD_RATE = 57600;
@@ -7,6 +9,8 @@ const port = new SerialPort({
   path: SERIAL_PORT,
   baudRate: BAUD_RATE
 });
+
+const rfidEmitter = new EventEmitter();
 
 port.on('open', () => {
   console.log('Serial port opened');
@@ -27,4 +31,7 @@ port.on('data', (data) => {
   const formattedData = `${tagType}-${tagId}-${tagPosition}`;
   
   console.log(`Formatted RFID Tag Data: ${formattedData}`);
+  rfidEmitter.emit('tagScanned', formattedData);
 });
+
+module.exports = rfidEmitter;

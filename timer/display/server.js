@@ -2,6 +2,7 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+const rfidEmitter = require('./stamper.js');
 const {
     Pool
 } = require('pg');
@@ -36,6 +37,10 @@ app.use((req, res, next) => {
         {
             text: 'RFID Linker',
             href: '/link-rfid'
+        },
+        {
+            text: 'Link RFID',
+            href: '/rfid-link'
         },
         // Add or remove breadcrumb items as needed
     ];
@@ -163,6 +168,13 @@ app.post('/update-demo-data', async (req, res) => {
     }
 });
 
+// Listen for RFID tag scanned event
+rfidEmitter.on('tagScanned', (rfidTag) => {
+    // Logic to handle the scanned RFID tag
+    // For example, you can store it in a variable that will be accessible in your routes
+    app.locals.scannedRFIDTag = rfidTag;
+  });
+
 app.get('/link-rfid', async (req, res) => {
     try {
         const result = await pool.query(`
@@ -179,29 +191,47 @@ app.get('/link-rfid', async (req, res) => {
     }
 });
 
+// Route for the RFID linking page
+app.get('/rfid-link', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT d.bibnumber AS demobibnumber, l.rfidtag
+            FROM DEMODATA d
+            LEFT JOIN LINKER l ON d.bibnumber = l.bibnumber
+        `);
+        // Pass scannedRFIDTag to the EJS template
+        res.render('rfidlink', {
+            demoData: result.rows,
+            scannedRFIDTag: app.locals.scannedRFIDTag || '' // Provide a default value if not set
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.render('rfidlink', {
+            demoData: [],
+            scannedRFIDTag: '' // Provide a default value
+        });
+    }
+});
+
+
+// Route for linking RFID tag to bibnumber
 app.post('/link-rfid', async (req, res) => {
     const { bibnumber, rfidtag } = req.body;
     try {
-        // Check if a record with the given bibnumber already exists in the LINKER table
-        const checkResult = await pool.query('SELECT * FROM LINKER WHERE bibnumber = $1', [bibnumber]);
-        if (checkResult.rows.length > 0) {
-            // Update the existing record with the new RFID tag
-            await pool.query('UPDATE LINKER SET rfidtag = $1 WHERE bibnumber = $2', [rfidtag, bibnumber]);
-        } else {
-            // Insert a new record if it doesn't exist
-            await pool.query('INSERT INTO LINKER (bibnumber, rfidtag) VALUES ($1, $2)', [bibnumber, rfidtag]);
-        }
-        res.redirect('/link-rfid');
+        // Insert or update the LINKER table with the new RFID tag and bibnumber link
+        await pool.query(`
+            INSERT INTO LINKER (bibnumber, rfidtag)
+            VALUES ($1, $2)
+            ON CONFLICT (bibnumber)
+            DO UPDATE SET rfidtag = EXCLUDED.rfidtag
+        `, [bibnumber, rfidtag]);
+        res.redirect('/rfid-link');
     } catch (error) {
         console.error('Error linking RFID tag:', error);
         res.status(500).send('Error linking RFID tag');
     }
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
 
 //Info APIs
 // Route for displaying time
@@ -218,4 +248,9 @@ app.get('/time', async (req, res) => {
         console.error('Error fetching time data:', error);
         res.send('Error fetching time data');
     }
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
