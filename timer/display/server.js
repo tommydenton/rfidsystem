@@ -38,10 +38,6 @@ app.use((req, res, next) => {
             text: 'RFID Linker',
             href: '/link-rfid'
         },
-        {
-            text: 'Link RFID',
-            href: '/rfid-link'
-        },
         // Add or remove breadcrumb items as needed
     ];
     next();
@@ -175,44 +171,24 @@ rfidEmitter.on('tagScanned', (rfidTag) => {
     app.locals.scannedRFIDTag = rfidTag;
   });
 
-app.get('/link-rfid', async (req, res) => {
+  app.get('/link-rfid', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT d.fname, d.lname, d.bibnumber AS demobibnumber, l.bibnumber AS linkerbibnumber, l.rfidtag, l.uid
             FROM DEMODATA d
             LEFT JOIN LINKER l ON d.bibnumber = l.bibnumber
         `);
+        // Ensure scannedRFIDTag is always defined by providing a default value if not set
+        const scannedRFIDTag = app.locals.scannedRFIDTag || '';
         res.render('linker', {
-            demoData: result.rows
+            demoData: result.rows,
+            scannedRFIDTag: scannedRFIDTag // Pass scannedRFIDTag to the EJS template
         });
     } catch (error) {
         console.error('Error fetching BIBNumbers:', error);
         res.send('Error fetching BIBNumbers');
     }
 });
-
-// Route for the RFID linking page
-app.get('/rfid-link', async (req, res) => {
-    try {
-        const result = await pool.query(`
-            SELECT d.bibnumber AS demobibnumber, l.rfidtag
-            FROM DEMODATA d
-            LEFT JOIN LINKER l ON d.bibnumber = l.bibnumber
-        `);
-        // Pass scannedRFIDTag to the EJS template
-        res.render('rfidlink', {
-            demoData: result.rows,
-            scannedRFIDTag: app.locals.scannedRFIDTag || '' // Provide a default value if not set
-        });
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        res.render('rfidlink', {
-            demoData: [],
-            scannedRFIDTag: '' // Provide a default value
-        });
-    }
-});
-
 
 // Route for linking RFID tag to bibnumber
 app.post('/link-rfid', async (req, res) => {
@@ -225,7 +201,7 @@ app.post('/link-rfid', async (req, res) => {
             ON CONFLICT (bibnumber)
             DO UPDATE SET rfidtag = EXCLUDED.rfidtag
         `, [bibnumber, rfidtag]);
-        res.redirect('/rfid-link');
+        res.redirect('/link-rfid');
     } catch (error) {
         console.error('Error linking RFID tag:', error);
         res.status(500).send('Error linking RFID tag');

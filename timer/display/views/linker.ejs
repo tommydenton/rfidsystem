@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <title>Link RFID to BIBNumber</title>
 </head>
-</head>
 <script>
     // Function to toggle dark mode
     function toggleTheme() {
@@ -126,6 +125,26 @@
         </div>
     </div>
     <div id="mainContent">
+        <h1>Link RFID Tags to BibNumbers</h1>
+        <form id="rfid-link-form" action="/link-rfid" method="post">
+            <label for="rfidtag">RFID Tag:</label>
+            <input type="text" id="rfidtag" name="rfidtag" readonly>
+            <label for="bibnumber">BibNumber:</label>
+            <input type="number" id="bibnumber" name="bibnumber">
+            <button type="submit">Link</button>
+        </form>
+        <script>
+            // Function to update the RFID tag input field
+            function updateRFIDTag() {
+                const rfidTagInput = document.getElementById('rfidtag');
+                // Assuming `scannedRFIDTag` is a global variable set in your server.js
+                rfidTagInput.value = '<%= scannedRFIDTag %>';
+            }
+            // Call the update function on page load
+            window.onload = () => {
+                updateRFIDTag();
+            };
+        </script>
         <table id="Data" border="1">
             <tr>
                 <th colspan="8">
@@ -147,9 +166,6 @@
                 <th onclick="sortTable(1)">Last Name</th>
                 <th onclick="sortTable(2)">Bib Number</th>
                 <th onclick="sorttable(3)">RFID Tag</th>
-                <th>
-                    <!-- Edit -->
-                </th>
             </tr>
             <% demoData.forEach(function(row) { %>
             <tr>
@@ -157,9 +173,6 @@
                 <td><%= row.lname %></td>
                 <td><%= row.demobibnumber %></td>
                 <td><%= row.rfidtag %></td>
-                <td>
-                    <!-- <a href="/editdata?uid=<%= row.uid %>" class="edit-button">Edit</a> -->
-                </td>
             </tr>
             <% }); %>
         </table>

@@ -241,40 +241,44 @@ Environment:
 psql (15.6 (Debian 15.6-0+deb12u1))
 > npm list
   timer@ /var/www/html/timer
-  ├── axios@1.6.8
-  ├── body-parser@1.20.2
-  ├── debug@4.3.4
-  ├── ejs@3.1.9
-  ├── express@4.19.2
-  ├── gg@0.1.3
-  ├── ntp-client@0.5.3
-  ├── ntp-time@2.0.4
-  ├── ntp@0.0.5
-  ├── pg@8.11.5
-  ├── pm2@5.3.1
-  ├── serialport@12.0.0
-  └── uuid@9.0.1
+├── axios@1.6.8
+├── body-parser@1.20.2
+├── debug@4.3.4
+├── ejs@3.1.9
+├── express@4.19.2
+├── gg@0.1.3
+├── ntp-client@0.5.3
+├── ntp-time@2.0.4
+├── ntp@0.0.5
+├── pg@8.11.5
+├── pm2@5.3.1
+├── serialport@12.0.0
+├── socket.io-client@4.7.5
+├── socket.io@4.7.5
+└── uuid@9.0.1
 
 > tree
-├── configfiles
+── configfiles
 │   ├── nginx.conf
 │   └── tree.txt
 ├── display
 │   ├── server.js
 │   ├── stamper.js
-│   ├── views
-│   │   ├── dataentry.ejs
-│   │   ├── editdata.ejs
-│   │   ├── index.ejs
-│   │   ├── linker.ejs
-│   │   └── time.ejs
-│   └── workingstamper.js
+│   └── views
+│       ├── dataentry.ejs
+│       ├── editdata.ejs
+│       ├── index.ejs
+│       ├── linker.ejs
+│       ├── rfidlink.ejs
+│       └── time.ejs
 ├── index.html
 ├── ntpapi
 │   └── ntpapi.mjs
 ├── public
-│   └── css
-│       └── style.css
+│   ├── css
+│   │   └── style.css
+│   └── js
+│       └── rfid-scanner.js
 └── stamp
     └── stamper.py
 
