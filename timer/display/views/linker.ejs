@@ -29,24 +29,40 @@
         </div>
     </div>
     <div id="mainContent">
-        <h1>Link RFID Tags to BibNumbers</h1>
         <form id="rfid-link-form" action="/link-rfid" method="post">
-            <label for="rfidtag">RFID Tag:</label>
-            <input type="text" id="rfidtag" name="rfidtag" readonly>
-            <label for="bibnumber">BibNumber:</label>
-            <input type="number" id="bibnumber" name="bibnumber">
-            <button type="submit">Link</button>
+            <table id="enterData">
+                <tr>
+                    <th colspan="3">
+                        <center>
+                            <h2>Link RFID Tag to Bib Number</h2>
+                        </center>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="rfidtag">RFID Tag:</label></th>
+                    <td class="detdsize"><input type="text" id="rfidtag" name="rfidtag" readonly></td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="bibnumber">BibNumber:</label></th>
+                    <td class="detdsize"><input type="number" id="bibnumber" name="bibnumber"></td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="submit-cell"><button type="submit">Link</button></td>
+                </tr>
+            </table>
         </form>
         <table id="Data" border="1">
             <tr>
-                <th colspan="8">
+                <th colspan="2">
                     <center>
                         <h2>Display BIB to RFID Tag</h2>
                     </center>
                 </th>
             </tr>
             <tr>
-                <th colspan="8">
+                <th colspan="2">
                     <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
                 </th>
             </tr>
@@ -54,7 +70,7 @@
         <table id="displayData" border="1">
             <tr>
                 <!-- Column headers -->
-                <th onclick="sortTable(0)">Linker Bib Number</th>
+                <th onclick="sortTable(0)">Bib Number</th>
                 <th onclick="sortTable(1)">RFID Tag</th>
             </tr>
             <% demoData.forEach(function(row) { %>
