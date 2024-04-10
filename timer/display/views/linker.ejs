@@ -1,3 +1,4 @@
+<!-- linker.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,18 +68,46 @@
                 </th>
             </tr>
         </table>
-        <table id="displayData" border="1">
+        <table>
             <tr>
-                <!-- Column headers -->
-                <th onclick="sortTable(0)">Bib Number</th>
-                <th onclick="sortTable(1)">RFID Tag</th>
+                <td>
+                    <table id="displayData" border="1">
+                        <tr>
+                            <td colspan="2">
+                                <h2>BIB to RFID</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- Column headers -->
+                            <th onclick="sortTable(0)">Bib Number</th>
+                            <th onclick="sortTable(1)">RFID Tag</th>
+                        </tr>
+                        <% demoData.forEach(function(row) { %>
+                        <tr>
+                            <td><%= row.linkerbibnumber %></td>
+                            <td><%= row.rfidtag %></td>
+                        </tr>
+                        <% }); %>
+                    </table>
+                </td>
+                <td class="orphaned-bib-numbers-container">
+                    <table id="orphanedBibNumbers" border="1">
+                        <tr>
+                            <td>
+                                <h2>Orphaned Bib Numbers</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Bib Number</th>
+                        </tr>
+                        <% orphanedBibNumbers.forEach(function(bib) { %>
+                        <tr>
+                            <td><%= bib.bibnumber %></td>
+                        </tr>
+                        <% }); %>
+                    </table>
+                </td>
             </tr>
-            <% demoData.forEach(function(row) { %>
-            <tr>
-                <td><%= row.linkerbibnumber %></td>
-                <td><%= row.rfidtag %></td>
-            </tr>
-            <% }); %>
         </table>
     </div>
 

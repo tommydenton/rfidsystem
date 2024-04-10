@@ -179,13 +179,22 @@ rfidEmitter.on('tagScanned', (rfidTag) => {
 
 app.get('/link-rfid', async (req, res) => {
     try {
-        const result = await pool.query(`
+        const linkerResult = await pool.query(`
             SELECT bibnumber AS linkerbibnumber, rfidtag
             FROM LINKER
         `);
+
+        // Query for orphaned BIBNUMBERs
+        const orphanedBibNumbersResult = await pool.query(`
+            SELECT bibnumber
+            FROM DEMODATA
+            WHERE bibnumber NOT IN (SELECT bibnumber FROM LINKER)
+        `);
+
         const scannedRFIDTag = app.locals.scannedRFIDTag || '';
         res.render('linker', {
-            demoData: result.rows, // The key here is 'demoData'
+            demoData: linkerResult.rows,
+            orphanedBibNumbers: orphanedBibNumbersResult.rows, // Pass the orphaned BIBNUMBERs to the template
             scannedRFIDTag: scannedRFIDTag
         });
     } catch (error) {
@@ -193,7 +202,6 @@ app.get('/link-rfid', async (req, res) => {
         res.send('Error fetching data from LINKER table');
     }
 });
-
 
 // Route for linking RFID tag to bibnumber
 app.post('/link-rfid', async (req, res) => {
