@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div id="TOPNAV">
+    <div id="topnav">
         <!-- Breadcrumb navigation -->
         <nav id="breadcrumbNav" aria-label="Breadcrumb">
             <ol>
@@ -33,10 +33,8 @@
         <form id="rfid-link-form" action="/link-rfid" method="post">
             <table id="enterData">
                 <tr>
-                    <th colspan="3">
-                        <center>
-                            <h2>Link RFID Tag to Bib Number</h2>
-                        </center>
+                    <th class="centered-text" colspan="3">
+                        <h2>Link RFID Tag to Bib Number</h2>
                     </th>
                 </tr>
                 <tr>
@@ -50,16 +48,14 @@
                     <td> </td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="submit-cell"><button type="submit">Link</button></td>
+                    <td colspan="3"><button type="submit">Link</button></td>
                 </tr>
             </table>
         </form>
         <table id="Data" border="1">
             <tr>
-                <th colspan="2">
-                    <center>
-                        <h2>Display BIB to RFID Tag</h2>
-                    </center>
+                <th class="centered-text" colspan="2">
+                    <h2>Display BIB to RFID Tag</h2>
                 </th>
             </tr>
             <tr>
@@ -73,7 +69,7 @@
                 <td>
                     <table id="displayData" border="1">
                         <tr>
-                            <td colspan="2">
+                            <td class="centered-text" colspan="2">
                                 <h2>BIB to RFID</h2>
                             </td>
                         </tr>
@@ -93,7 +89,7 @@
                 <td class="orphaned-bib-numbers-container">
                     <table id="orphanedBibNumbers" border="1">
                         <tr>
-                            <td>
+                            <td class="centered-text">
                                 <h2>Orphaned Bib Numbers</h2>
                             </td>
                         </tr>
