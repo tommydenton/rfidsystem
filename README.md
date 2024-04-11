@@ -315,3 +315,16 @@ Indexes:
     "linker_bibnumber_key" UNIQUE CONSTRAINT, btree (bibnumber)
     "linker_rfidtag_key" UNIQUE CONSTRAINT, btree (rfidtag)
 Access method: heap
+
+rfid_system=# \d+ BOATS
+                                                             Table "public.boats"
+   Column   |  Type   | Collation | Nullable |                  Default                  | Storage | Compression | Stats target | Description
+------------+---------+-----------+----------+-------------------------------------------+---------+-------------+--------------+-------------
+ uid        | integer |           | not null | nextval('boats_uid_seq'::regclass)        | plain   |             |              |
+ bibnumber1 | integer |           |          |                                           | plain   |             |              |
+ bibnumber2 | integer |           |          |                                           | plain   |             |              |
+ boatnumber | integer |           | not null | nextval('boats_boatnumber_seq'::regclass) | plain   |             |              |
+Indexes:
+    "boats_pkey" PRIMARY KEY, btree (uid)
+    "unique_bibnumber_pair" UNIQUE CONSTRAINT, btree (bibnumber1, bibnumber2)
+Access method: heap

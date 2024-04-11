@@ -40,6 +40,10 @@ app.use((req, res, next) => {
             text: 'RFID Linker',
             href: '/link-rfid'
         },
+        {
+            text: 'Boat Linker',
+            href: '/boats'
+        },
         // Add or remove breadcrumb items as needed
     ];
     next();
@@ -218,6 +222,26 @@ app.post('/link-rfid', async (req, res) => {
     } catch (error) {
         console.error('Error linking RFID tag:', error);
         res.status(500).send('Error linking RFID tag');
+    }
+});
+
+app.get('/boats', async (req, res) => {
+    try {
+        // Fetch all bib numbers that are not yet paired
+        const unpairedBibsResult = await pool.query(`
+            SELECT d.fname, d.lname, d.unittype, d.unitnumber, d.bibnumber
+            FROM DEMODATA d
+            LEFT JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
+            WHERE b.bibnumber1 IS NULL OR b.bibnumber2 IS NULL
+        `);
+
+        // Render the boats.ejs file, passing the unpaired bibs data
+        res.render('boats', {
+            unpairedBibs: unpairedBibsResult.rows
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.send('Error fetching data');
     }
 });
 
