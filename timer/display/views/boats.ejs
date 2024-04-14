@@ -147,9 +147,10 @@
                         <td><%= bib.bibnumber %></td>
                         <td>
                             <!-- Form to link bib numbers -->
-                            <form action="/link-bib" method="post">
+                            <form action="/boats" method="post">
                                 <input type="hidden" name="bibnumber" value="<%= bib.bibnumber %>">
-                                <input type="text" name="partnerBibnumber" placeholder="Enter partner bib number">
+                                <input type="text" name="bibnumber1" placeholder="Enter partner bib number">
+                                <input type="text" name="bibnumber2" placeholder="Enter partner bib number">
                                 <button type="submit">Link</button>
                             </form>
                         </td>
@@ -157,7 +158,25 @@
                 <% }); %>
             </tbody>
         </table>
-        
+        <h1>Bib and Boat Pairing</h1>
+        <table>
+            <tbody>
+                <tr>
+                    <th>Boat Number</th>
+                    <th>Bibnumber 1</th>
+                    <th>Bibnumber 2</th>
+                    <th>Edit Boat Pairing</th>
+                </tr>
+                <% boatBibs.forEach(function(bib) { %>
+                    <tr>
+                        <td><%= bib.boatnumber %></td>
+                        <td><%= bib.bibnumber1 %></td>
+                        <td><%= bib.bibnumber2 %></td>
+                        <td><a href="/editboats?boatnumber=<%= bib.boatnumber %>" class="edit-button">Edit</a></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
 </body>
 

@@ -282,7 +282,7 @@ psql (15.6 (Debian 15.6-0+deb12u1))
 └── stamp
     └── stamper.py
 
-> rfid_system=# \d+ DEMODATA
+> \d+ DEMODATA
                                                                  Table "public.demodata"
    Column   |          Type          | Collation | Nullable |                Default                | Storage  | Compression | Stats target | Description
 ------------+------------------------+-----------+----------+---------------------------------------+----------+-------------+--------------+-------------
@@ -303,7 +303,7 @@ Indexes:
     "demodata_bibnumber_key" UNIQUE CONSTRAINT, btree (bibnumber)
 Access method: heap
 
-> rfid_system=# \d+ LINKER
+> \d+ LINKER
                                                                  Table "public.linker"
   Column   |          Type          | Collation | Nullable |               Default               | Storage  | Compression | Stats target | Description
 -----------+------------------------+-----------+----------+-------------------------------------+----------+-------------+--------------+-------------
@@ -316,7 +316,7 @@ Indexes:
     "linker_rfidtag_key" UNIQUE CONSTRAINT, btree (rfidtag)
 Access method: heap
 
-rfid_system=# \d+ BOATS
+> \d+ BOATS
                                                              Table "public.boats"
    Column   |  Type   | Collation | Nullable |                  Default                  | Storage | Compression | Stats target | Description
 ------------+---------+-----------+----------+-------------------------------------------+---------+-------------+--------------+-------------

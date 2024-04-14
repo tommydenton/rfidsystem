@@ -225,23 +225,108 @@ app.post('/link-rfid', async (req, res) => {
     }
 });
 
+// Route for displaying unpaired bibnumber
 app.get('/boats', async (req, res) => {
     try {
         // Fetch all bib numbers that are not yet paired
         const unpairedBibsResult = await pool.query(`
-            SELECT d.fname, d.lname, d.unittype, d.unitnumber, d.bibnumber
-            FROM DEMODATA d
-            LEFT JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
-            WHERE b.bibnumber1 IS NULL OR b.bibnumber2 IS NULL
+        SELECT d.fname, d.lname, d.unittype, d.unitnumber, d.bibnumber
+        FROM DEMODATA d
+        LEFT JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
+        WHERE b.bibnumber1 IS NULL OR b.bibnumber2 IS NULL
         `);
 
-        // Render the boats.ejs file, passing the unpaired bibs data
+        // Fetch all boat numbers along with their associated bib numbers
+        const boatBibsResult = await pool.query(`
+        SELECT boatnumber, bibnumber1, bibnumber2
+        FROM BOATS
+        `);
+
+        // Render the boats.ejs file, passing both unpaired bibs data and boat bibs data
         res.render('boats', {
-            unpairedBibs: unpairedBibsResult.rows
+            unpairedBibs: unpairedBibsResult.rows,
+            boatBibs: boatBibsResult.rows // Pass the fetched boat bibs data to the template
         });
     } catch (error) {
         console.error('Error fetching data:', error);
         res.send('Error fetching data');
+    }
+});
+
+
+// Route for creating a boatnumber out of two bibnumber
+app.post('/boats', async (req, res) => {
+    const { bibnumber1, bibnumber2 } = req.body; // Extract the two bib numbers from the request body
+
+    // Check if bibnumber1 and bibnumber2 are not the same and not already paired
+    if (bibnumber1 === bibnumber2) {
+        return res.status(400).send('Cannot pair the same bibnumber.');
+    }
+
+    try {
+        // Check if bibnumber1 or bibnumber2 is already in a pair
+        const existingPairCheck = await pool.query(
+            'SELECT * FROM BOATS WHERE bibnumber1 = $1 OR bibnumber2 = $2 OR bibnumber1 = $2 OR bibnumber2 = $1',
+            [bibnumber1, bibnumber2]
+        );
+        if (existingPairCheck.rows.length > 0) {
+            return res.status(400).send('One or both bibnumbers are already paired.');
+        }
+
+        // Generate a unique boatnumber using the nextval function
+        const boatnumberResult = await pool.query('SELECT nextval(\'boats_boatnumber_seq\')');
+        const boatnumber = boatnumberResult.rows[0].nextval;
+
+        // Insert the bib numbers and the generated boatnumber into the BOATS table
+        await pool.query(
+            'INSERT INTO BOATS (bibnumber1, bibnumber2, boatnumber) VALUES ($1, $2, $3)',
+            [bibnumber1, bibnumber2, boatnumber]
+        );
+
+        // Redirect back to the boats page or display a success message
+        res.redirect('/boats'); // Redirect back to the boats page or handle as needed
+    } catch (error) {
+        console.error('Error inserting data into BOATS table:', error);
+        res.status(500).send('Error inserting data into BOATS table');
+    }
+    console.log(`Attempting to pair bibnumber1: ${bibnumber1} with bibnumber2: ${bibnumber2}`);
+});
+
+// Route for displaying the edit form
+app.get('/editboats', async (req, res) => {
+    const { boatnumber } = req.query; // Assuming you pass the boat number as a query parameter
+
+    try {
+        const result = await pool.query('SELECT bibnumber1, bibnumber2 FROM BOATS WHERE boatnumber = $1', [boatnumber]);
+        if (result.rows.length > 0) {
+            // Render the edit form with the current bib numbers
+            res.render('editboats', {
+                boatnumber: boatnumber,
+                currentBib1: result.rows[0].bibnumber1,
+                currentBib2: result.rows[0].bibnumber2
+            });
+        } else {
+            res.send('Boat not found');
+        }
+    } catch (error) {
+        console.error('Error fetching boat:', error);
+        res.status(500).send('Error fetching boat');
+    }
+});
+
+// Route for updating bib numbers in the database
+app.post('/update-boat-data', async (req, res) => {
+    const { boatnumber, bibnumber1, bibnumber2 } = req.body;
+
+    try {
+        await pool.query(
+            'UPDATE BOATS SET bibnumber1 = $1, bibnumber2 = $2 WHERE boatnumber = $3',
+            [bibnumber1, bibnumber2, boatnumber]
+        );
+        res.redirect('/boats'); // Redirect back to the boats page or another appropriate page
+    } catch (error) {
+        console.error('Error updating bib numbers:', error);
+        res.status(500).send('Error updating bib numbers');
     }
 });
 
