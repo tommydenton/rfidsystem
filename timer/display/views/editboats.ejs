@@ -30,16 +30,33 @@
         </div>
     </div>
     <div id="mainContent">
-        <h1>Edit Bib Numbers for Boat <%= boatnumber %></h1>
+
         <form action="/update-boat-data" method="post">
-            <input type="hidden" name="boatnumber" value="<%= boatnumber %>">
-            <label for="bibnumber1">Bib Number 1:</label>
-            <input type="text" id="bibnumber1" name="bibnumber1" value="<%= currentBib1 %>"><br>
-            <label for="bibnumber2">Bib Number 2:</label>
-            <input type="text" id="bibnumber2" name="bibnumber2" value="<%= currentBib2 %>"><br>
-            <input type="submit" value="Update"><input type="button" value="Cancel" onclick="window.history.back();">
+            <table id="enterData">
+                <tr>
+                    <th colspan="3">
+                        <center>
+                            <h1>Edit Bib Numbers for Boat <%= boatnumber %></h1>
+                        </center>
+                    </th>
+                </tr>
+                <tr>
+                    <input type="hidden" name="boatnumber" value="<%= boatnumber %>">
+                    <th class="dethsize"><label for="bibnumber1">Boat # <%= boatnumber %>: Bib # 1:</label></th>
+                    <td class="detdsize"><input type="text" id="bibnumber1" name="bibnumber1" value="<%= currentBib1 %>"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="bibnumber2">Boat # <%= boatnumber %>: Bib # 2:</label></th>
+                    <td class="detdsize"><input type="text" id="bibnumber2" name="bibnumber2" value="<%= currentBib2 %>"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Update"><input type="button" value="Cancel" onclick="window.history.back();"></td>
+                </tr>
+            </table>
         </form>
-</div>
+    </div>
 </body>
 
 </html>

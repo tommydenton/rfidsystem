@@ -30,82 +30,123 @@
         </div>
     </div>
     <div id="mainContent">
-    <h2>Edit Demographic Data</h2>
-    <form action="/update-demo-data" method="post">
-        <input type="hidden" name="uid" value="<%= rowData.uid %>">
-        <label for="fname">First Name:</label>
-        <input type="text" id="fname" name="fname" value="<%= rowData.fname %>" required><br><br>
-        <label for="lname">Last Name:</label>
-        <input type="text" id="lname" name="lname" value="<%= rowData.lname %>" required><br><br>
-        <label for="gender">Gender:</label>
-        <select id="gender" name="gender" required>
-            <option value="<%= rowData.gender %>" selected><%= rowData.gender %></option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Prefer not to say">Prefer not to say</option>
-        </select><br><br>
-        <label for="age">Age Bracket:</label>
-        <select id="age" name="age" required>
-            <option value="<%= rowData.age %>" selected><%= rowData.age %></option>
-            <option value="Age 11-14">Age 11-14</option>
-            <option value="Age 15-17">Age 15-17</option>
-            <option value="Age 18-20">Age 18-20</option>
-            <option value="Age Adult">Adult</option>
-        </select><br><br>
-        <label for="council">Council:</label>
-        <select id="council" name="council" required>
-            <option value="<%= rowData.council %>" selected><%= rowData.council %></option>
-            <option value="Longhorn">Longhorn</option>
-            <option value="Circle Ten">Circle Ten</option>
-            <option value="Other">Other</option>
-        </select><br><br>
-        <label for="district">District:</label>
-        <select id="district" name="district" required>
-            <option value="<%= rowData.district %>" selected><%= rowData.district %></option>
-            <option value="Arrowhead (#46)">Arrowhead (#46)</option>
-            <option value="Brazos Valley (#44)">Brazos Valley (#44)</option>
-            <option value="Chisholm Trail (#52)">Chisholm Trail (#52)</option>
-            <option value="Frontier Trails (#41)">Frontier Trails (#41)</option>
-            <option value="Heart O' Texas (#50)">Heart O' Texas (#50)</option>
-            <option value="Leon Valley (#51)">Leon Valley (#51)</option>
-            <option value="Lone Star (#48)">Lone Star (#48)</option>
-            <option value="Mustang (#43)">Mustang (#43)</option>
-            <option value="Pathfinder (#45)">Pathfinder (#45)</option>
-            <option value="Orion (#42)">Orion (#42)</option>
-            <option value="Santa Fe (#49)">Santa Fe (#49)</option>
-            <option value="Trinity Trails (#47)">Trinity Trails (#47)</option>
-            <option value="Other">Other</option>
-        </select><br><br>
-        <label for="unittype">Unit Type:</label>
-        <select id="unittype" name="unittype" required>
-            <option value="<%= rowData.unittype %>" selected><%= rowData.unittype %></option>
-            <option value="Troop-Boys">Troop-Boys</option>
-            <option value="Troop-Girls">Troop-Girls</option>
-            <option value="Troop B&G">Troop B&G</option>
-            <option value="Crew">Crew</option>
-            <option value="Other">Other</option>
-        </select><br><br>
-        <label for="unitnumber">Unit Number:</label>
-        <input type="number" id="unitnumber" name="unitnumber" value="<%= rowData.unitnumber %>" required><br><br>
-        <label for="race">Race Type:</label>
-        <select id="race" name="race" required>
-            <option value="<%= rowData.race %>" selected><%= rowData.race %></option>
-            <option value="6-Mile">6-Mile</option>
-            <option value="14-Mile">14-Mile</option>
-        </select><br><br>
-        <label for="boat">Boat Type:</label>
-        <select id="boat" name="boat" required>
-            <option value="<%= rowData.boat %>" selected><%= rowData.boat %></option>
-            <option value="Canoe">Canoe</option>
-            <option value="Kayak">Kayak</option>
-            <option value="Canoe-Personal">Canoe - Personal</option>
-            <option value="Kayak-Personal">Kayak - Personal</option>
-        </select><br><br>
-        <label for="bibnumber">Bib Number:</label>
-        <input type="number" id="bibnumber" name="bibnumber" value="<%= rowData.bibnumber %>" required><br><br>
-        <input type="submit" value="Update"> <input type="button" value="Cancel" onclick="window.history.back();">
-    </form>
-</div>
+        <form action="/update-demo-data" method="post">
+            <table id="enterData">
+                <tr>
+                    <th colspan="3">
+                        <center>
+                            <h2>Edit Demographic Data</h2>
+                        </center>
+
+                </tr>
+                <tr>
+                    <input type="hidden" name="uid" value="<%= rowData.uid %>">
+                    <th class="dethsize"><label for="fname">First Name:</label></th>
+                    <td class="detdsize"><input type="text" id="fname" name="fname" value="<%= rowData.fname %>" required>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="lname">Last Name:</label></th>
+                    <td class="detdsize"><input type="text" id="lname" name="lname" value="<%= rowData.lname %>" required>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="gender">Gender:</label></th>
+                    <td class="detdsize"><select id="gender" name="gender" required>
+                            <option value="<%= rowData.gender %>" selected><%= rowData.gender %></option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="age">Age Bracket:</label></th>
+                    <td class="detdsize"><select id="age" name="age" required>
+                            <option value="<%= rowData.age %>" selected><%= rowData.age %></option>
+                            <option value="Age 11-14">Age 11-14</option>
+                            <option value="Age 15-17">Age 15-17</option>
+                            <option value="Age 18-20">Age 18-20</option>
+                            <option value="Age Adult">Adult</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="council">Council:</label></th>
+                    <td class="detdsize"><select id="council" name="council" required>
+                            <option value="<%= rowData.council %>" selected><%= rowData.council %></option>
+                            <option value="Longhorn">Longhorn</option>
+                            <option value="Circle Ten">Circle Ten</option>
+                            <option value="Other">Other</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="district">District:</label></th>
+                    <td class="detdsize"><select id="district" name="district" required>
+                            <option value="<%= rowData.district %>" selected><%= rowData.district %></option>
+                            <option value="Arrowhead (#46)">Arrowhead (#46)</option>
+                            <option value="Brazos Valley (#44)">Brazos Valley (#44)</option>
+                            <option value="Chisholm Trail (#52)">Chisholm Trail (#52)</option>
+                            <option value="Frontier Trails (#41)">Frontier Trails (#41)</option>
+                            <option value="Heart O' Texas (#50)">Heart O' Texas (#50)</option>
+                            <option value="Leon Valley (#51)">Leon Valley (#51)</option>
+                            <option value="Lone Star (#48)">Lone Star (#48)</option>
+                            <option value="Mustang (#43)">Mustang (#43)</option>
+                            <option value="Pathfinder (#45)">Pathfinder (#45)</option>
+                            <option value="Orion (#42)">Orion (#42)</option>
+                            <option value="Santa Fe (#49)">Santa Fe (#49)</option>
+                            <option value="Trinity Trails (#47)">Trinity Trails (#47)</option>
+                            <option value="Other">Other</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="unittype">Unit Type:</label></th>
+                    <td class="detdsize"><select id="unittype" name="unittype" required>
+                            <option value="<%= rowData.unittype %>" selected><%= rowData.unittype %></option>
+                            <option value="Troop-Boys">Troop-Boys</option>
+                            <option value="Troop-Girls">Troop-Girls</option>
+                            <option value="Troop B&G">Troop B&G</option>
+                            <option value="Crew">Crew</option>
+                            <option value="Other">Other</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="unitnumber">Unit Number:</label></th>
+                    <td class="detdsize"><input type="number" id="unitnumber" name="unitnumber" value="<%= rowData.unitnumber %>" required></td>
+                <tr>
+                    <th class="dethsize"><label for="race">Race Type:</label></th>
+                    <td class="detdsize"><select id="race" name="race" required>
+                            <option value="<%= rowData.race %>" selected><%= rowData.race %></option>
+                            <option value="6-Mile">6-Mile</option>
+                            <option value="14-Mile">14-Mile</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="boat">Boat Type:</label></th>
+                    <td class="detdsize"><select id="boat" name="boat" required>
+                            <option value="<%= rowData.boat %>" selected><%= rowData.boat %></option>
+                            <option value="Canoe">Canoe</option>
+                            <option value="Kayak">Kayak</option>
+                            <option value="Canoe-Personal">Canoe - Personal</option>
+                            <option value="Kayak-Personal">Kayak - Personal</option>
+                        </select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="dethsize"><label for="bibnumber">Bib Number:</label>
+                    <td class="detdsize"><input type="number" id="bibnumber" name="bibnumber" value="<%= rowData.bibnumber %>" required></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Update"> <input type="button" value="Cancel" onclick="window.history.back();"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
 </body>
 
 </html>
