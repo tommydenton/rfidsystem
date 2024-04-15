@@ -3,6 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const path = require('path');
 const WebSocket = require('ws');
+const moment = require('moment');
 const wss = new WebSocket.Server({ noServer: true });
 const rfidEmitter = require('./stamper.js');
 const {
@@ -29,10 +30,6 @@ app.use((req, res, next) => {
             href: '/display'
         },
         {
-            text: 'Time Display',
-            href: '/time'
-        },
-        {
             text: 'Data Entry',
             href: '/dataentry'
         },
@@ -53,6 +50,9 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Set the time backend for each view
+app.locals.moment = moment;
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -60,6 +60,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({
     extended: true
 }));
+
+// Define the fetchTimeData middleware
+async function fetchTimeData(req, res, next) {
+    try {
+        const response = await axios.get('http://localhost:3001/time');
+        const cloudTime = response.data.ntpTime;
+        const localTime = new Date().toISOString();
+        res.locals.timeData = {
+            cloudTime,
+            localTime
+        };
+    } catch (error) {
+        console.error('Error fetching time data:', error);
+        res.locals.timeData = {
+            cloudTime: 'Unavailable',
+            localTime: 'Unavailable'
+        };
+    }
+    next();
+}
+
+// Time for all pages
+app.use(fetchTimeData);
 
 // Route for the homepage
 app.get('/display', (req, res) => {
@@ -327,24 +350,6 @@ app.post('/update-boat-data', async (req, res) => {
     } catch (error) {
         console.error('Error updating bib numbers:', error);
         res.status(500).send('Error updating bib numbers');
-    }
-});
-
-
-//Info APIs
-// Route for displaying time
-app.get('/time', async (req, res) => {
-    try {
-        const response = await axios.get('http://localhost:3001/time');
-        const cloudTime = response.data.ntpTime;
-        const localTime = new Date().toISOString();
-        res.render('time', {
-            cloudTime,
-            localTime
-        });
-    } catch (error) {
-        console.error('Error fetching time data:', error);
-        res.send('Error fetching time data');
     }
 });
 

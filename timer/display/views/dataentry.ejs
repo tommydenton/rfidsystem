@@ -113,12 +113,16 @@
                 <li>
                     <a href="<%= crumb.href %>"><%= crumb.text %></a>
                     <% if (index < breadcrumbPath.length - 1) { %>
-                    <span> &gt; </span>
+                    <span> | </span>
                     <% } %>
                 </li>
                 <% }); %>
             </ol>
         </nav>
+        <!-- Time -->
+        <div id="timeDisplay">
+            Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
+        </div>
         <!-- light/dark toggle link -->
         <div class="theme-toggle">
             <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
@@ -128,10 +132,8 @@
         <form action="/insert-demo-data" method="post">
             <table id="enterData">
                 <tr>
-                    <th colspan="3">
-                        <center>
+                    <th class="centered-text" colspan="3">
                             <h2>Enter Demographic Data</h2>
-                        </center>
                     </th>
                 </tr>
                 <tr>
@@ -256,10 +258,8 @@
         </form>
         <table id="Data" border="1">
             <tr>
-                <th colspan="8">
-                    <center>
+                <th class="centered-text" colspan="8">
                         <h2>Edit Demographic Data</h2>
-                    </center>
                 </th>
             </tr>
             <tr>

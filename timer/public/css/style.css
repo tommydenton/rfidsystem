@@ -1,187 +1,242 @@
-body{
-    font-family:Arial,sans-serif
+body {
+    font-family: Arial, sans-serif;
 }
-table{
-    width:100%;
-    max-width:1500px;
-    margin-bottom:20px;
-    border-collapse:collapse
+
+table {
+    width: 100%;
+    max-width: 1500px;
+    margin-bottom: 20px;
+    border-collapse: collapse;
 }
-table,td,th{
-    border:1px solid #ddd
+
+table, td, th {
+    border: 1px solid #ddd;
 }
+
 td.centered-text, th.centered-text {
     text-align: center;
 }
-td,th{
-    padding:10px;
-    text-align:left
-}
-th{
-    background-color:#f2f2f2
-}
-.dethsize{
-    width:250px
-}
-.detdsize{
-    width:300px
-}
-input[type=number],input[type=text]{
-    width:100%;
-    padding:8px;
-    margin:5px 0;
-    box-sizing:border-box
-}
-input[type=submit]{
-    background-color:#4caf50;
-    color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:4px;
-    cursor:pointer
-}
-input[type=submit]{
-    background-color:#c01f5d;
-    color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:4px;
-    cursor:pointer
-}
-input[type=submit]:hover{
-    background-color:#45a049
-}
-.edit-button{
-    display:inline-block;
-    background-color:#4caf50;
-    color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:4px;
-    cursor:pointer;
-    text-decoration:none
-}
-.edit-button:hover{
-    background-color:#45a049
-}
-input[type=button]{
-    background-color:red;
-    color:#fff;
-    padding:10px 20px;
-    border:none;
-    border-radius:4px;
-    cursor:pointer
-}
-input[type=button]:hover{
-    background-color:#ff6a00
-}
-.sort-asc::after{
-    content:"▲";
-    font-size:.7em;
-    margin-left:5px
-}
-.sort-desc::after{
-    content:"▼";
-    font-size:.7em;
-    margin-left:5px
-}
-#topnav{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    background-color:#f2f2f2;
-    z-index:1000;
-    padding:10px 0;
-    box-shadow:0 2px 4px rgba(0,0,0,.1)
-}
-.theme-toggle{
-    position:absolute;
-    top:10px;
-    right:10px
-}
-.toggle-theme-link{
-    color: #2afb00;
-}
-#mainContent{
-    padding-top:60px
-}
-.orphaned-bib-numbers-container{
-    vertical-align:top;
-    text-align:left
-}
-#displayData,#orphanedBibNumbers{
-    width:48%;
-    margin:0
-}
-#displayData,#displayData th,#orphanedBibNumbers td,#orphanedBibNumbers th{
-    vertical-align:top
-}
-.table-container{
-    width:50%;
-    padding:0 10px
-}
-.table-container table{
-    margin-top:0;
-    margin-bottom:20px
+
+td, th {
+    padding: 10px;
+    text-align: left;
 }
 
-#breadcrumbNav{
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    padding:10px 0
+th {
+    background-color: #f2f2f2;
 }
-#breadcrumbNav ol{
-    list-style:none;
-    padding:0;
-    margin:0;
-    display:flex;
-    align-items:center
+
+.dethsize {
+    width: 250px;
 }
-#breadcrumbNav li{
-    margin-right:5px
+
+.detdsize {
+    width: 300px;
 }
-#breadcrumbNav li a{
-    text-decoration:none;
-    color:inherit
+
+input[type=number], input[type=text] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
 }
-#breadcrumbNav li span{
-    margin-right:5px
+
+input[type=submit] {
+    background-color: #c01f5d;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
-body.dark-mode{
-    background-color:#333;
-    color:#fff
+
+input[type=submit]:hover {
+    background-color: #45a049;
 }
-body.dark-mode table,body.dark-mode td,body.dark-mode th{
-    border-color:#777
+
+.edit-button {
+    display: inline-block;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
 }
-body.dark-mode th{
-    background-color:#555
+
+.edit-button:hover {
+    background-color: #45a049;
 }
-body.dark-mode input[type=submit]{
-    background-color:#666;
-    color:#fff
+
+input[type=button] {
+    background-color: #ff0000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
-body.dark-mode input[type=button]{
-    background-color:#640202;
-    color:#fff
+
+input[type=button]:hover {
+    background-color: #ff6a00;
 }
-body.dark-mode a{
-    color:#c792ea
+
+.sort-asc::after {
+    content: "▲";
+    font-size: .7em;
+    margin-left: 5px;
 }
-body.dark-mode a:visited{
-    color:#ae81ff
+
+.sort-desc::after {
+    content: "▼";
+    font-size: .7em;
+    margin-left: 5px;
 }
-body.dark-mode a:hover{
-    color:#ff79c6
+
+#topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f2f2f2;
+    z-index: 1000;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
 }
-body.dark-mode #topnav{
-    background-color:#333
+
+.theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
-body.dark-mode .edit-button{
-    background-color:#666
+
+.toggle-theme-link {
+    color: #2afb00;
 }
-body.dark-mode .edit-button:hover{
-    background-color:#777
+
+#mainContent {
+    padding-top: 60px;
+}
+
+.orphaned-bib-numbers-container {
+    vertical-align: top;
+    text-align: left;
+}
+
+#displayData, #orphanedBibNumbers {
+    width: 100%;
+    margin: 0;
+}
+
+#displayData, #displayData th, #orphanedBibNumbers td, #orphanedBibNumbers th {
+    vertical-align: top;
+}
+
+.table-container {
+    width: 50%;
+    padding: 0 10px;
+}
+
+.table-container table {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+#breadcrumbNav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0;
+}
+
+#breadcrumbNav ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+#breadcrumbNav li {
+    margin-right: 5px;
+}
+
+#breadcrumbNav li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#breadcrumbNav li span {
+    margin-right: 5px;
+}
+
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark-mode table, body.dark-mode td, body.dark-mode th {
+    border-color: #777;
+}
+
+body.dark-mode th {
+    background-color: #555;
+}
+
+body.dark-mode input[type=submit] {
+    background-color: #666;
+    color: #fff;
+}
+
+body.dark-mode input[type=button] {
+    background-color: #640202;
+    color: #fff;
+}
+
+body.dark-mode a {
+    color: #c792ea;
+}
+
+body.dark-mode a:visited {
+    color: #ae81ff;
+}
+
+body.dark-mode a:hover {
+    color: #ff79c6;
+}
+
+body.dark-mode #topnav {
+    background-color: #333;
+}
+
+body.dark-mode .edit-button {
+    background-color: #666;
+}
+
+body.dark-mode .edit-button:hover {
+    background-color: #777;
+}
+
+breadcrumbNav ol, #breadcrumbNav li {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+#breadcrumbNav li a, #timeDisplay, .theme-toggle a {
+    padding: 0 10px;
+}
+
+#timeDisplay {
+    text-align: center;
+    flex-grow: 1;
+}
+
+.theme-toggle {
+    text-align: right;
 }

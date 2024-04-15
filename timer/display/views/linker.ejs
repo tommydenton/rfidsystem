@@ -11,24 +11,29 @@
 
 <body>
     <div id="topnav">
-        <!-- Breadcrumb navigation -->
-        <nav id="breadcrumbNav" aria-label="Breadcrumb">
-            <ol>
-                <% breadcrumbPath.forEach(function(crumb, index) { %>
-                <li>
-                    <a href="<%= crumb.href %>"><%= crumb.text %></a>
-                    <% if (index < breadcrumbPath.length - 1) { %>
-                    <span> &gt; </span>
-                    <% } %>
-                </li>
-                <% }); %>
-            </ol>
-        </nav>
-        <!-- light/dark toggle link -->
-        <div class="theme-toggle">
-            <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+            <!-- Breadcrumb navigation -->
+            <nav id="breadcrumbNav" aria-label="Breadcrumb">
+                <ol>
+                    <% breadcrumbPath.forEach(function(crumb, index) { %>
+                    <li>
+                        <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                        <% if (index < breadcrumbPath.length - 1) { %>
+                        <span> | </span>
+                        <% } %>
+                    </li>
+                    <% }); %>
+                </ol>
+            </nav>
+            <!-- Time -->
+            <div id="timeDisplay">
+                Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
+            </div>
+            <!-- light/dark toggle link -->
+            <div class="theme-toggle">
+                <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+            </div>
         </div>
-    </div>
+                <!-- TODO fix the sort and add search-->
     <div id="mainContent">
         <form id="rfid-link-form" action="/link-rfid" method="post">
             <table id="enterData">

@@ -106,28 +106,36 @@
 
 <body>
     <div id="topnav">
-        <!-- Breadcrumb navigation -->
-        <nav id="breadcrumbNav" aria-label="Breadcrumb">
-            <ol>
-                <% breadcrumbPath.forEach(function(crumb, index) { %>
-                <li>
-                    <a href="<%= crumb.href %>"><%= crumb.text %></a>
-                    <% if (index < breadcrumbPath.length - 1) { %>
-                    <span> &gt; </span>
-                    <% } %>
-                </li>
-                <% }); %>
-            </ol>
-        </nav>
-        <!-- light/dark toggle link -->
-        <div class="theme-toggle">
-            <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+            <!-- Breadcrumb navigation -->
+            <nav id="breadcrumbNav" aria-label="Breadcrumb">
+                <ol>
+                    <% breadcrumbPath.forEach(function(crumb, index) { %>
+                    <li>
+                        <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                        <% if (index < breadcrumbPath.length - 1) { %>
+                        <span> | </span>
+                        <% } %>
+                    </li>
+                    <% }); %>
+                </ol>
+            </nav>
+            <!-- Time -->
+            <div id="timeDisplay">
+                Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
+            </div>
+            <!-- light/dark toggle link -->
+            <div class="theme-toggle">
+                <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
+            </div>
         </div>
-    </div>
+        <!-- TODO fix the sort and add search-->
     <div id="mainContent">
-        <h1>Unpaired Bib Numbers</h1>
         <table>
-            <thead>
+            <tr>
+                <th class="centered-text" colspan="6">
+                        <h2>Unpaired Bib Numbers</h2>
+                </th>
+            </tr>
                 <tr>
                     <th>First Name</th>
                     <th>Last Name</th>
@@ -136,8 +144,6 @@
                     <th>Bib Number</th>
                     <th>Action</th>
                 </tr>
-            </thead>
-            <tbody>
                 <% unpairedBibs.forEach(function(bib) { %>
                     <tr>
                         <td><%= bib.fname %></td>
@@ -146,7 +152,6 @@
                         <td><%= bib.unitnumber %></td>
                         <td><%= bib.bibnumber %></td>
                         <td>
-                            <!-- Form to link bib numbers -->
                             <form action="/boats" method="post">
                                 <input type="hidden" name="bibnumber" value="<%= bib.bibnumber %>">
                                 <input type="text" name="bibnumber1" placeholder="Enter partner bib number">
@@ -156,11 +161,13 @@
                         </td>
                     </tr>
                 <% }); %>
-            </tbody>
         </table>
-        <h1>Bib and Boat Pairing</h1>
         <table>
-            <tbody>
+            <tr>
+                <th class="centered-text" colspan="4">
+                        <h2>Bib and Boat Pairing</h2>
+                </th>
+            </tr>
                 <tr>
                     <th>Boat Number</th>
                     <th>Bibnumber 1</th>
@@ -175,7 +182,6 @@
                         <td><a href="/editboats?boatnumber=<%= bib.boatnumber %>" class="edit-button">Edit</a></td>
                     </tr>
                 <% }); %>
-            </tbody>
         </table>
     </div>
 </body>

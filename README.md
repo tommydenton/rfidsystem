@@ -126,7 +126,7 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g uuid@latest express axios serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io
+sudo npm install -g uuid@latest express axios moment serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io
 ```
 ```zsh
 create the node project
