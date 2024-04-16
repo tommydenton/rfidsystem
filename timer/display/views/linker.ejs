@@ -55,7 +55,7 @@
                     <td> </td>
                 </tr>
                 <tr>
-                    <td colspan="3"><button type="submit">Link</button></td>
+                    <td colspan="3"><input type="submit" value="Link"></td>
                 </tr>
             </table>
         </form>
@@ -76,14 +76,13 @@
                 <td>
                     <table id="displayData" border="1">
                         <tr>
-                            <td class="centered-text" colspan="2">
+                            <th class="centered-text" colspan="2">
                                 <h2>BIB to RFID</h2>
-                            </td>
+                            </th>
                         </tr>
                         <tr>
-                            <!-- Column headers -->
-                            <th onclick="sortTable(0)">Bib Number</th>
-                            <th onclick="sortTable(1)">RFID Tag</th>
+                            <th>Bib Number</th>
+                            <th>RFID Tag</th>
                         </tr>
                         <% demoData.forEach(function(row) { %>
                         <tr>
@@ -96,9 +95,9 @@
                 <td class="orphaned-bib-numbers-container">
                     <table id="orphanedBibNumbers" border="1">
                         <tr>
-                            <td class="centered-text">
+                            <th class="centered-text">
                                 <h2>Orphaned Bib Numbers</h2>
-                            </td>
+                            </th>
                         </tr>
                         <tr>
                             <th>Bib Number</th>
@@ -170,62 +169,6 @@
                         }
                     }
                 }
-            }
-        }
-    </script>
-    <script>
-        function sortTable(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("displayData");
-            switching = true;
-            dir = "asc"; // Set the sorting direction to ascending initially
-            // Remove the sorting class from all headers
-            var headers = table.getElementsByTagName("TH");
-            for (i = 0; i < headers.length; i++) {
-                headers[i].classList.remove("sort-asc", "sort-desc");
-            }
-
-            while (switching) {
-                switching = false;
-                rows = table.getElementsByTagName("TR");
-
-                // Loop through all table rows (except the first, which contains table headers)
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[n];
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-
-                    if (x && y) {
-                        if (dir == "asc") {
-                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        } else if (dir == "desc") {
-                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-            // Add the sorting class to the header that was clicked
-            if (dir === "asc") {
-                headers[n].classList.add("sort-asc");
-            } else {
-                headers[n].classList.add("sort-desc");
             }
         }
     </script>

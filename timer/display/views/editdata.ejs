@@ -22,11 +22,8 @@
         <form action="/update-demo-data" method="post">
             <table id="enterData">
                 <tr>
-                    <th colspan="3">
-                        <center>
+                    <th class="centered-text" colspan="3">
                             <h2>Edit Demographic Data</h2>
-                        </center>
-
                 </tr>
                 <tr>
                     <input type="hidden" name="uid" value="<%= rowData.uid %>">
@@ -131,7 +128,7 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td><input type="submit" value="Update"> <input type="button" value="Cancel" onclick="window.history.back();"></td>
+                    <td colspan="3"><input type="submit" value="Update Demographic Data"> <input type="button" class="cancelButton" value="Cancel" onclick="window.history.back();"></td>
                 </tr>
             </table>
         </form>

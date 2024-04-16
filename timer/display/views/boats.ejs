@@ -119,18 +119,27 @@
         </div>
         <!-- TODO fix the sort and add search-->
     <div id="mainContent">
-        <table>
+        <table id="Data" border="1">
             <tr>
-                <th class="centered-text" colspan="6">
-                        <h2>Unpaired Bib Numbers</h2>
+                <tr>
+                    <th class="centered-text" colspan="6">
+                            <h2>Unpaired Bib Numbers</h2>
+                    </th>
+                </tr>
+            </tr>
+            <tr>
+                <th colspan="6">
+                    <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
                 </th>
             </tr>
+        </table>
+        <table id="editData">
                 <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Unit Type</th>
-                    <th>Unit Number</th>
-                    <th>Bib Number</th>
+                    <th onclick="sortTable(0)">First Name</th>
+                    <th onclick="sortTable(1)">Last Name</th>
+                    <th onclick="sortTable(2)">Unit Type</th>
+                    <th onclick="sortTable(3)">Unit Number</th>
+                    <th onclick="sortTable(4)">Bib Number</th>
                     <th>Action</th>
                 </tr>
                 <% unpairedBibs.forEach(function(bib) { %>
@@ -145,7 +154,7 @@
                                 <input type="hidden" name="bibnumber" value="<%= bib.bibnumber %>">
                                 <input type="text" name="bibnumber1" placeholder="Enter partner bib number">
                                 <input type="text" name="bibnumber2" placeholder="Enter partner bib number">
-                                <button type="submit">Link</button>
+                                <input type="submit" value="Link Bibs to make a Boat">
                             </form>
                         </td>
                     </tr>
