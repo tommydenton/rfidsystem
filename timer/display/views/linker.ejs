@@ -7,8 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <title>Link RFID to BIBNumber</title>
+    <script src="/js/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    new Darkmode().showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
 </head>
-
 <body>
     <div id="topnav">
             <!-- Breadcrumb navigation -->
@@ -27,10 +33,6 @@
             <!-- Time -->
             <div id="timeDisplay">
                 Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
-            </div>
-            <!-- light/dark toggle link -->
-            <div class="theme-toggle">
-                <a href="#" onclick="toggleTheme(); return false;" class="toggle-theme-link">Toggle Dark/Light Mode</a>
             </div>
         </div>
                 <!-- TODO fix the sort and add search-->

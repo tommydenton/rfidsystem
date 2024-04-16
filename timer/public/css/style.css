@@ -1,5 +1,6 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #fff;
 }
 
 table {
@@ -173,53 +174,6 @@ input[type=button]:hover {
 
 #breadcrumbNav li span {
     margin-right: 5px;
-}
-
-body.dark-mode {
-    background-color: #333;
-    color: #fff;
-}
-
-body.dark-mode table, body.dark-mode td, body.dark-mode th {
-    border-color: #777;
-}
-
-body.dark-mode th {
-    background-color: #555;
-}
-
-body.dark-mode input[type=submit] {
-    background-color: #666;
-    color: #fff;
-}
-
-body.dark-mode input[type=button] {
-    background-color: #640202;
-    color: #fff;
-}
-
-body.dark-mode a {
-    color: #c792ea;
-}
-
-body.dark-mode a:visited {
-    color: #ae81ff;
-}
-
-body.dark-mode a:hover {
-    color: #ff79c6;
-}
-
-body.dark-mode #topnav {
-    background-color: #333;
-}
-
-body.dark-mode .edit-button {
-    background-color: #666;
-}
-
-body.dark-mode .edit-button:hover {
-    background-color: #777;
 }
 
 breadcrumbNav ol, #breadcrumbNav li {

@@ -126,7 +126,7 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g uuid@latest express axios moment serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io
+sudo npm install -g uuid@latest express axios moment serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io  darkmode-js
 ```
 ```zsh
 create the node project
@@ -240,13 +240,15 @@ Environment:
 > psql -v
 psql (15.6 (Debian 15.6-0+deb12u1))
 > npm list
-  timer@ /var/www/html/timer
+timer@ /var/www/html/timer
 ├── axios@1.6.8
 ├── body-parser@1.20.2
+├── darkmode-js@1.5.7
 ├── debug@4.3.4
 ├── ejs@3.1.9
 ├── express@4.19.2
 ├── gg@0.1.3
+├── moment@2.30.1
 ├── ntp-client@0.5.3
 ├── ntp-time@2.0.4
 ├── ntp@0.0.5
@@ -258,29 +260,30 @@ psql (15.6 (Debian 15.6-0+deb12u1))
 └── uuid@9.0.1
 
 > tree
-── configfiles
+├──configfiles
 │   ├── nginx.conf
 │   └── tree.txt
-├── display
-│   ├── server.js
-│   ├── stamper.js
-│   └── views
-│       ├── dataentry.ejs
-│       ├── editdata.ejs
+├──display
+│   ├──server.js
+│   ├──stamper.js
+│   └──views
+│       ├──boats.ejs
+│       ├──dataentry.ejs
+│       ├──editboats.ejs
+│       ├──editdata.ejs
 │       ├── index.ejs
-│       ├── linker.ejs
-│       ├── rfidlink.ejs
-│       └── time.ejs
-├── index.html
-├── ntpapi
-│   └── ntpapi.mjs
-├── public
-│   ├── css
-│   │   └── style.css
-│   └── js
-│       └── rfid-scanner.js
-└── stamp
-    └── stamper.py
+│       └──linker.ejs
+├──index.html
+├──ntpapi
+│   └──ntpapi.mjs
+├──public
+│   ├──css
+│   │   └──style.css
+│   └──js
+└──stamp
+    └──stamper.py
+
+9 directories, 15 files
 
 > \d+ DEMODATA
                                                                  Table "public.demodata"
