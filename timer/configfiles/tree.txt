@@ -1,26 +1,27 @@
-[01;34m.[0m
-├── [01;34mconfigfiles[0m
+.
+├── configfiles
 │   ├── nginx.conf
 │   └── tree.txt
-├── [01;34mdisplay[0m
-│   ├── [01;32mserver.js[0m
-│   ├── [01;32mstamper.js[0m
-│   └── [01;34mviews[0m
-│       ├── [01;32mboats.ejs[0m
-│       ├── [01;32mdataentry.ejs[0m
-│       ├── [01;32meditboats.ejs[0m
-│       ├── [01;32meditdata.ejs[0m
+├── display
+│   ├── server.js
+│   ├── stamper.js
+│   └── views
+│       ├── boats.ejs
+│       ├── dataentry.ejs
+│       ├── deletelink.ejs
+│       ├── editboats.ejs
+│       ├── editdata.ejs
 │       ├── index.ejs
-│       └── [01;32mlinker.ejs[0m
-├── [01;32mindex.html[0m
-├── [01;34mntpapi[0m
-│   └── [01;32mntpapi.mjs[0m
-├── [01;34mpublic[0m
-│   ├── [01;34mcss[0m
-│   │   └── [01;32mstyle.css[0m
-│   └── [01;34mjs[0m
-│       └── [01;32mdarkmode-js.min.js[0m
-└── [01;34mstamp[0m
-    └── [01;32mstamper.py[0m
+│       └── linker.ejs
+├── index.html
+├── ntpapi
+│   └── ntpapi.mjs
+├── public
+│   ├── css
+│   │   └── style.css
+│   └── js
+│       └── darkmode-js.min.js
+└── stamp
+    └── stamper.py
 
-9 directories, 15 files
+9 directories, 16 files

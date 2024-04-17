@@ -4,7 +4,9 @@ const axios = require('axios');
 const path = require('path');
 const WebSocket = require('ws');
 const moment = require('moment');
-const wss = new WebSocket.Server({ noServer: true });
+const wss = new WebSocket.Server({
+    noServer: true
+});
 const rfidEmitter = require('./stamper.js');
 const {
     Pool
@@ -38,12 +40,15 @@ app.use((req, res, next) => {
             href: '/link-rfid'
         },
         {
+            text: 'Delete RFID Link',
+            href: '/delete-rfid-link'
+        },
+        {
             text: 'Boat Linker',
             href: '/boats'
         },
-        // Add or remove breadcrumb items as needed
-    ];
-    next();
+    // Add or remove breadcrumb items as needed
+]; next();
 });
 
 // Set the view engine to EJS and the views directory
@@ -198,7 +203,9 @@ rfidEmitter.on('tagScanned', (rfidTag) => {
     // Broadcast the RFID tag to all connected clients
     wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ rfidTag: rfidTag }));
+            client.send(JSON.stringify({
+                rfidTag: rfidTag
+            }));
         }
     });
 });
@@ -221,7 +228,7 @@ app.get('/link-rfid', async (req, res) => {
         const scannedRFIDTag = app.locals.scannedRFIDTag || '';
         res.render('linker', {
             demoData: linkerResult.rows,
-            orphanedBibNumbers: orphanedBibNumbersResult.rows, // Pass the orphaned BIBNUMBERs to the template
+            orphanedBibNumbers: orphanedBibNumbersResult.rows,
             scannedRFIDTag: scannedRFIDTag
         });
     } catch (error) {
@@ -232,7 +239,10 @@ app.get('/link-rfid', async (req, res) => {
 
 // Route for linking RFID tag to bibnumber
 app.post('/link-rfid', async (req, res) => {
-    const { bibnumber, rfidtag } = req.body;
+    const {
+        bibnumber,
+        rfidtag
+    } = req.body;
     try {
         // Insert or update the LINKER table with the new RFID tag and bibnumber link
         await pool.query(`
@@ -245,6 +255,39 @@ app.post('/link-rfid', async (req, res) => {
     } catch (error) {
         console.error('Error linking RFID tag:', error);
         res.status(500).send('Error linking RFID tag');
+    }
+});
+
+// Define the route for rendering the deletelink.ejs view
+app.get('/delete-rfid-link', async (req, res) => {
+    try {
+        // Fetch necessary data from your database if needed
+        // For example, let's say you want to display all RFID links in the deletelink.ejs page
+        const result = await pool.query('SELECT * FROM LINKER'); // Adjust the query according to your database schema
+
+        // Render the deletelink.ejs file and pass the fetched data to it
+        res.render('deletelink', {
+            demoData: result.rows // Assuming 'demoData' will be used in your deletelink.ejs to display the data
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Error fetching data');
+    }
+});
+
+// Route for deleting RFID link
+app.post('/delete-rfid-link', async (req, res) => {
+    const {
+        bibnumber
+    } = req.body;
+    try {
+
+        await pool.query('DELETE FROM LINKER WHERE bibnumber = $1', [bibnumber]);
+
+        res.redirect('/delete-rfid-link');
+    } catch (error) {
+        console.error('Error deleting RFID link:', error);
+        res.status(500).send('Error deleting RFID link');
     }
 });
 
@@ -279,7 +322,10 @@ app.get('/boats', async (req, res) => {
 
 // Route for creating a boatnumber out of two bibnumber
 app.post('/boats', async (req, res) => {
-    const { bibnumber1, bibnumber2 } = req.body; // Extract the two bib numbers from the request body
+    const {
+        bibnumber1,
+        bibnumber2
+    } = req.body; // Extract the two bib numbers from the request body
 
     // Check if bibnumber1 and bibnumber2 are not the same and not already paired
     if (bibnumber1 === bibnumber2) {
@@ -317,7 +363,9 @@ app.post('/boats', async (req, res) => {
 
 // Route for displaying the edit form
 app.get('/editboats', async (req, res) => {
-    const { boatnumber } = req.query; // Assuming you pass the boat number as a query parameter
+    const {
+        boatnumber
+    } = req.query; // Assuming you pass the boat number as a query parameter
 
     try {
         const result = await pool.query('SELECT bibnumber1, bibnumber2 FROM BOATS WHERE boatnumber = $1', [boatnumber]);
@@ -339,7 +387,11 @@ app.get('/editboats', async (req, res) => {
 
 // Route for updating bib numbers in the database
 app.post('/update-boat-data', async (req, res) => {
-    const { boatnumber, bibnumber1, bibnumber2 } = req.body;
+    const {
+        boatnumber,
+        bibnumber1,
+        bibnumber2
+    } = req.body;
 
     try {
         await pool.query(
