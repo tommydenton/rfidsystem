@@ -126,7 +126,7 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g uuid@latest express axios moment serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io  darkmode-js
+sudo npm install -g multer uuid@latest express axios moment serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io  darkmode-js
 ```
 ```zsh
 create the node project
@@ -202,28 +202,7 @@ ALTER USER postgres WITH PASSWORD 'new_password';
 CREATE DATABASE rfid_system;
 exit
 psql -U postgres -d rfid_system
-CREATE TABLE DEMODATA (
-    uid SERIAL PRIMARY KEY,
-    fname VARCHAR(255),
-    lname VARCHAR(255),
-    gender VARCHAR(255),
-    age VARCHAR(255),
-    council VARCHAR(255),
-    district VARCHAR(255),
-    unittype VARCHAR(255),
-    unitnumber INT,
-    race VARCHAR(255),
-    boat VARCHAR(255),
-    bibnumber INT UNIQUE
-);
-COMMIT;
-
-CREATE TABLE LINKER (
-    uid SERIAL PRIMARY KEY,
-    bibnumber INT UNIQUE,
-    rfidtag VARCHAR(255) UNIQUE
-);
-COMMIT;
+CREATE THE TABLES
 
 
 Environment:
@@ -247,8 +226,10 @@ timer@ /var/www/html/timer
 ├── debug@4.3.4
 ├── ejs@3.1.9
 ├── express@4.19.2
+├── fs@0.0.1-security
 ├── gg@0.1.3
 ├── moment@2.30.1
+├── multer@1.4.5-lts.1
 ├── ntp-client@0.5.3
 ├── ntp-time@2.0.4
 ├── ntp@0.0.5
@@ -260,30 +241,31 @@ timer@ /var/www/html/timer
 └── uuid@9.0.1
 
 > tree
-├──configfiles
+├├── configfiles
 │   ├── nginx.conf
 │   └── tree.txt
-├──display
-│   ├──server.js
-│   ├──stamper.js
-│   └──views
-│       ├──boats.ejs
-│       ├──dataentry.ejs
-│       ├──editboats.ejs
-│       ├──editdata.ejs
+├── display
+│   ├── server.js
+│   ├── stamper.js
+│   └── views
+│       ├── boats.ejs
+│       ├── dataentry.ejs
+│       ├── deletelink.ejs
+│       ├── editboats.ejs
+│       ├── editdata.ejs
 │       ├── index.ejs
-│       └──linker.ejs
-├──index.html
-├──ntpapi
-│   └──ntpapi.mjs
-├──public
-│   ├──css
-│   │   └──style.css
-│   └──js
-└──stamp
-    └──stamper.py
+│       └── linker.ejs
+├── index.html
+├── ntpapi
+│   └── ntpapi.mjs
+├── public
+│   ├── css
+│   │   └── style.css
+│   └── js
+│       └── darkmode-js.min.js
+├── stamp
+    └── stamper.py
 
-9 directories, 15 files
 
 > \d+ DEMODATA
                                                                  Table "public.demodata"
@@ -330,4 +312,18 @@ Access method: heap
 Indexes:
     "boats_pkey" PRIMARY KEY, btree (uid)
     "unique_bibnumber_pair" UNIQUE CONSTRAINT, btree (bibnumber1, bibnumber2)
+Access method: heap
+
+ \d+ TIMERESULTS
+                                                                  Table "public.timeresults"
+    Column    |          Type          | Collation | Nullable |                 Default                 | Storage  | Compression | Stats target | Description
+--------------+------------------------+-----------+----------+-----------------------------------------+----------+-------------+--------------+-------------
+ id           | integer                |           | not null | nextval('timeresults_id_seq'::regclass) | plain    |             |              |
+ tag_type     | character varying(255) |           |          |                                         | extended |             |              |
+ tag_id       | character varying(255) |           |          |                                         | extended |             |              |
+ tag_position | character varying(255) |           |          |                                         | extended |             |              |
+ timestamp    | double precision       |           |          |                                         | plain    |             |              |
+ timestamp_h  | character varying(255) |           |          |                                         | extended |             |              |
+Indexes:
+    "timeresults_pkey" PRIMARY KEY, btree (id)
 Access method: heap
