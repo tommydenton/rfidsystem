@@ -3,12 +3,12 @@ import binascii
 import time
 import json
 import os
-from datetime import datetime  # Import the datetime class from the datetime module
+from datetime import datetime
 
-# Configure the serial port based on your RFID reader's configuration
+# Configuration
 SERIAL_PORT = '/dev/ttyUSB0'
 BAUD_RATE = 57600
-DWELL_TIME = 1  # Dwell time in seconds, configurable
+DWELL_TIME = 2  # Dwell time in seconds, configurable
 OUTPUT_DIR = '/home/pi/'  # Configurable output directory
 OUTPUT_FILE = 'rfid_output.json'  # Configurable output file name
 
@@ -19,31 +19,38 @@ def setup_serial_connection(port, baud_rate):
         print(f"Failed to establish serial connection: {e}")
         return None
 
+def parse_tag_data(hex_data):
+    tags = []
+    for i in range(0, len(hex_data), 38):
+        chunk = hex_data[i:i+38]
+        if len(chunk) == 38:
+            tags.append(chunk)
+    return tags
+
 def read_rfid_tag(ser, last_seen_tags):
     try:
-        data = ser.read(100)  # Adjust the byte size as needed
+        data = ser.read(100)
         if data:
             hex_data = binascii.hexlify(data).decode('ascii').upper()
-            # Extract the tag type, ID, and position from the hex_data
-            tag_type = hex_data[:14]  # First 14 characters are the tag type
-            tag_id = hex_data[14:-4]  # The actual ID of the tag
-            tag_position = hex_data[-4:]  # Last 4 characters are the position
-            timestamp = time.time()
-            formatted_data = {
-                "tag_type": tag_type,
-                "tag_id": tag_id,
-                "tag_position": tag_position,
-                "timestamp": timestamp,
-                "timestamp_h": datetime.fromtimestamp(timestamp).strftime('%m-%d-%Y|%H:%M:%S:%f')[:-3]
-            }
-            
-            current_time = time.time()
-            # Check if the tag has been seen recently
-            if tag_id not in last_seen_tags or (current_time - last_seen_tags[tag_id] > DWELL_TIME):
-                last_seen_tags[tag_id] = current_time
-                return formatted_data
-            else:
-                return None
+            tags = parse_tag_data(hex_data)
+            valid_tags = []
+            for tag in tags:
+                tag_type = tag[:14]
+                tag_id = tag[14:-4]
+                tag_position = tag[-4:]
+                timestamp = time.time()
+                formatted_data = {
+                    "tag_type": tag_type,
+                    "tag_id": tag_id,
+                    "tag_position": tag_position,
+                    "timestamp": timestamp,
+                    "timestamp_h": datetime.fromtimestamp(timestamp).strftime('%m-%d-%Y|%H:%M:%S:%f')[:-3]
+                }
+                current_time = time.time()
+                if tag_id not in last_seen_tags or (current_time - last_seen_tags[tag_id] > DWELL_TIME):
+                    last_seen_tags[tag_id] = current_time
+                    valid_tags.append(formatted_data)
+            return valid_tags
         else:
             return None
     except Exception as e:
@@ -53,23 +60,23 @@ def read_rfid_tag(ser, last_seen_tags):
 def write_to_json(data, directory, filename):
     if data:
         filepath = os.path.join(directory, filename)
-        with open(filepath, 'a') as f:
-            json.dump(data, f, indent=4)
-            f.write('\n')  # Add newline for readability in the JSON file
+        with open(filepath, 'a') as f:  # Change to 'w' to overwrite each time
+            json.dump(data, f, indent=4)  # Use json.dump to write the entire list
 
 if __name__ == "__main__":
-    print("Starting RFID reader...")
+    print("Starting RFID reader...GTD")
     ser = setup_serial_connection(SERIAL_PORT, BAUD_RATE)
-    last_seen_tags = {}  # Dictionary to store the last seen time for each tag
+    last_seen_tags = {}
     
     if ser is not None:
         try:
             while True:
                 formatted_tag_data = read_rfid_tag(ser, last_seen_tags)
                 if formatted_tag_data:
-                    print(f"RFID Tag Data: {formatted_tag_data}")
-                    write_to_json(formatted_tag_data, OUTPUT_DIR, OUTPUT_FILE)
-                time.sleep(0.1)  # Adjust the sleep time as needed
+                    for tag_data in formatted_tag_data:
+                        print(f"RFID Tag Data: {tag_data}")
+                        write_to_json(tag_data, OUTPUT_DIR, OUTPUT_FILE)
+                time.sleep(0.1)
         except KeyboardInterrupt:
             print("Stopping RFID reader...")
         finally:
