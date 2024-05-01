@@ -14,10 +14,90 @@
   }
   window.addEventListener('load', addDarkmodeWidget);
 </script>
+<script>
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("displayData");
+        switching = true;
+        dir = "asc"; // Set the sorting direction to ascending initially
+        // Remove the sorting class from all headers
+        var headers = table.getElementsByTagName("TH");
+        for (i = 0; i < headers.length; i++) {
+            headers[i].classList.remove("sort-asc", "sort-desc");
+        }
+
+        while (switching) {
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+
+            // Loop through all table rows (except the first, which contains table headers)
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                if (x && y) {
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+        // Add the sorting class to the header that was clicked
+        if (dir === "asc") {
+            headers[n].classList.add("sort-asc");
+        } else {
+            headers[n].classList.add("sort-desc");
+        }
+    }
+</script>
+<script>
+    function searchTable() {
+        // Declare variables
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("displayData");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
+            tr[i].style.display = "none"; // Hide the row initially
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) { // Loop through all cells in the row
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = ""; // Show the row if the query matches any cell
+                        break; // Stop searching through cells once a match is found
+                    }
+                }
+            }
+        }
+    }
+</script>
 </head>
 <body>
     <div id="topnav">
-            <!-- Breadcrumb navigation -->
             <nav id="breadcrumbNav" aria-label="Breadcrumb">
                 <ol>
                     <% breadcrumbPath.forEach(function(crumb, index) { %>
@@ -35,10 +115,9 @@
                 Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
             </div>
         </div>
-                <!-- TODO fix the sort and add search-->
     <div id="mainContent">
         <form id="rfid-link-form" action="/link-rfid" method="post">
-            <table id="enterData">
+            <table id="linkData">
                 <tr>
                     <th class="centered-text" colspan="3">
                         <h2>Link RFID Tag to Bib Number</h2>
@@ -59,11 +138,15 @@
                 </tr>
             </table>
         </form>
-        <table id="Data" border="1">
+        <table id="sortData" border="1">
             <tr>
                 <th class="centered-text" colspan="2">
                     <h2>Display BIB to RFID Tag</h2>
                 </th>
+            </tr>
+            <tr>
+                <th onclick="sortTable(0)">Bib Number</th>
+                <th onclick="sortTable(1)">RFID Tag</th>
             </tr>
             <tr>
                 <th colspan="2">
@@ -135,31 +218,6 @@
                 }
             };
         };
-    </script>
-    <script>
-        function searchTable() {
-            // Declare variables
-            var input, filter, table, tr, td, i, j, txtValue;
-            input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("displayData");
-            tr = table.getElementsByTagName("tr");
-
-            // Loop through all table rows, and hide those who don't match the search query
-            for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
-                tr[i].style.display = "none"; // Hide the row initially
-                td = tr[i].getElementsByTagName("td");
-                for (j = 0; j < td.length; j++) { // Loop through all cells in the row
-                    if (td[j]) {
-                        txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = ""; // Show the row if the query matches any cell
-                            break; // Stop searching through cells once a match is found
-                        }
-                    }
-                }
-            }
-        }
     </script>
 </body>
 
