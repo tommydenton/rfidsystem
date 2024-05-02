@@ -17,7 +17,7 @@
 <script>
     function sortTable(n) {
         var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-        table = document.getElementById("displayData");
+        table = document.getElementById("editData");
         switching = true;
         dir = "asc"; // Set the sorting direction to ascending initially
         // Remove the sorting class from all headers
@@ -145,10 +145,6 @@
                 </th>
             </tr>
             <tr>
-                <th onclick="sortTable(0)">Bib Number</th>
-                <th onclick="sortTable(1)">RFID Tag</th>
-            </tr>
-            <tr>
                 <th colspan="2">
                     <input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search for names..">
                 </th>
@@ -157,15 +153,15 @@
         <table>
             <tr>
                 <td>
-                    <table id="displayData" border="1">
+                    <table id="editData" border="1">
                         <tr>
                             <th class="centered-text" colspan="2">
                                 <h2>BIB to RFID</h2>
                             </th>
                         </tr>
                         <tr>
-                            <th>Bib Number</th>
-                            <th>RFID Tag</th>
+                            <th onclick="sortTable(1)">Bib Number</th>
+                            <th onclick="sortTable(2)">RFID Tag</th>
                         </tr>
                         <% demoData.forEach(function(row) { %>
                         <tr>
@@ -197,18 +193,14 @@
     </div>
 
     <script>
-        // Function to update the RFID tag input field
         function updateRFIDTag(tagValue) {
             const rfidTagInput = document.getElementById('rfidtag');
             rfidTagInput.value = tagValue;
         }
-
-        // Combined window.onload function
         window.onload = () => {
-            // Establish WebSocket connection
             const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
             const host = window.location.hostname;
-            const port = ':3000'; // Specify the port if it's not the default port
+            const port = ':3000';
             const ws = new WebSocket(protocol + host + port);
 
             ws.onmessage = function(event) {
