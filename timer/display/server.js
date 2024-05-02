@@ -11,6 +11,8 @@ const rfidEmitter = require('./stamper.js');
 const {
     Pool
 } = require('pg');
+const multer = require('multer');
+
 
 // Initialize the Express application
 const app = express();
@@ -46,6 +48,10 @@ app.use((req, res, next) => {
         {
             text: 'Boat Linker',
             href: '/boats'
+        },
+        {
+            text: 'Import Data',
+            href: '/importdata'
         },
     // Add or remove breadcrumb items as needed
 ]; next();
@@ -404,6 +410,25 @@ app.post('/update-boat-data', async (req, res) => {
         res.status(500).send('Error updating bib numbers');
     }
 });
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, '/var/www/html/timer/uploads');
+    },
+    filename: function(req, file, cb) {
+      cb(null, file.originalname);
+    }
+  });
+  
+  const upload = multer({ storage: storage });
+
+  app.get('/importdata', (req, res) => {
+    res.render('importdata');
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.redirect('/importdata');
+  });
 
 // Start the server
 const server = app.listen(PORT, () => {

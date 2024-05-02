@@ -1,0 +1,46 @@
+<!-- import.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>Welcome</title>
+    <script src="/js/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    new Darkmode().showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+</head>
+<body>
+    <div id="topnav">
+            <nav id="breadcrumbNav" aria-label="Breadcrumb">
+                <ol>
+                    <% breadcrumbPath.forEach(function(crumb, index) { %>
+                    <li>
+                        <a href="<%= crumb.href %>"><%= crumb.text %></a>
+                        <% if (index < breadcrumbPath.length - 1) { %>
+                        <span> | </span>
+                        <% } %>
+                    </li>
+                    <% }); %>
+                </ol>
+            </nav>
+            <!-- Time -->
+            <div id="timeDisplay">
+                Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
+            </div>
+        </div>
+    <div id="mainContent">
+        Import Data
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="submit" value="Upload">
+        </form>
+    </div>
+</body>
+
+</html>
