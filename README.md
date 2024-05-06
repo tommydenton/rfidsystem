@@ -126,7 +126,8 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g multer uuid@latest express axios moment serialport pm2 gg pg ntp ntp-client ejs ntp-time body-parser socket.io-client socket.io  darkmode-js
+sudo npm install -g axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid
+sudo npm install axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid --save
 ```
 ```zsh
 create the node project
@@ -219,29 +220,34 @@ Environment:
 > psql -v
 psql (15.6 (Debian 15.6-0+deb12u1))
 > npm list
-timer@ /var/www/html/timer
 ├── axios@1.6.8
 ├── body-parser@1.20.2
+├── compression@1.7.4
 ├── darkmode-js@1.5.7
 ├── debug@4.3.4
-├── ejs@3.1.9
+├── ejs@3.1.10
+├── eslint@9.1.1
+├── express-async-errors@3.1.1
 ├── express@4.19.2
 ├── fs@0.0.1-security
 ├── gg@0.1.3
+├── helmet@7.1.0
 ├── moment@2.30.1
+├── morgan@1.10.0
 ├── multer@1.4.5-lts.1
 ├── ntp-client@0.5.3
 ├── ntp-time@2.0.4
 ├── ntp@0.0.5
 ├── pg@8.11.5
 ├── pm2@5.3.1
+├── save@2.9.0
 ├── serialport@12.0.0
 ├── socket.io-client@4.7.5
 ├── socket.io@4.7.5
 └── uuid@9.0.1
 
 > tree
-├├── configfiles
+├── configfiles
 │   ├── nginx.conf
 │   └── tree.txt
 ├── display
@@ -253,19 +259,23 @@ timer@ /var/www/html/timer
 │       ├── deletelink.ejs
 │       ├── editboats.ejs
 │       ├── editdata.ejs
+│       ├── importdata.ejs
 │       ├── index.ejs
-│       └── linker.ejs
+│       ├── linker.ejs
+│       └── rfidlink.ejs
 ├── index.html
 ├── ntpapi
 │   └── ntpapi.mjs
+├── package.json
+├── package-lock.json
 ├── public
 │   ├── css
 │   │   └── style.css
 │   └── js
 │       └── darkmode-js.min.js
 ├── stamp
-    └── stamper.py
-
+│   └── stamper.py
+└── uploads
 
 > \d+ DEMODATA
                                                                  Table "public.demodata"

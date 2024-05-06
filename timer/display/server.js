@@ -1,5 +1,6 @@
 // server.js
 const express = require('express');
+const morgan = require('morgan');
 const axios = require('axios');
 const path = require('path');
 const WebSocket = require('ws');
@@ -12,7 +13,17 @@ const {
     Pool
 } = require('pg');
 const multer = require('multer');
-
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, '/var/www/html/timer/uploads');
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+const upload = multer({
+    storage: storage
+});
 
 // Initialize the Express application
 const app = express();
@@ -26,6 +37,56 @@ const pool = new Pool({
     password: 'r0ckkrush3r',
     port: 5432,
 });
+
+// Set the view engine to EJS and the views directory
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Set the time backend for each view
+app.locals.moment = moment;
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Parse URL-encoded bodies (as sent by HTML forms)
+app.use(express.urlencoded({
+    extended: true
+}));
+
+// Async/Await Error Handling
+require('express-async-errors');
+
+// Logging with Morgan Middleware
+app.use(morgan('tiny', {
+    skip: function (req, res) { return res.statusCode < 400 }
+  }));
+
+// Compression Middleware
+const compression = require('compression');
+app.use(compression());
+
+// Define the fetchTimeData middleware
+async function fetchTimeData(req, res, next) {
+    try {
+        const response = await axios.get('http://localhost:3001/time');
+        const cloudTime = response.data.ntpTime;
+        const localTime = new Date().toISOString();
+        res.locals.timeData = {
+            cloudTime,
+            localTime
+        };
+    } catch (error) {
+        console.error('Error fetching time data:', error);
+        res.locals.timeData = {
+            cloudTime: 'Unavailable',
+            localTime: 'Unavailable'
+        };
+    }
+    next();
+}
+
+// Time for all pages
+app.use(fetchTimeData);
 
 // Breadcrumb middleware
 app.use((req, res, next) => {
@@ -53,70 +114,42 @@ app.use((req, res, next) => {
             text: 'Import Data',
             href: '/importdata'
         },
-    // Add or remove breadcrumb items as needed
-]; next();
+        // Add or remove breadcrumb items as needed
+    ];
+    next();
 });
 
-// Set the view engine to EJS and the views directory
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Set the time backend for each view
-app.locals.moment = moment;
-
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({
-    extended: true
-}));
-
-// Define the fetchTimeData middleware
-async function fetchTimeData(req, res, next) {
-    try {
-        const response = await axios.get('http://localhost:3001/time');
-        const cloudTime = response.data.ntpTime;
-        const localTime = new Date().toISOString();
-        res.locals.timeData = {
-            cloudTime,
-            localTime
-        };
-    } catch (error) {
-        console.error('Error fetching time data:', error);
-        res.locals.timeData = {
-            cloudTime: 'Unavailable',
-            localTime: 'Unavailable'
-        };
+class AppError extends Error {
+    constructor(statusCode, message) {
+        super();
+        this.statusCode = statusCode;
+        this.message = message;
     }
-    next();
 }
 
-// Time for all pages
-app.use(fetchTimeData);
-
 // Route for the homepage
-app.get('/display', (req, res) => {
-    res.render('index');
+app.get('/display', (req, res, next) => {
+    try {
+        res.render('index');
+    } catch (error) {
+        next(new AppError(500, 'Error fetching data - get - dataentry'));
+    }
 });
 
 // Route for the data entry form
-app.get('/dataentry', async (req, res) => {
+app.get('/dataentry', async (req, res, next) => {
     try {
         const result = await pool.query('SELECT * FROM DEMODATA');
         res.render('dataentry', {
             demoData: result.rows
         });
     } catch (error) {
-        console.error('Error fetching data:', error);
-        res.render('dataentry', {
-            demoData: []
-        });
+        next(new AppError(500, 'Error fetching data - get - dataentry'));
     }
 });
 
 // Route for inserting data into the database
-app.post('/insert-demo-data', async (req, res) => {
+app.post('/insert-demo-data', async (req, res, next) => {
     const {
         fname,
         lname,
@@ -148,13 +181,12 @@ app.post('/insert-demo-data', async (req, res) => {
         );
         res.redirect('/dataentry');
     } catch (error) {
-        console.error('Error inserting data:', error);
-        res.status(500).send('Error inserting data');
+        next(new AppError(500, 'Error inserting data - post - insert-demo-data'));
     }
 });
 
 // Route for displaying the edit form
-app.get('/editdata', async (req, res) => {
+app.get('/editdata', async (req, res, next) => {
     const {
         uid
     } = req.query; // Get the UID from the query parameter
@@ -170,13 +202,12 @@ app.get('/editdata', async (req, res) => {
             res.send('Row not found');
         }
     } catch (error) {
-        console.error('Error fetching row:', error);
-        res.status(500).send('Error fetching row');
+        next(new AppError(500, 'Error editing data - get - editdata'));
     }
 });
 
 // Route for updating data in the database
-app.post('/update-demo-data', async (req, res) => {
+app.post('/update-demo-data', async (req, res, next) => {
     const {
         uid,
         fname,
@@ -199,8 +230,7 @@ app.post('/update-demo-data', async (req, res) => {
         );
         res.redirect('/dataentry');
     } catch (error) {
-        console.error('Error updating data:', error);
-        res.status(500).send('Error updating data');
+        next(new AppError(500, 'Error updating data - post - update-demo-data'));
     }
 });
 
@@ -217,7 +247,7 @@ rfidEmitter.on('tagScanned', (rfidTag) => {
 });
 
 
-app.get('/link-rfid', async (req, res) => {
+app.get('/link-rfid', async (req, res, next) => {
     try {
         const linkerResult = await pool.query(`
             SELECT bibnumber AS linkerbibnumber, rfidtag
@@ -238,13 +268,12 @@ app.get('/link-rfid', async (req, res) => {
             scannedRFIDTag: scannedRFIDTag
         });
     } catch (error) {
-        console.error('Error fetching data from LINKER table:', error);
-        res.send('Error fetching data from LINKER table');
+        next(new AppError(500, 'Error linking data - get - link-rfid'));
     }
 });
 
 // Route for linking RFID tag to bibnumber
-app.post('/link-rfid', async (req, res) => {
+app.post('/link-rfid', async (req, res, next) => {
     const {
         bibnumber,
         rfidtag
@@ -259,13 +288,12 @@ app.post('/link-rfid', async (req, res) => {
         `, [bibnumber, rfidtag]);
         res.redirect('/link-rfid');
     } catch (error) {
-        console.error('Error linking RFID tag:', error);
-        res.status(500).send('Error linking RFID tag');
+        next(new AppError(500, 'Error linking data - post - link-rfid'));
     }
 });
 
 // Define the route for rendering the deletelink.ejs view
-app.get('/delete-rfid-link', async (req, res) => {
+app.get('/delete-rfid-link', async (req, res, next) => {
     try {
         // Fetch necessary data from your database if needed
         // For example, let's say you want to display all RFID links in the deletelink.ejs page
@@ -276,13 +304,12 @@ app.get('/delete-rfid-link', async (req, res) => {
             demoData: result.rows // Assuming 'demoData' will be used in your deletelink.ejs to display the data
         });
     } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).send('Error fetching data');
+        next(new AppError(500, 'Error fetching data - get - delete-rfid-link'));
     }
 });
 
 // Route for deleting RFID link
-app.post('/delete-rfid-link', async (req, res) => {
+app.post('/delete-rfid-link', async (req, res, next) => {
     const {
         bibnumber
     } = req.body;
@@ -292,13 +319,12 @@ app.post('/delete-rfid-link', async (req, res) => {
 
         res.redirect('/delete-rfid-link');
     } catch (error) {
-        console.error('Error deleting RFID link:', error);
-        res.status(500).send('Error deleting RFID link');
+        next(new AppError(500, 'Error deleting RFID link - post - delete-rfid-link'));
     }
 });
 
 // Route for displaying unpaired bibnumber
-app.get('/boats', async (req, res) => {
+app.get('/boats', async (req, res, next) => {
     try {
         // Fetch all bib numbers that are not yet paired
         const unpairedBibsResult = await pool.query(`
@@ -320,18 +346,17 @@ app.get('/boats', async (req, res) => {
             boatBibs: boatBibsResult.rows // Pass the fetched boat bibs data to the template
         });
     } catch (error) {
-        console.error('Error fetching data:', error);
-        res.send('Error fetching data');
+        next(new AppError(500, 'Error fetching data - get - boats'));
     }
 });
 
 
 // Route for creating a boatnumber out of two bibnumber
-app.post('/boats', async (req, res) => {
+app.post('/boats', async (req, res, next) => {
     const {
         bibnumber1,
         bibnumber2
-    } = req.body; // Extract the two bib numbers from the request body
+    } = req.body;
 
     // Check if bibnumber1 and bibnumber2 are not the same and not already paired
     if (bibnumber1 === bibnumber2) {
@@ -358,20 +383,17 @@ app.post('/boats', async (req, res) => {
             [bibnumber1, bibnumber2, boatnumber]
         );
 
-        // Redirect back to the boats page or display a success message
-        res.redirect('/boats'); // Redirect back to the boats page or handle as needed
+        res.redirect('/boats');
     } catch (error) {
-        console.error('Error inserting data into BOATS table:', error);
-        res.status(500).send('Error inserting data into BOATS table');
+        next(new AppError(500, 'Error inserting data - post - boats'))
     }
-    console.log(`Attempting to pair bibnumber1: ${bibnumber1} with bibnumber2: ${bibnumber2}`);
 });
 
 // Route for displaying the edit form
-app.get('/editboats', async (req, res) => {
+app.get('/editboats', async (req, res, next) => {
     const {
         boatnumber
-    } = req.query; // Assuming you pass the boat number as a query parameter
+    } = req.query;
 
     try {
         const result = await pool.query('SELECT bibnumber1, bibnumber2 FROM BOATS WHERE boatnumber = $1', [boatnumber]);
@@ -386,13 +408,12 @@ app.get('/editboats', async (req, res) => {
             res.send('Boat not found');
         }
     } catch (error) {
-        console.error('Error fetching boat:', error);
-        res.status(500).send('Error fetching boat');
+        next(new AppError(500, 'Error editing data - get - editboats'))
     }
 });
 
 // Route for updating bib numbers in the database
-app.post('/update-boat-data', async (req, res) => {
+app.post('/update-boat-data', async (req, res, next) => {
     const {
         boatnumber,
         bibnumber1,
@@ -404,31 +425,34 @@ app.post('/update-boat-data', async (req, res) => {
             'UPDATE BOATS SET bibnumber1 = $1, bibnumber2 = $2 WHERE boatnumber = $3',
             [bibnumber1, bibnumber2, boatnumber]
         );
-        res.redirect('/boats'); // Redirect back to the boats page or another appropriate page
+        res.redirect('/boats');
     } catch (error) {
-        console.error('Error updating bib numbers:', error);
-        res.status(500).send('Error updating bib numbers');
+        next(new AppError(500, 'Error updating data - post - update-boat-data'));
     }
 });
 
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      cb(null, '/var/www/html/timer/uploads');
-    },
-    filename: function(req, file, cb) {
-      cb(null, file.originalname);
-    }
-  });
-  
-  const upload = multer({ storage: storage });
-
-  app.get('/importdata', (req, res) => {
+// Route for displaying the importdata form
+app.get('/importdata', (req, res) => {
     res.render('importdata');
 });
 
+// Route for uploading a file
 app.post('/upload', upload.single('file'), (req, res) => {
     res.redirect('/importdata');
-  });
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    if (err instanceof AppError) {
+        res.status(err.statusCode).send(err.message);
+    } else {
+        res.status(500).send('Something broke!');
+    }
+});
+
+// Helmet Middleware
+const helmet = require('helmet');
+app.use(helmet());
 
 // Start the server
 const server = app.listen(PORT, () => {
