@@ -22,7 +22,7 @@
             filter = input.value.toUpperCase();
             table = document.getElementById("editData");
             tr = table.getElementsByTagName("tr");
-    
+
             // Loop through all table rows, and hide those who don't match the search query
             for (i = 1; i < tr.length; i++) { // Start at 1 to skip the header row
                 tr[i].style.display = "none"; // Hide the row initially
@@ -64,7 +64,7 @@
         <form action="/upload" method="post" enctype="multipart/form-data">
             <table>
                 <tr>
-                    <th class="centered-text" colspan=2>Upload Data</th>
+                    <th class="centered-text" colspan=2><h2>Upload Data</h2></th>
                 </tr>
                 <tr>
                     <th class="dethsize">File Name:</th>
@@ -76,6 +76,23 @@
                 </tr>
             </table>
         </form>
+        <table id="filesOnDisk">
+            <tr>
+                <th class="centered-text" colspan=4><h2>Manipulate Data</h2></th>
+            </tr>
+            <tr>
+                <th class="dethsize">Filename:</th>
+                <th class="dethsize">Import:</th>
+                <th class="dethsize">Download:</th>
+                <th class="dethsize">Delete:</th>
+            </tr>
+            <tr>
+                <td class="detdsize">future listing of /var/www/html/timer/uploads</td>
+                <td class="detdsize">future import form</td>
+                <td class="detdsize">future download link</td>
+                <td class="detdsize">future delete link</td>
+            </tr>
+        </table>
     </div>
 </body>
 
