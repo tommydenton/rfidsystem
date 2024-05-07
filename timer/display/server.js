@@ -3,27 +3,18 @@ const express = require('express');
 const morgan = require('morgan');
 const axios = require('axios');
 const path = require('path');
-const WebSocket = require('ws');
 const moment = require('moment');
+const multer = require('multer');
+const WebSocket = require('ws');
 const wss = new WebSocket.Server({
     noServer: true
 });
+const fs = require('fs');
+const util = require('util');
+const readdir = util.promisify(fs.readdir);
 const rfidEmitter = require('./stamper.js');
-const {
-    Pool
-} = require('pg');
-const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, '/var/www/html/timer/uploads');
-    },
-    filename: function(req, file, cb) {
-        cb(null, file.originalname);
-    }
-});
-const upload = multer({
-    storage: storage
-});
+const {Pool} = require('pg');
+const uploadsDirectory = path.join(__dirname, '..', 'uploads');
 
 // Initialize the Express application
 const app = express();
@@ -58,12 +49,31 @@ require('express-async-errors');
 
 // Logging with Morgan Middleware
 app.use(morgan('tiny', {
-    skip: function (req, res) { return res.statusCode < 400 }
-  }));
+    skip: function(req, res) {
+        return res.statusCode < 400
+    }
+}));
 
 // Compression Middleware
 const compression = require('compression');
 app.use(compression());
+
+// Multer Middleware
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, uploadsDirectory)
+    },
+    filename: function(req, file, cb) {
+        const originalName = path.parse(file.originalname).name;
+        const extension = path.parse(file.originalname).ext;
+        const timestamp = Date.now();
+        cb(null, `${originalName}-${timestamp}${extension}`);
+    }
+});
+
+const upload = multer({
+    storage: storage
+});
 
 // Define the fetchTimeData middleware
 async function fetchTimeData(req, res, next) {
@@ -419,7 +429,6 @@ app.post('/update-boat-data', async (req, res, next) => {
         bibnumber1,
         bibnumber2
     } = req.body;
-
     try {
         await pool.query(
             'UPDATE BOATS SET bibnumber1 = $1, bibnumber2 = $2 WHERE boatnumber = $3',
@@ -432,15 +441,55 @@ app.post('/update-boat-data', async (req, res, next) => {
 });
 
 // Route for displaying the importdata form
-app.get('/importdata', (req, res) => {
-    res.render('importdata');
+app.get('/importdata', async (req, res, next) => {
+    try {
+        const files = await readdir(uploadsDirectory);
+        res.render('importdata', {
+            files: files
+        });
+    } catch (error) {
+        next(new AppError(500, 'Error fetching data - get - importdata'));
+    }
 });
 
 // Route for uploading a file
-app.post('/upload', upload.single('file'), (req, res) => {
-    res.redirect('/importdata');
+app.post('/upload', upload.single('file'), (req, res, next) => {
+    try {
+        res.redirect('/importdata');
+    } catch (error) {
+        next(new AppError(500, 'Error uploading file - post - upload'));
+    }
 });
 
+// Route for downloading a file
+app.get('/download/:filename', (req, res, next) => {
+    try {
+        const filename = req.params.filename;
+        const file = path.join(uploadsDirectory, filename);
+        res.download(file); // Set disposition and send it.
+    } catch (error) {
+        next(new AppError(500, 'Error downloading file - get - download'));
+    }
+});
+
+// Route for deleting a file
+app.post('/delete-file', (req, res, next) => {
+    try {
+        const filename = req.body.filename;
+        fs.unlink(path.join(uploadsDirectory, filename), err => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('An error occurred while deleting the file.');
+            } else {
+                res.redirect('/importdata');
+            }
+        });
+    } catch (error) {
+        next(new AppError(502, 'Error deleting file - post - delete-file'));
+    }
+});
+
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     if (err instanceof AppError) {

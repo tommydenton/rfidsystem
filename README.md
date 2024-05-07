@@ -126,8 +126,8 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid
-sudo npm install axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid --save
+sudo npm install -g axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid util
+sudo npm install axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid util --save
 ```
 ```zsh
 create the node project
@@ -244,6 +244,7 @@ psql (15.6 (Debian 15.6-0+deb12u1))
 ├── serialport@12.0.0
 ├── socket.io-client@4.7.5
 ├── socket.io@4.7.5
+├── util@0.12.5
 └── uuid@9.0.1
 
 > tree

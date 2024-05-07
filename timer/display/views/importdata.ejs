@@ -67,8 +67,8 @@
                     <th class="centered-text" colspan=2><h2>Upload Data</h2></th>
                 </tr>
                 <tr>
-                    <th class="dethsize">File Name:</th>
-                    <td class="detdsize"><input type="text" name="file" required></td>
+                    <th class="dethsize">File:</th>
+                    <td class="detdsize"><input type="file" name="file" required></td>
                 </tr>
                 <tr>
                     <th class="dethsize">Action:</th>
@@ -86,12 +86,17 @@
                 <th class="dethsize">Download:</th>
                 <th class="dethsize">Delete:</th>
             </tr>
+            <% files.forEach(function(file) { %>
             <tr>
-                <td class="detdsize">future listing of /var/www/html/timer/uploads</td>
+                <td class="detdsize"><%= file %></td>
                 <td class="detdsize">future import form</td>
-                <td class="detdsize">future download link</td>
-                <td class="detdsize">future delete link</td>
+                <td class="detdsize"><a href="/download/<%= file %>">Download</a></td>
+                <td class="detdsize">        <form action="/delete-file" method="post">
+                    <input type="hidden" name="filename" value="<%= file %>">
+                    <input type="submit" value="Delete">
+                </form></td>
             </tr>
+            <% }); %>
         </table>
     </div>
 </body>
