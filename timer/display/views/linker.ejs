@@ -112,7 +112,9 @@
             </nav>
             <!-- Time -->
             <div id="timeDisplay">
-                Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YYYY HH:mm:ss') %> | Device Time: <%= moment(timeData.localTime).format('MM/DD/YYYY HH:mm:ss') %>
+                Cloud Time: <%= moment(timeData.cloudTime).format('MM/DD/YY HH:mm') %> | 
+                Device Time: <%= moment(timeData.localTime).format('MM/DD/YY HH:mm') %> |
+                Epoch Time: <%= timeData.epochTime %>
             </div>
         </div>
     <div id="mainContent">

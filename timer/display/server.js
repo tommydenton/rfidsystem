@@ -80,16 +80,19 @@ async function fetchTimeData(req, res, next) {
     try {
         const response = await axios.get('http://localhost:3001/time');
         const cloudTime = response.data.ntpTime;
-        const localTime = new Date().toISOString();
+        const localTime = new Date();
+        const epochTime = Math.floor(localTime.getTime() / 1000);
         res.locals.timeData = {
             cloudTime,
-            localTime
+            localTime: localTime.toISOString(),
+            epochTime
         };
     } catch (error) {
         console.error('Error fetching time data:', error);
         res.locals.timeData = {
             cloudTime: 'Unavailable',
-            localTime: 'Unavailable'
+            localTime: 'Unavailable',
+            epochTime: 'Unavailable'
         };
     }
     next();
