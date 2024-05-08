@@ -37,8 +37,34 @@
             </div>
         </div>
     <div id="mainContent">
-        <h1>Welcome to Our Time Display and Data Entry App</h1>
-        Results coming soon
+        <table>
+            <tr>
+                <th class="centered-text" colspan="6">
+                    <h2>Welcome to Our Time Display and Data Entry App</h2>
+                </th>
+            </tr>
+                <tr>
+                    <th class="dethsize">ID</th>
+                    <th class="dethsize">Tag Type</th>
+                    <th class="dethsize">Tag ID</th>
+                    <th class="dethsize">Tag Position</th>
+                    <th class="dethsize">Timestamp</th>
+                    <th class="dethsize">Timestamp H</th>
+                </tr>
+
+
+                <% timeResults.forEach(function(result) { %>
+                    <tr>
+                        <td class="detdsize"><%= result.id %></td>
+                        <td class="detdsize"><%= result.tag_type %></td>
+                        <td class="detdsize"><%= result.tag_id %></td>
+                        <td class="detdsize"><%= result.tag_position %></td>
+                        <td class="detdsize"><%= result.timestamp %></td>
+                        <td class="detdsize"><%= result.timestamp_h %></td>
+                    </tr>
+                <% }); %>
+
+        </table>
     </div>
 </body>
 

@@ -158,11 +158,15 @@ class AppError extends Error {
 }
 
 // Route for the homepage
-app.get('/display', (req, res, next) => {
+// Route for the homepage
+app.get('/display', async (req, res, next) => {
     try {
-        res.render('index');
+        const result = await pool.query('SELECT * FROM TIMERESULTS');
+        res.render('index', {
+            timeResults: result.rows
+        });
     } catch (error) {
-        next(new AppError(500, 'Error fetching data - get - dataentry'));
+        next(new AppError(500, 'Error fetching data - get - display'));
     }
 });
 
