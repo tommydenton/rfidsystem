@@ -61,8 +61,20 @@ def read_rfid_tag(ser, last_seen_tags, port):
 def write_to_json(data, directory, filename):
     if data:
         filepath = os.path.join(directory, filename)
-        with open(filepath, 'a') as f:  # Change to 'w' to overwrite each time
-            json.dump(data, f, indent=4)  # Use json.dump to write the entire list
+        try:
+            # Read existing data
+            with open(filepath, 'r') as f:
+                existing_data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            # If file doesn't exist or is empty/invalid, start with an empty list
+            existing_data = []
+
+        # Append new data to existing data
+        existing_data.extend(data)
+
+        # Write combined data back to file
+        with open(filepath, 'w') as f:
+            json.dump(existing_data, f, indent=4)
 
 def monitor_rfid_reader(port):
     print(f"Starting RFID reader on {port}...")
