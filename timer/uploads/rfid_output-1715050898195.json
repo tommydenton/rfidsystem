@@ -43,25 +43,12 @@
     },
     {
         "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CBA5CCCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "C109",
-        "timestamp": 1713920295.2010307,
-        "timestamp_h": "04-23-2024|19:58:15:201"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
         "tag_id": "3400E200470BFEA06821E2B00115",
         "tag_position": "B812",
         "timestamp": 1713920296.3020012,
         "timestamp_h": "04-23-2024|19:58:16:302"
     },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CB95DCCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B911",
-        "timestamp": 1713920297.4030766,
-        "timestamp_h": "04-23-2024|19:58:17:403"
-    },
+
     {
         "tag_type": "CCFFFF20051000",
         "tag_id": "3400E2004709B4706821BE0D010C",
@@ -71,52 +58,10 @@
     },
     {
         "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E200470BFEA06821E2B00115B614CCFFFF200510003400E2004709B4706821BE0D010C",
-        "tag_position": "B95D",
-        "timestamp": 1713920299.606424,
-        "timestamp_h": "04-23-2024|19:58:19:606"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CBA5CCCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B515",
-        "timestamp": 1713920300.710173,
-        "timestamp_h": "04-23-2024|19:58:20:710"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CBC5ACCFFFF200510003400E2004709B4706821BE0D010CC155CCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B911",
-        "timestamp": 1713920301.8128269,
-        "timestamp_h": "04-23-2024|19:58:21:812"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
         "tag_id": "3400E200470BFEA06821E2B00115",
         "tag_position": "B614",
         "timestamp": 1713920302.913541,
         "timestamp_h": "04-23-2024|19:58:22:913"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E200470BFEA06821E2B00115BF0BCCFFFF200510003400E2004709B4706821BE0D010C",
-        "tag_position": "B75F",
-        "timestamp": 1713920305.1154892,
-        "timestamp_h": "04-23-2024|19:58:25:115"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CB75FCCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B911",
-        "timestamp": 1713920307.318939,
-        "timestamp_h": "04-23-2024|19:58:27:318"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E200470BFEA06821E2B00115BA10CCFFFF200510003400E2004709B4706821BE0D010C",
-        "tag_position": "B95D",
-        "timestamp": 1713920308.4196525,
-        "timestamp_h": "04-23-2024|19:58:28:419"
     },
     {
         "tag_type": "CCFFFF20051000",
@@ -131,13 +76,6 @@
         "tag_position": "BB5B",
         "timestamp": 1713920310.622323,
         "timestamp_h": "04-23-2024|19:58:30:622"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CB660CCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B812",
-        "timestamp": 1713920311.7237234,
-        "timestamp_h": "04-23-2024|19:58:31:723"
     },
     {
         "tag_type": "CCFFFF20051000",
@@ -176,13 +114,6 @@
     },
     {
         "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CC74FCCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B812",
-        "timestamp": 1713920319.4360478,
-        "timestamp_h": "04-23-2024|19:58:39:436"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
         "tag_id": "3400E2004709B4706821BE0D010C",
         "tag_position": "BB5B",
         "timestamp": 1713920320.5373428,
@@ -190,24 +121,10 @@
     },
     {
         "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E200470BFEA06821E2B00115B812CCFFFF200510003400E2004709B4706821BE0D010C",
-        "tag_position": "C155",
-        "timestamp": 1713920321.638326,
-        "timestamp_h": "04-23-2024|19:58:41:638"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
         "tag_id": "3400E200470BFEA06821E2B00115",
         "tag_position": "B812",
         "timestamp": 1713920322.7395997,
         "timestamp_h": "04-23-2024|19:58:42:739"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CC353CCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "BB0F",
-        "timestamp": 1713920323.8404891,
-        "timestamp_h": "04-23-2024|19:58:43:840"
     },
     {
         "tag_type": "CCFFFF20051000",
@@ -225,23 +142,9 @@
     },
     {
         "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E200470BFEA06821E2B00115BA10CCFFFF200510003400E2004709B4706821BE0D010C",
-        "tag_position": "B95D",
-        "timestamp": 1713920329.3487086,
-        "timestamp_h": "04-23-2024|19:58:49:348"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
-        "tag_id": "3400E2004709B4706821BE0D010CB85ECCFFFF200510003400E200470BFEA06821E2B00115",
-        "tag_position": "B812",
-        "timestamp": 1713920331.551734,
-        "timestamp_h": "04-23-2024|19:58:51:551"
-    },
-    {
-        "tag_type": "CCFFFF20051000",
         "tag_id": "3400E2004709B4706821BE0D010C",
         "tag_position": "B95D",
         "timestamp": 1713920332.6545064,
         "timestamp_h": "04-23-2024|19:58:52:654"
-    }
+    }    
 ]
