@@ -76,6 +76,11 @@
         </div>
     </div>
     <div id="mainContent">
+        <% if (messages.success) { %>
+            <div class="alert alert-success">
+                <%= messages.success %>
+            </div>
+        <% } %>
         <form action="/upload" method="post" enctype="multipart/form-data">
             <table>
                 <tr>
@@ -93,16 +98,23 @@
                 </tr>
             </table>
         </form>
-        <table id="filesOnDisk">
+        <table>
             <tr>
-                <th class="centered-text" colspan=4>
-                    <h2>Manipulate Data</h2>
+                <th class="dethsize">Convert EPOCH to Central</th>
+                <td class="detdsize">
                     <form id="epoch-to-ct" onsubmit="event.preventDefault(); convertEpochToCT();">
                         <label for="epoch">Epoch:</label>
                         <input type="number" id="epoch" name="epoch">
-                        <button type="submit">Convert to Central Time</button>
+                        <button type="submit">Convert</button>
                         <p id="ct-output"></p>
                     </form>
+                </td>
+            </tr>
+        </table>
+        <table id="fileOnDisk">
+            <tr>
+                <th class="centered-text" colspan=4>
+                    <h2>Manipulate Data</h2>
                 </th>
             </tr>
             <tr>
@@ -111,10 +123,14 @@
                 <th class="dethsize">Download:</th>
                 <th class="dethsize">Delete:</th>
             </tr>
-            <% files.forEach(function(file) { %>
+            <% file.forEach(function(file) { %>
             <tr>
                 <td class="detdsize"><%= file %></td>
-                <td class="detdsize">future import form</td>
+                <td class="detdsize">
+                    <form action="/importime" method="post">
+                        <input type="hidden" name="filename" value="<%= file %>">
+                        <input type="submit" value="Import">
+                    </form>
                 <td class="detdsize"><a href="/download/<%= file %>">Download</a></td>
                 <td class="detdsize">
                     <form action="/delete-file" method="post">

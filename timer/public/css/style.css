@@ -179,3 +179,16 @@ breadcrumbNav ol, #breadcrumbNav li {
 .theme-toggle {
     text-align: right;
 }
+
+.alert {
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #ffffff;
+    background-color: #05b32e;
+    border-color: #eb0606;
+}

@@ -126,8 +126,8 @@ fc-cache -f -v
 Install NPM Packages
 
 ```zsh
-sudo npm install -g axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid util
-sudo npm install axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid util --save
+sudo npm install -g axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid util connect-flash express-session
+sudo npm install axios body-parser compression darkmode-js debug ejs eslint express-async-errors express fs gg helmet moment morgan multer ntp-client ntp-time ntp pg pm2 save serialport socket.io-client socket.io uuid util connect-flash express-session --save
 ```
 ```zsh
 create the node project
@@ -223,12 +223,14 @@ psql (15.6 (Debian 15.6-0+deb12u1))
 ├── axios@1.6.8
 ├── body-parser@1.20.2
 ├── compression@1.7.4
+├── connect-flash
 ├── darkmode-js@1.5.7
 ├── debug@4.3.4
 ├── ejs@3.1.10
 ├── eslint@9.1.1
 ├── express-async-errors@3.1.1
 ├── express@4.19.2
+├── express-session
 ├── fs@0.0.1-security
 ├── gg@0.1.3
 ├── helmet@7.1.0

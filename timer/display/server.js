@@ -5,6 +5,8 @@ const axios = require('axios');
 const path = require('path');
 const moment = require('moment');
 const multer = require('multer');
+const session = require('express-session');
+const flash = require('connect-flash');
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({
     noServer: true
@@ -13,7 +15,9 @@ const fs = require('fs');
 const util = require('util');
 const readdir = util.promisify(fs.readdir);
 const rfidEmitter = require('./stamper.js');
-const {Pool} = require('pg');
+const {
+    Pool
+} = require('pg');
 const uploadsDirectory = path.join(__dirname, '..', 'uploads');
 
 // Initialize the Express application
@@ -43,6 +47,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({
     extended: true
 }));
+
+// Session
+app.use(session({
+    secret: 'rfidcookies',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: true
+    }
+}));
+
+// Flash Messages
+app.use(flash());
 
 // Async/Await Error Handling
 require('express-async-errors');
@@ -443,12 +460,18 @@ app.post('/update-boat-data', async (req, res, next) => {
     }
 });
 
-// Route for displaying the importdata form
 app.get('/importdata', async (req, res, next) => {
+    let file = [];
     try {
-        const files = await readdir(uploadsDirectory);
+        file = await readdir(uploadsDirectory);
+        console.log('Files:', file); // Log the file
+    } catch (error) {
+        console.error('Error:', error); // Log the error
+    }
+    try {
         res.render('importdata', {
-            files: files
+            messages: req.flash(),
+            file: file
         });
     } catch (error) {
         next(new AppError(500, 'Error fetching data - get - importdata'));
@@ -456,9 +479,20 @@ app.get('/importdata', async (req, res, next) => {
 });
 
 // Route for uploading a file
-app.post('/upload', upload.single('file'), (req, res, next) => {
+app.post('/upload', upload.single('file'), async (req, res, next) => {
     try {
-        res.redirect('/importdata');
+        req.flash('success', 'File uploaded successfully');
+        let file = [];
+        try {
+            file = await readdir(uploadsDirectory);
+            console.log('Files:', file); // Log the file
+        } catch (error) {
+            console.error('Error:', error); // Log the error
+        }
+        res.render('importdata', {
+            messages: req.flash(),
+            file: file
+        });
     } catch (error) {
         next(new AppError(500, 'Error uploading file - post - upload'));
     }
@@ -489,6 +523,39 @@ app.post('/delete-file', (req, res, next) => {
         });
     } catch (error) {
         next(new AppError(502, 'Error deleting file - post - delete-file'));
+    }
+});
+
+// Route for Importing Time Data
+app.post('/importime', async (req, res, next) => {
+    try {
+        const filename = req.body.filename; // Get the filename from the form data
+        const filePath = path.join(uploadsDirectory, filename);
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+        for (const item of data) {
+            await pool.query(`
+                INSERT INTO timeresults (tag_type, tag_id, tag_position, timestamp, timestamp_h)
+                VALUES ($1, $2, $3, $4, $5)
+        `, [item.tag_type, item.tag_id, item.tag_position, item.timestamp, item.timestamp_h]);
+        }
+        req.flash('success', 'Data imported successfully');
+
+        let file = [];
+        try {
+            file = await readdir(uploadsDirectory);
+            console.log('Files:', file); // Log the file
+        } catch (error) {
+            console.error('Error:', error); // Log the error
+        }
+
+        res.render('importdata', {
+            messages: req.flash(),
+            file: file
+        }); // Redirect back to the importdata page
+    } catch (error) {
+        console.error('Detailed error:', error);
+        next(new AppError(500, 'Error importing time data - post - importime'));
     }
 });
 
