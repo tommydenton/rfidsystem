@@ -158,12 +158,22 @@ class AppError extends Error {
 }
 
 // Route for the homepage
-// Route for the homepage
 app.get('/display', async (req, res, next) => {
     try {
-        const result = await pool.query('SELECT * FROM TIMERESULTS');
+        const timeResults = await pool.query(`
+            SELECT tag_id, MIN(timestamp) AS first_timestamp, MAX(timestamp) AS last_timestamp
+            FROM TIMERESULTS
+            GROUP BY tag_id
+        `);
+        const demoBoatRFIDdata = await pool.query(`
+            SELECT d.fname, d.lname, d.bibnumber, l.rfidtag, b.boatnumber
+            FROM DEMODATA d
+            JOIN LINKER l ON d.bibnumber = l.bibnumber
+            INNER JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
+        `);
         res.render('index', {
-            timeResults: result.rows
+            timeResults: timeResults.rows,
+            demoBoatRFIDdata: demoBoatRFIDdata.rows
         });
     } catch (error) {
         next(new AppError(500, 'Error fetching data - get - display'));

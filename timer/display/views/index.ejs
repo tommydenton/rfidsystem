@@ -1,6 +1,6 @@
 <!-- index.ejs -->
 <!DOCTYPE html>
-<html lang="en">
+<htmlkkk lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -40,32 +40,46 @@
         <table>
             <tr>
                 <th class="centered-text" colspan="6">
-                    <h2>Welcome to Our Time Display and Data Entry App</h2>
+                    <h2>raw timer data</h2>
                 </th>
             </tr>
                 <tr>
-                    <th class="dethsize">Unique ID</th>
-                    <th class="dethsize">Tag Type</th>
                     <th class="dethsize">Tag ID</th>
-                    <th class="dethsize">Tag Position</th>
-                    <th class="dethsize">Timestamp</th>
-                    <th class="dethsize">Timestamp H</th>
+                    <th class="dethsize">Start Time</th>>
+                    <th class="dethsize">End Time</th>
                 </tr>
-
 
                 <% timeResults.forEach(function(result) { %>
                     <tr>
-                        <td class="detdsize"><%= result.id %></td>
-                        <td class="detdsize"><%= result.tag_type %></td>
                         <td class="detdsize"><%= result.tag_id %></td>
-                        <td class="detdsize"><%= result.tag_position %></td>
-                        <td class="detdsize"><%= result.timestamp %></td>
-                        <td class="detdsize"><%= result.timestamp_h %></td>
+                        <td class="detdsize"><%= result.first_timestamp %></td>
+                        <td class="detdsize"><%= result.last_timestamp %></td>
                     </tr>
                 <% }); %>
-
         </table>
-    </div>
-</body>
+        <table>
+            <tr>
+                <th class="centered-text" colspan="6">
+                    <h2>Demo and Linker and Boat data</h2>
+                </th>
+            </tr>
+                <tr>
+                    <th class="dethsize">First Name</th>
+                    <th class="dethsize">Last Name</th>
+                    <th class="dethsize">Bibnumber</th>
+                    <th class="dethsize">Boat Number </th>
+                    <th class="dethsize">RFID Tag</th>
+                </tr>
+
+                <% demoBoatRFIDdata.forEach(function(row) { %>
+                    <tr>
+                        <td class="detdsize"><%= row.fname %></td>
+                        <td class="detdsize"><%= row.lname %></td>
+                        <td class="detdsize"><%= row.bibnumber %></td>
+                        <td class="detdsize"><%= row.boatnumber %></td>
+                        <td class="detdsize"><%= row.rfidtag.split('-')[1] %></td>
+                    </tr>
+                <% }); %>
+        </table>
 
 </html>
