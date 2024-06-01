@@ -302,12 +302,14 @@ Indexes:
 Access method: heap
 
 > \d+ LINKER
-                                                                 Table "public.linker"
-  Column   |          Type          | Collation | Nullable |               Default               | Storage  | Compression | Stats target | Description
------------+------------------------+-----------+----------+-------------------------------------+----------+-------------+--------------+-------------
- uid       | integer                |           | not null | nextval('linker_uid_seq'::regclass) | plain    |             |              |
- bibnumber | integer                |           |          |                                     | plain    |             |              |
- rfidtag   | character varying(255) |           |          |                                     | extended |             |              |
+    Column    |          Type          | Collation | Nullable |               Default               | Storage  | Compression | Stats target | Description
+--------------+------------------------+-----------+----------+-------------------------------------+----------+-------------+--------------+-------------
+ uid          | integer                |           | not null | nextval('linker_uid_seq'::regclass) | plain    |             |              |
+ bibnumber    | integer                |           |          |                                     | plain    |             |              |
+ rfidtag      | character varying(255) |           |          |                                     | extended |             |              |
+ tag_type     | character varying(255) |           |          |                                     | extended |             |              |
+ tag_id       | character varying(255) |           |          |                                     | extended |             |              |
+ tag_position | character varying(255) |           |          |                                     | extended |             |              |
 Indexes:
     "linker_pkey" PRIMARY KEY, btree (uid)
     "linker_bibnumber_key" UNIQUE CONSTRAINT, btree (bibnumber)

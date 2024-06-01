@@ -165,10 +165,10 @@
                             <th onclick="sortTable(1)">Bib Number</th>
                             <th onclick="sortTable(2)">RFID Tag</th>
                         </tr>
-                        <% demoData.forEach(function(row) { %>
+                        <% linkerResult.forEach(function(row) { %>
                         <tr>
                             <td><%= row.linkerbibnumber %></td>
-                            <td><%= row.rfidtag %></td>
+                            <td><%= row.tag_id %></td>
                         </tr>
                         <% }); %>
                     </table>

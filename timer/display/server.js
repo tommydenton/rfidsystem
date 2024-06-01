@@ -290,28 +290,27 @@ rfidEmitter.on('tagScanned', (rfidTag) => {
     });
 });
 
-
+// Route for linking RFID tag to bibnumber
 app.get('/link-rfid', async (req, res, next) => {
     try {
         const linkerResult = await pool.query(`
-            SELECT bibnumber AS linkerbibnumber, rfidtag
+            SELECT bibnumber AS linkerbibnumber, rfidtag, tag_id
             FROM LINKER
         `);
-
         // Query for orphaned BIBNUMBERs
         const orphanedBibNumbersResult = await pool.query(`
             SELECT bibnumber
             FROM DEMODATA
             WHERE bibnumber NOT IN (SELECT bibnumber FROM LINKER)
         `);
-
         const scannedRFIDTag = app.locals.scannedRFIDTag || '';
         res.render('linker', {
-            demoData: linkerResult.rows,
+            linkerResult: linkerResult.rows,
             orphanedBibNumbers: orphanedBibNumbersResult.rows,
             scannedRFIDTag: scannedRFIDTag
         });
     } catch (error) {
+        console.error(error); // Add this line to log the error
         next(new AppError(500, 'Error linking data - get - link-rfid'));
     }
 });
@@ -322,14 +321,18 @@ app.post('/link-rfid', async (req, res, next) => {
         bibnumber,
         rfidtag
     } = req.body;
+
+    // Split the rfidtag into id_type, id_tag, and id_position
+    const [id_type, id_tag, id_position] = rfidtag.split('-');
+
     try {
         // Insert or update the LINKER table with the new RFID tag and bibnumber link
         await pool.query(`
-            INSERT INTO LINKER (bibnumber, rfidtag)
-            VALUES ($1, $2)
+            INSERT INTO LINKER (bibnumber, rfidtag, type_id, tag_id, position_id)
+            VALUES ($1, $2, $3, $4, $5)
             ON CONFLICT (bibnumber)
-            DO UPDATE SET rfidtag = EXCLUDED.rfidtag
-        `, [bibnumber, rfidtag]);
+            DO UPDATE SET rfidtag = EXCLUDED.rfidtag, id_type = EXCLUDED.id_type, id_tag = EXCLUDED.id_tag, id_position = EXCLUDED.id_position
+        `, [bibnumber, rfidtag, id_type, id_tag, id_position]);
         res.redirect('/link-rfid');
     } catch (error) {
         next(new AppError(500, 'Error linking data - post - link-rfid'));
