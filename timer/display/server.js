@@ -160,22 +160,28 @@ class AppError extends Error {
 // Route for the homepage
 app.get('/display', async (req, res, next) => {
     try {
-        const timeResults = await pool.query(`
-            SELECT tag_id, MIN(timestamp) AS first_timestamp, MAX(timestamp) AS last_timestamp
-            FROM TIMERESULTS
-            GROUP BY tag_id
-        `);
         const demoBoatRFIDdata = await pool.query(`
-            SELECT d.fname, d.lname, d.bibnumber, l.rfidtag, b.boatnumber
-            FROM DEMODATA d
-            JOIN LINKER l ON d.bibnumber = l.bibnumber
-            INNER JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
-        `);
+        SELECT d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
+        FROM DEMODATA d
+        JOIN LINKER l ON d.bibnumber = l.bibnumber
+        JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
+        JOIN TIMERESULTS t ON l.tag_id = t.tag_id
+        GROUP BY d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber
+    `);
+    const boatTime = await pool.query(`
+    SELECT b.boatnumber, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
+    FROM DEMODATA d
+    JOIN LINKER l ON d.bibnumber = l.bibnumber
+    JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
+    JOIN TIMERESULTS t ON l.tag_id = t.tag_id
+    GROUP BY b.boatnumber
+`);
         res.render('index', {
-            timeResults: timeResults.rows,
-            demoBoatRFIDdata: demoBoatRFIDdata.rows
+            demoBoatRFIDdata: demoBoatRFIDdata.rows,
+            boatTime: boatTime.rows
         });
     } catch (error) {
+        console.error('Detailed error:', error);
         next(new AppError(500, 'Error fetching data - get - display'));
     }
 });
