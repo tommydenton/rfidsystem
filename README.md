@@ -58,6 +58,18 @@ sudo nala update
 sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram bat samba atop htop python3-neovim solaar software-properties-common
 ```
 
+Configure Git - https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+
+```
+~/.gitconfig
+[user]
+        name = Thomas Denton
+        email = tommydenton@gmail.com
+[core]
+        editor = vi
+[color]
+        ui = true
+```
 Install Bottom
 ```bash
 curl -LO https://github.com/ClementTsang/bottom/releases/download/0.9.6/bottom_0.9.6_arm64.deb
