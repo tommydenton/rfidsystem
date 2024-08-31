@@ -39,21 +39,21 @@
         <div id="mainContent">
             <table>
                 <tr>
-                    <th class="centered-text" colspan="6">
-                        <h2>Demo and Linker and Boat data</h2>
+                    <th class="centered-text" colspan="7777777">
+                        <h2>racer data</h2>
                     </th>
                 </tr>
                     <tr>
-                        <th class="dethsize">First Name</th>
-                        <th class="dethsize">Last Name</th>
-                        <th class="dethsize">Bibnumber</th>
-                        <th class="dethsize">Boat Number </th>
-                        <th class="dethsize">RFID Tag</th>
-                        <th class="dethsize">Start Time</th>
-                        <th class="dethsize">End Time</th>
+                        <th class="dethsize">d.fname</th>
+                        <th class="dethsize">d.lname</th>
+                        <th class="dethsize">d.bibnumber</th>
+                        <th class="dethsize">b.boatnumber</th>
+                        <th class="dethsize">l.tag_id</th>
+                        <th class="dethsize">(min)t.timestamp_h as first_timestamp</th>
+                        <th class="dethsize">(max)t.timestamp_h as last_timestamp</th>
                     </tr>
     
-                    <% demoBoatRFIDdata.forEach(function(row) { %>
+                    <% racerData.forEach(function(row) { %>
                         <tr>
                             <td class="detdsize"><%= row.fname %></td>
                             <td class="detdsize"><%= row.lname %></td>
@@ -68,7 +68,27 @@
             <table>
                 <tr>
                     <th class="centered-text" colspan="6">
-                        <h2>Demo and Linker and Boat data</h2>
+                        <h2>boat time</h2>
+                    </th>
+                </tr>
+                    <tr>
+                        <th class="dethsize">Boat Number </th>
+                        <th class="dethsize">Start Time</th>
+                        <th class="dethsize">End Time</th>
+                    </tr>
+    
+                    <% boatTime.forEach(function(row) { %>
+                        <tr>
+                            <td class="detdsize"><%= row.boatnumber %></td>
+                            <td class="detdsize"><%= row.first_timestamp %></td>
+                            <td class="detdsize"><%= row.last_timestamp %></td>
+                        </tr>
+                    <% }); %>
+            </table>
+            <table>
+                <tr>
+                    <th class="centered-text" colspan="7">
+                        <h2>all together</h2>
                     </th>
                 </tr>
                     <tr>
@@ -81,12 +101,12 @@
                         <th class="dethsize">End Time</th>
                     </tr>
     
-                    <% boatTime.forEach(function(row) { %>
+                    <% allTogether.forEach(function(row) { %>
                         <tr>
+                            <td class="detdsize"><%= row.boatnumber %></td>
                             <td class="detdsize"><%= row.fname %></td>
                             <td class="detdsize"><%= row.lname %></td>
                             <td class="detdsize"><%= row.bibnumber %></td>
-                            <td class="detdsize"><%= row.boatnumber %></td>
                             <td class="detdsize"><%= row.tag_id %></td>
                             <td class="detdsize"><%= row.first_timestamp %></td>
                             <td class="detdsize"><%= row.last_timestamp %></td>

@@ -55,7 +55,7 @@ Install log2ram and other packages required to edit, configure, and monitor
 echo "deb [signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian/ bookworm main" | sudo tee /etc/apt/sources.list.d/azlux.list
 sudo wget -O /usr/share/keyrings/azlux-archive-keyring.gpg  https://azlux.fr/repo.gpg
 sudo nala update
-sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram bat samba atop htop python3-neovim
+sudo nala install zsh exa fzf ripgrep neovim tmux git neofetch nginx nodejs npm postgresql postgresql-contrib tmux thefuck lm-sensors log2ram bat samba atop htop python3-neovim solaar software-properties-common
 ```
 
 Install Bottom
@@ -82,6 +82,19 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 .zshrc
 (git colorize tmux colored-man-pages zsh-autosuggestions zsh-syntax-highlighting thefuck)
 change to agnoster
+```
+
+Things to Install
+
+https://github.com/dbcli/pgcli
+https://github.com/Unitech/pm2
+https://github.com/santinic/how2
+
+Configure RTC
+https://pimylifeup.com/raspberry-pi-rtc/
+
+```
+dtoverlay=i2c-rtc,ds3231
 ```
 
 Setup up SAMBA
