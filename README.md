@@ -367,3 +367,63 @@ Access method: heap
 Indexes:
     "timeresults_pkey" PRIMARY KEY, btree (id)
 Access method: heap
+
+
+Setup the database on the timers:
+
+Certainly! Here are the steps to set up the PostgreSQL database rfid_system and the table timeresults on your Debian system.
+
+Step-by-Step Instructions
+1. Switch to the PostgreSQL User:
+  sudo -i -u postgres
+2. Open the PostgreSQL Interactive Terminal:
+  psql
+3. Create the Database:
+  CREATE DATABASE rfid_system;
+4. Connect to the New Database:
+  \c rfid_system
+5. Create the timeresults Table:
+  CREATE TABLE timeresults (
+      id SERIAL PRIMARY KEY,
+      tag_type VARCHAR(255),
+      tag_id VARCHAR(255),
+      tag_position VARCHAR(255),
+      timestamp DOUBLE PRECISION,
+      timestamp_h VARCHAR(255)
+  );
+6. Verify the Table:
+  \d+ timeresults
+Summary of Commands
+Here is a summary of the commands you need to run:
+  # Switch to the PostgreSQL user
+  sudo -i -u postgres
+
+  # Open the PostgreSQL interactive terminal
+  psql
+In the psql prompt:
+  -- Create the database
+  CREATE DATABASE rfid_system;
+
+  -- Connect to the new database
+  \c rfid_system
+
+  -- Create the timeresults table
+  CREATE TABLE timeresults (
+      id SERIAL PRIMARY KEY,
+      tag_type VARCHAR(255),
+      tag_id VARCHAR(255),
+      tag_position VARCHAR(255),
+      timestamp DOUBLE PRECISION,
+      timestamp_h VARCHAR(255)
+  );
+
+  -- Verify the table
+  \d+ timeresults
+Explanation
+  Switch to PostgreSQL User: This ensures you have the necessary permissions to create databases and tables.
+  Open PostgreSQL Interactive Terminal: This opens the psql prompt where you can run SQL commands.
+  Create Database: This command creates a new database named rfid_system.
+  Connect to Database: This command switches the context to the newly created database.
+  Create Table: This command creates the timeresults table with the specified columns.
+  Verify Table: This command displays the details of the timeresults table to ensure it was created correctly.
+This setup will allow your stamper.js script to connect to the rfid_system database and insert data into the timeresults table.

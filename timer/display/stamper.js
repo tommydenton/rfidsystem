@@ -27,7 +27,7 @@ const pool = new Pool({
 
 const rfidEmitter = new EventEmitter();
 
-const handlePortData = (portName) => (data) => {
+const handlePortData = (portName) => async (data) => {
   const hexData = data.toString('hex').toUpperCase();
  
   // Assuming the RFID data format follows the structure in the Python script
@@ -41,17 +41,15 @@ const handlePortData = (portName) => (data) => {
   rfidEmitter.emit('tagScanned', formattedData);
 
   // Insert the data into the database
-  // pool.query(
-  //   'INSERT INTO LINKER (tag_type, tag_id, tag_position, rfidtag, timestamp) VALUES ($1, $2, $3, $4, $5)',
-  //   [tagType, tagId, tagPosition, formattedData, timestamp],
-  //   (err, res) => {
-  //     if (err) {
-  //       console.error('Error inserting data into database:', err);
-  //     } else {
-  //       console.log('Data inserted into database successfully');
-  //     }
-  //   }
-  // );
+  try {
+    await pool.query(`
+      INSERT INTO timeresults (tag_type, tag_id, tag_position, timestamp, timestamp_h)
+      VALUES ($1, $2, $3, $4, $5)
+    `, [tagType, tagId, tagPosition, Date.now(), timestamp]);
+    console.log('Data inserted into database successfully');
+  } catch (err) {
+    console.error('Error inserting data into database:', err);
+  }
 };
 
 const setupPort = (port, portName) => {
