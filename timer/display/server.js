@@ -15,9 +15,7 @@ const fs = require('fs');
 const util = require('util');
 const readdir = util.promisify(fs.readdir);
 const rfidEmitter = require('./stamper.js');
-const {
-    Pool
-} = require('pg');
+const { Pool } = require('pg');
 const uploadsDirectory = path.join(__dirname, '..', 'uploads');
 
 // Initialize the Express application
