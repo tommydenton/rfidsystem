@@ -400,3 +400,11 @@ Step-by-Step Instructions
     ALTER USER postgres WITH PASSWORD 'r0ckkrush3r';
 8. Check for data
   select * from timeresults;
+
+
+Added Scripts folder that has the export and deploy script it in.
+you will have to update the pg_hba.conf file to allow for exports
+
+the line local/all/postgres/peer changes to local/all/postgres/md5
+
+https://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge
