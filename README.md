@@ -40,6 +40,25 @@ PermitRootLogin no
 Port 8997
 ```
 
+Disable ipv6
+https://support.nordvpn.com/hc/en-us/articles/20164669224337-How-to-disable-IPv6-on-Linux
+
+Here's how to disable IPv6 on Linux if you’re running a Debian-based machine.
+
+Open the terminal window.
+Type this command:
+
+sudo nano /etc/sysctl.conf
+Add the following at the bottom of the file:
+
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+net.ipv6.conf.tun0.disable_ipv6 = 1
+Save and close the file.
+Reboot your device.
+To re-enable IPv6, remove the above lines from /etc/sysctl.conf and reboot your device.
+
 Before you begin, update your package list and upgrade your system:
 
 ```bash
