@@ -94,7 +94,9 @@ Install Bottom
 curl -LO https://github.com/ClementTsang/bottom/releases/download/0.9.6/bottom_0.9.6_arm64.deb
 sudo dpkg -i bottom_0.9.6_arm64.deb
 ```
+Run Bottom
 
+```btm --hide_table_gap -f -T```
 Change your default shell to Zsh:
 
 ```zsh
