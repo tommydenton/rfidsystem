@@ -240,7 +240,11 @@ Reference Documents
 
 ### This README is part of the RFID project documentation. For more information, visit the [project repository](#).
 
-install https://www.pgcli.com/
+fix PIP installs
+https://www.jeffgeerling.com/blog/2023/how-solve-error-externally-managed-environment-when-installing-pip3
+
+install
+https://www.pgcli.com/
 
 Setup the database
 
