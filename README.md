@@ -240,6 +240,7 @@ Reference Documents
 
 ### This README is part of the RFID project documentation. For more information, visit the [project repository](#).
 
+install https://www.pgcli.com/
 
 Setup the database
 
