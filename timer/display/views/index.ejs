@@ -218,10 +218,9 @@
                         </tr>
                     <% }); %>
             </table>
-            </table>
             <table>
                 <tr>
-                    <th class="centered-text" colspan="7">
+                    <th class="centered-text" colspan="4">
                         <h2>Boat with Min and Max Timestamp</h2>
                     </th>
                 </tr>
@@ -231,48 +230,42 @@
                     <th class="dethsize">Max Timestamp</th>
                     <th class="dethsize">Time Difference</th>
                 </tr>
-                <% if (typeof minMaxBoat !== 'undefined' && minMaxBoat !== null) { %>
-                    <tr>
-                        <td class="detdsize"><%= minMaxBoat.boatnumber %></td>
-                        <td class="detdsize"><%= minMaxBoat.min_timestamp %></td>
-                        <td class="detdsize"><%= minMaxBoat.max_timestamp %></td>
-                        <td class="detdsize">
-                            <% 
-                                // Declare formattedTimeDiff before the if block
-                                let formattedTimeDiff;
-
-                                // Function to parse the custom timestamp format
-                                function parseCustomTimestamp(timestamp) {
-                                    const [datePart, timePart] = timestamp.split('|');
-                                    const [month, day, year] = datePart.split('-');
-                                    const [hours, minutes, seconds, milliseconds] = timePart.split(/[:.]/);
-                                    return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
-                                }
-
-                                // Parse the timestamps
-                                const startTime = parseCustomTimestamp(minMaxBoat.min_timestamp);
-                                const endTime = parseCustomTimestamp(minMaxBoat.max_timestamp);
-
-                                if (!isNaN(startTime) && !isNaN(endTime)) {
-                                    // Calculate the time difference in milliseconds
-                                    const timeDiff = endTime - startTime;
-
-                                    // Convert the time difference to a readable format (hours, minutes, seconds)
-                                    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                                    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                                    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-                                    // Assign the formatted time difference
-                                    formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
-                                } else {
-                                    formattedTimeDiff = 'Invalid timestamps';
-                                }
-                            %>
-                            <%= formattedTimeDiff %>
-                    </tr>
+                <% if (minMaxBoat.length > 0) { %>
+                    <% minMaxBoat.forEach(function(row) { %>
+                        <tr>
+                            <td class="detdsize"><%= row.boatnumber %></td>
+                            <td class="detdsize"><%= row.min_timestamp %></td>
+                            <td class="detdsize"><%= row.max_timestamp %></td>
+                            <td class="detdsize">
+                                <% 
+                                    // Function to parse the custom timestamp format
+                                    function parseCustomTimestamp(timestamp) {
+                                        const [datePart, timePart] = timestamp.split('|');
+                                        const [month, day, year] = datePart.split('-');
+                                        const [hours, minutes, seconds, milliseconds] = timePart.split(/[:.]/);
+                                        return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+                                    }
+    
+                                    let formattedTimeDiff = 'Invalid timestamps';
+    
+                                    const startTime = parseCustomTimestamp(row.min_timestamp);
+                                    const endTime = parseCustomTimestamp(row.max_timestamp);
+    
+                                    if (!isNaN(startTime) && !isNaN(endTime)) {
+                                        const timeDiff = endTime - startTime;
+                                        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                                        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                                        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                                        formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
+                                    }
+                                %>
+                                <%= formattedTimeDiff %>
+                            </td>
+                        </tr>
+                    <% }); %>
                 <% } else { %>
                     <tr>
-                        <td colspan="3">No data available</td>
+                        <td colspan="4">No data available</td>
                     </tr>
                 <% } %>
             </table>
