@@ -166,6 +166,7 @@ app.get('/display', async (req, res, next) => {
             JOIN TIMERESULTS t ON l.tag_id = t.tag_id
             GROUP BY d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber
         `);
+
         const boatTime = await pool.query(`
             SELECT b.boatnumber, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
             FROM DEMODATA d
@@ -174,17 +175,36 @@ app.get('/display', async (req, res, next) => {
             JOIN TIMERESULTS t ON l.tag_id = t.tag_id
             GROUP BY b.boatnumber
         `);
+
+        const minMaxBoat = await pool.query(`
+            SELECT b.boatnumber, MIN(t.timestamp_h) AS min_timestamp, MAX(t.timestamp_h) AS max_timestamp
+            FROM BOATS b
+            JOIN LINKER l ON b.bibnumber1 = l.bibnumber OR b.bibnumber2 = l.bibnumber
+            JOIN TIMERESULTS t ON l.tag_id = t.tag_id
+            GROUP BY b.boatnumber
+            ORDER BY min_timestamp ASC, max_timestamp DESC
+            LIMIT 1
+        `);
+
         const allTogether = await pool.query(`
-            SELECT d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
+            SELECT d.bibnumber, d.fname, d.lname, b.boatnumber, l.tag_id, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
             FROM DEMODATA d
             JOIN LINKER l ON d.bibnumber = l.bibnumber
             JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
             JOIN TIMERESULTS t ON l.tag_id = t.tag_id
-            GROUP BY d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber
+            GROUP BY d.bibnumber, d.fname, d.lname, b.boatnumber, l.tag_id
         `);
+
+        // Log the results to ensure they are correct
+        // console.log('racerData:', JSON.stringify(racerData.rows, null, 2));
+        // console.log('boatTime:', JSON.stringify(boatTime.rows, null, 2));
+        // console.log('minMaxBoat:', JSON.stringify(minMaxBoat.rows, null, 2));
+        // console.log('allTogether:', JSON.stringify(allTogether.rows, null, 2));
+
         res.render('index', {
             racerData: racerData.rows,
             boatTime: boatTime.rows,
+            minMaxBoat: minMaxBoat.rows.length > 0 ? minMaxBoat.rows[0] : null, // Handle case where no result is returned
             allTogether: allTogether.rows
         });
     } catch (error) {
