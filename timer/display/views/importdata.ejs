@@ -111,56 +111,51 @@
                 </td>
             </tr>
         </table>
-        <table>
-            <tr>
-                <td class="detdsize">
-                    <button onclick="exportTimeresults()">Export Data</button>
-                    <script>
-                        async function exportTimeresults() {
-                            const response = await fetch('/export-timeresults', {
-                                method: 'GET',
-                            });
-                            if (response.ok) {
-                                alert('Data export initiated. Check the server logs for details.');
-                            } else {
-                                alert('Failed to export data.');
-                            }
-                        }
-                    </script>
-                </td>
-            </tr>
-        </table>
         <table id="fileOnDisk">
             <tr>
                 <th class="centered-text" colspan=4>
                     <h2>Manipulate Data</h2>
                 </th>
-            </tr>
-            <tr>
-                <th class="dethsize">Filename:</th>
-                <th class="dethsize">Import:</th>
-                <th class="dethsize">Download:</th>
-                <th class="dethsize">Delete:</th>
-            </tr>
-            <% file.forEach(function(file) { %>
-            <tr>
-                <td class="detdsize"><%= file %></td>
-                <td class="detdsize">
-                    <form action="/importime" method="post">
-                        <input type="hidden" name="filename" value="<%= file %>">
-                        <input type="submit" value="Import">
-                    </form>
-                <td class="detdsize"><a href="/download/<%= file %>">Download</a></td>
-                <td class="detdsize">
-                    <form action="/delete-file" method="post">
-                        <input type="hidden" name="filename" value="<%= file %>">
-                        <input type="submit" value="Delete">
-                    </form>
-                </td>
-            </tr>
-            <% }); %>
-        </table>
-
+                </tr>
+                <tr>
+                    <th class="dethsize">Filename:</th>
+                    <th class="dethsize">Import:</th>
+                    <th class="dethsize">Download:</th>
+                    <th class="dethsize">Delete:</th>
+                </tr>
+                <% files.forEach(function(file) { %> <!-- Changed 'file' to 'files' -->
+                <tr>
+                    <td class="detdsize"><%= file %></td>
+                    <td class="detdsize">
+                        <form action="/importime" method="post">
+                            <input type="hidden" name="filename" value="<%= file %>">
+                            <input type="submit" value="Import">
+                        </form>
+                    </td>
+                    <td class="detdsize"><a href="/download/<%= file %>">Download</a></td>
+                    <td class="detdsize">
+                        <form action="/delete-file" method="post">
+                            <input type="hidden" name="filename" value="<%= file %>">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </td>
+                </tr>
+                <% }); %>
+                </table>
+                <!-- Display contents of the exports folder -->
+                <h2>Exported Files</h2>
+                <table>
+                    <tr>
+                        <th class="dethsize">Filename:</th>
+                        <th class="dethsize">Download:</th>
+                    </tr>
+                    <% exportFiles.forEach(function(file) { %>
+                    <tr>
+                        <td class="detdsize"><%= file %></td>
+                        <td class="detdsize"><a href="/exports/<%= file %>">Download</a></td>
+                    </tr>
+                    <% }); %>
+                </table>
     </div>
 </body>
 

@@ -215,25 +215,6 @@ app.get('/display', async (req, res, next) => {
     }
 });
 
-// Route for exporting data
-app.get('/export-timeresults', (req, res, next) => {
-    console.log('Received request for /export-timeresults'); // Debugging log
-    const scriptPath = '/var/www/html/timer/scripts/exportime.sh';
-
-    exec(`zsh ${scriptPath}`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error executing script: ${error.message}`);
-            return next(new AppError(500, 'Failed to export data.'));
-        }
-        if (stderr) {
-            console.error(`Script stderr: ${stderr}`);
-            return next(new AppError(500, 'Failed to export data.'));
-        }
-        console.log(`Script stdout: ${stdout}`);
-        res.status(200).send('Data export initiated. Check the server logs for details.');
-    });
-});
-
 // Route for the data entry form
 app.get('/dataentry', async (req, res, next) => {
     try {
@@ -531,18 +512,23 @@ app.post('/update-boat-data', async (req, res, next) => {
     }
 });
 
+// Route for displaying the import data page
 app.get('/importdata', async (req, res, next) => {
-    let file = [];
+    let files = [];
+    let exportFiles = [];
     try {
-        file = await readdir(uploadsDirectory);
-        console.log('Files:', file); // Log the file
+        files = await readdir(uploadsDirectory);
+        exportFiles = await readdir(exportsDirectory);
+        console.log('Files:', files); // Log the files
+        console.log('Export Files:', exportFiles); // Log the export files
     } catch (error) {
         console.error('Error:', error); // Log the error
     }
     try {
         res.render('importdata', {
             messages: req.flash(),
-            file: file
+            files: files,
+            exportFiles: exportFiles
         });
     } catch (error) {
         next(new AppError(500, 'Error fetching data - get - importdata'));
