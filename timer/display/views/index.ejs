@@ -39,13 +39,14 @@
         <div id="mainContent">
             <table>
                 <tr>
-                    <th class="centered-text" colspan="8">
+                    <th class="centered-text" colspan="9">
                         <h2>racer data</h2>
                     </th>
                 </tr>
                     <tr>
                         <th class="dethsize">First Name</th>
                         <th class="dethsize">Last Name</th>
+                        <th class="dethsize">Age Bracket</th>
                         <th class="dethsize">BIB Number</th>
                         <th class="dethsize">Boat Number</th>
                         <th class="dethsize">RFID Tag</th>
@@ -58,6 +59,7 @@
                         <tr>
                             <td class="detdsize"><%= row.fname %></td>
                             <td class="detdsize"><%= row.lname %></td>
+                            <td class="detdsize"><%= row.age %></td>
                             <td class="detdsize"><%= row.bibnumber %></td>
                             <td class="detdsize"><%= row.boatnumber %></td>
                             <td class="detdsize"><%= row.tag_id %></td>
@@ -157,7 +159,7 @@
             </table>
             <table>
                 <tr>
-                    <th class="centered-text" colspan="8">
+                    <th class="centered-text" colspan="9">
                         <h2>all together</h2>
                     </th>
                 </tr>
@@ -165,6 +167,7 @@
                         <th class="dethsize">Boat Number</th>
                         <th class="dethsize">First Name</th>
                         <th class="dethsize">Last Name</th>
+                        <th class="dethsize">Age Bracket</th>
                         <th class="dethsize">BIB Number</th>
                         <th class="dethsize">RFID Tag</th>
                         <th class="dethsize">Start Time</th>
@@ -177,6 +180,7 @@
                             <td class="detdsize"><%= row.boatnumber %></td>
                             <td class="detdsize"><%= row.fname %></td>
                             <td class="detdsize"><%= row.lname %></td>
+                            <td class="detdsize"><%= row.age %></td>
                             <td class="detdsize"><%= row.bibnumber %></td>
                             <td class="detdsize"><%= row.tag_id %></td>
                             <td class="detdsize"><%= row.first_timestamp %></td>

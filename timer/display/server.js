@@ -159,12 +159,12 @@ class AppError extends Error {
 app.get('/display', async (req, res, next) => {
     try {
         const racerData = await pool.query(`
-            SELECT d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
+            SELECT d.fname, d.lname, d.age, d.bibnumber, l.tag_id, b.boatnumber, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
             FROM DEMODATA d
             JOIN LINKER l ON d.bibnumber = l.bibnumber
             JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
             JOIN TIMERESULTS t ON l.tag_id = t.tag_id
-            GROUP BY d.fname, d.lname, d.bibnumber, l.tag_id, b.boatnumber
+            GROUP BY d.fname, d.lname, d.age, d.bibnumber, l.tag_id, b.boatnumber
         `);
 
         const boatTime = await pool.query(`
@@ -177,12 +177,12 @@ app.get('/display', async (req, res, next) => {
         `);
 
         const allTogether = await pool.query(`
-            SELECT d.bibnumber, d.fname, d.lname, b.boatnumber, l.tag_id, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
+            SELECT d.bibnumber, d.fname, d.lname, d.age, b.boatnumber, l.tag_id, MIN(t.timestamp_h) AS first_timestamp, MAX(t.timestamp_h) AS last_timestamp
             FROM DEMODATA d
             JOIN LINKER l ON d.bibnumber = l.bibnumber
             JOIN BOATS b ON d.bibnumber = b.bibnumber1 OR d.bibnumber = b.bibnumber2
             JOIN TIMERESULTS t ON l.tag_id = t.tag_id
-            GROUP BY d.bibnumber, d.fname, d.lname, b.boatnumber, l.tag_id
+            GROUP BY d.bibnumber, d.fname, d.lname, d.age, b.boatnumber, l.tag_id
         `);
 
         const minMaxBoat = await pool.query(`
