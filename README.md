@@ -238,6 +238,14 @@ Reference Documents
 - https://medium.com/today-i-learned-chai/setup-node-js-application-with-pm2-and-nginx-72840f44ea73
 - https://github.com/Unitech/pm2
 
+##$ Setup the uploads and exports folders
+chmod 777 /var/www/html/timer/uploads
+chmod 777 /var/www/html/timer/exports
+
+Remmeber to MD5 the postgres file.
+
+you might need to create both folders
+
 ### This README is part of the RFID project documentation. For more information, visit the [project repository](#).
 
 fix PIP installs
