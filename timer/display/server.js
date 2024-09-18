@@ -512,6 +512,9 @@ app.post('/update-boat-data', async (req, res, next) => {
     }
 });
 
+// Serve the exports directory
+app.use('/exports', express.static(exportsDirectory));
+
 // Route for displaying the import data page
 app.get('/importdata', async (req, res, next) => {
     let files = [];
@@ -527,8 +530,8 @@ app.get('/importdata', async (req, res, next) => {
     try {
         res.render('importdata', {
             messages: req.flash(),
-            files: files,
-            exportFiles: exportFiles
+            files: files, // Ensure 'files' is passed correctly
+            exportFiles: exportFiles // Ensure 'exportFiles' is passed correctly
         });
     } catch (error) {
         next(new AppError(500, 'Error fetching data - get - importdata'));
