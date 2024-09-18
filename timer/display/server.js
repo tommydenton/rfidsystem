@@ -17,6 +17,8 @@ const readdir = util.promisify(fs.readdir);
 const rfidEmitter = require('./stamper.js');
 const { Pool } = require('pg');
 const uploadsDirectory = path.join(__dirname, '..', 'uploads');
+const exportsDirectory = path.join(__dirname, '..', 'exports');
+const { exec } = require('child_process');
 
 // Initialize the Express application
 const app = express();
@@ -139,7 +141,7 @@ app.use((req, res, next) => {
             href: '/boats'
         },
         {
-            text: 'Import Data',
+            text: 'Data',
             href: '/importdata'
         },
         // Add or remove breadcrumb items as needed
@@ -211,6 +213,25 @@ app.get('/display', async (req, res, next) => {
         console.error('Detailed error:', error);
         next(new AppError(500, 'Error fetching data - get - display'));
     }
+});
+
+// Route for exporting data
+app.get('/export-timeresults', (req, res, next) => {
+    console.log('Received request for /export-timeresults'); // Debugging log
+    const scriptPath = '/var/www/html/timer/scripts/exportime.sh';
+
+    exec(`zsh ${scriptPath}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing script: ${error.message}`);
+            return next(new AppError(500, 'Failed to export data.'));
+        }
+        if (stderr) {
+            console.error(`Script stderr: ${stderr}`);
+            return next(new AppError(500, 'Failed to export data.'));
+        }
+        console.log(`Script stdout: ${stdout}`);
+        res.status(200).send('Data export initiated. Check the server logs for details.');
+    });
 });
 
 // Route for the data entry form
@@ -594,7 +615,7 @@ app.post('/importime', async (req, res, next) => {
         let file = [];
         try {
             file = await readdir(uploadsDirectory);
-            console.log('Files:', file); // Log the file
+            // console.log('Files:', file); // Log the file
         } catch (error) {
             console.error('Error:', error); // Log the error
         }
@@ -607,6 +628,12 @@ app.post('/importime', async (req, res, next) => {
         console.error('Detailed error:', error);
         next(new AppError(500, 'Error importing time data - post - importime'));
     }
+});
+
+
+// Catch-all route for handling 404 errors
+app.use((req, res, next) => {
+    res.status(404).send('Not Found');
 });
 
 // Error handling middleware

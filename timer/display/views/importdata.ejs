@@ -111,6 +111,25 @@
                 </td>
             </tr>
         </table>
+        <table>
+            <tr>
+                <td class="detdsize">
+                    <button onclick="exportTimeresults()">Export Data</button>
+                    <script>
+                        async function exportTimeresults() {
+                            const response = await fetch('/export-timeresults', {
+                                method: 'GET',
+                            });
+                            if (response.ok) {
+                                alert('Data export initiated. Check the server logs for details.');
+                            } else {
+                                alert('Failed to export data.');
+                            }
+                        }
+                    </script>
+                </td>
+            </tr>
+        </table>
         <table id="fileOnDisk">
             <tr>
                 <th class="centered-text" colspan=4>
@@ -141,6 +160,7 @@
             </tr>
             <% }); %>
         </table>
+
     </div>
 </body>
 

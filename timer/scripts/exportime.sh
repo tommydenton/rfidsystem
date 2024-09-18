@@ -10,7 +10,7 @@ TABLE_NAME="timeresults"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
 # Define the output file path
-OUTPUT_FILE="/home/pi/timeresults_${TIMESTAMP}.csv"
+OUTPUT_FILE="/var/www/html/timer/exports/timeresults_${TIMESTAMP}.csv"
 
 # Export the table to a CSV file
 PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_NAME -c "\COPY $TABLE_NAME TO '$OUTPUT_FILE' WITH CSV HEADER"
