@@ -125,19 +125,19 @@ app.use((req, res, next) => {
             href: '/display'
         },
         {
-            text: 'Data Entry',
+            text: 'Data',
             href: '/dataentry'
         },
         {
-            text: 'RFID Linker',
+            text: 'Link RFID',
             href: '/link-rfid'
         },
         {
-            text: 'Delete RFID Link',
+            text: 'Axe RFID',
             href: '/delete-rfid-link'
         },
         {
-            text: 'Boat Linker',
+            text: 'Boats',
             href: '/boats'
         },
         {
