@@ -123,21 +123,23 @@
                         <td class="detdsize">
                             <% 
                                 // Declare formattedTimeDiff before the if block
-                                let formattedTimeDiff;
+                                let formattedTimeDiff = 'Invalid timestamps';
             
                                 // Function to parse the custom timestamp format
                                 function parseCustomTimestamp(timestamp) {
+                                    if (!timestamp) return null; // Check if timestamp is valid
                                     const [datePart, timePart] = timestamp.split('|');
-                                    const [month, day, year] = datePart.split('-');
-                                    const [hours, minutes, seconds, milliseconds] = timePart.split(/[:.]/);
-                                    return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+                                    const [year, month, day] = datePart.split('-');
+                                    const [hours, minutes, seconds] = timePart.split(':');
+                                    const [sec, millis] = seconds.split('.');
+                                    return new Date(Date.UTC(year, month - 1, day, hours, minutes, sec, millis.replace('Z', '')));
                                 }
             
                                 // Parse the timestamps
                                 const startTime = parseCustomTimestamp(row.first_timestamp);
                                 const endTime = parseCustomTimestamp(row.last_timestamp);
             
-                                if (!isNaN(startTime) && !isNaN(endTime)) {
+                                if (startTime && endTime && !isNaN(startTime) && !isNaN(endTime)) {
                                     // Calculate the time difference in milliseconds
                                     const timeDiff = endTime - startTime;
             
@@ -148,8 +150,6 @@
             
                                     // Assign the formatted time difference
                                     formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
-                                } else {
-                                    formattedTimeDiff = 'Invalid timestamps';
                                 }
                             %>
                             <%= formattedTimeDiff %>
