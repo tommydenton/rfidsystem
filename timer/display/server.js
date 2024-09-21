@@ -125,7 +125,7 @@ app.use((req, res, next) => {
             href: '/display'
         },
         {
-            text: 'Data',
+            text: 'Demo Data',
             href: '/dataentry'
         },
         {

@@ -43,64 +43,64 @@
                         <h2>racer data</h2>
                     </th>
                 </tr>
+                <tr>
+                    <th class="dethsize">First Name</th>
+                    <th class="dethsize">Last Name</th>
+                    <th class="dethsize">Age Bracket</th>
+                    <th class="dethsize">BIB Number</th>
+                    <th class="dethsize">Boat Number</th>
+                    <th class="dethsize">RFID Tag</th>
+                    <th class="dethsize">Start Time</th>
+                    <th class="dethsize">End Time</th>
+                    <th class="dethsize">Time Difference</th>
+                </tr>
+            
+                <% racerData.forEach(function(row) { %>
                     <tr>
-                        <th class="dethsize">First Name</th>
-                        <th class="dethsize">Last Name</th>
-                        <th class="dethsize">Age Bracket</th>
-                        <th class="dethsize">BIB Number</th>
-                        <th class="dethsize">Boat Number</th>
-                        <th class="dethsize">RFID Tag</th>
-                        <th class="dethsize">Start Time</th>
-                        <th class="dethsize">End Time</th>
-                        <th class="dethsize">Time Difference</th>
+                        <td class="detdsize"><%= row.fname %></td>
+                        <td class="detdsize"><%= row.lname %></td>
+                        <td class="detdsize"><%= row.age %></td>
+                        <td class="detdsize"><%= row.bibnumber %></td>
+                        <td class="detdsize"><%= row.boatnumber %></td>
+                        <td class="detdsize"><%= row.tag_id %></td>
+                        <td class="detdsize"><%= row.first_timestamp %></td>
+                        <td class="detdsize"><%= row.last_timestamp %></td>
+                        <td class="detdsize">
+                            <% 
+                                // Declare formattedTimeDiff before the if block
+                                let formattedTimeDiff = 'Invalid timestamps';
+            
+                                // Function to parse the custom timestamp format
+                                function parseCustomTimestamp(timestamp) {
+                                    if (!timestamp) return null; // Check if timestamp is valid
+                                    const [datePart, timePart] = timestamp.split('|');
+                                    const [year, month, day] = datePart.split('-');
+                                    const [hours, minutes, seconds] = timePart.split(':');
+                                    const [sec, millis] = seconds.split('.');
+                                    return new Date(Date.UTC(year, month - 1, day, hours, minutes, sec, millis.replace('Z', '')));
+                                }
+            
+                                // Parse the timestamps
+                                const startTime = parseCustomTimestamp(row.first_timestamp);
+                                const endTime = parseCustomTimestamp(row.last_timestamp);
+            
+                                if (startTime && endTime && !isNaN(startTime) && !isNaN(endTime)) {
+                                    // Calculate the time difference in milliseconds
+                                    const timeDiff = endTime - startTime;
+            
+                                    // Convert the time difference to a readable format (hours, minutes, seconds)
+                                    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                                    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                                    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            
+                                    // Assign the formatted time difference
+                                    formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
+                                }
+                            %>
+                            <%= formattedTimeDiff %>
+                        </td>
                     </tr>
-    
-                    <% racerData.forEach(function(row) { %>
-                        <tr>
-                            <td class="detdsize"><%= row.fname %></td>
-                            <td class="detdsize"><%= row.lname %></td>
-                            <td class="detdsize"><%= row.age %></td>
-                            <td class="detdsize"><%= row.bibnumber %></td>
-                            <td class="detdsize"><%= row.boatnumber %></td>
-                            <td class="detdsize"><%= row.tag_id %></td>
-                            <td class="detdsize"><%= row.first_timestamp %></td>
-                            <td class="detdsize"><%= row.last_timestamp %></td>
-                            <td class="detdsize">
-                                <% 
-                                    // Declare formattedTimeDiff before the if block
-                                    let formattedTimeDiff;
-                
-                                    // Function to parse the custom timestamp format
-                                    function parseCustomTimestamp(timestamp) {
-                                        const [datePart, timePart] = timestamp.split('|');
-                                        const [month, day, year] = datePart.split('-');
-                                        const [hours, minutes, seconds, milliseconds] = timePart.split(/[:.]/);
-                                        return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
-                                    }
-                
-                                    // Parse the timestamps
-                                    const startTime = parseCustomTimestamp(row.first_timestamp);
-                                    const endTime = parseCustomTimestamp(row.last_timestamp);
-                
-                                    if (!isNaN(startTime) && !isNaN(endTime)) {
-                                        // Calculate the time difference in milliseconds
-                                        const timeDiff = endTime - startTime;
-                
-                                        // Convert the time difference to a readable format (hours, minutes, seconds)
-                                        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                                        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                                        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-                
-                                        // Assign the formatted time difference
-                                        formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
-                                    } else {
-                                        formattedTimeDiff = 'Invalid timestamps';
-                                    }
-                                %>
-                                <%= formattedTimeDiff %>
-                            </td>
-                        </tr>
-                    <% }); %>
+                <% }); %>
             </table>
             <table>
                 <tr>
@@ -163,64 +163,114 @@
                         <h2>all together</h2>
                     </th>
                 </tr>
+                <tr>
+                    <th class="dethsize">Boat Number</th>
+                    <th class="dethsize">First Name</th>
+                    <th class="dethsize">Last Name</th>
+                    <th class="dethsize">Age Bracket</th>
+                    <th class="dethsize">BIB Number</th>
+                    <th class="dethsize">RFID Tag</th>
+                    <th class="dethsize">Start Time</th>
+                    <th class="dethsize">End Time</th>
+                    <th class="dethsize">Time Difference</th>
+                </tr>
+            
+                <% allTogether.forEach(function(row) { %>
                     <tr>
-                        <th class="dethsize">Boat Number</th>
-                        <th class="dethsize">First Name</th>
-                        <th class="dethsize">Last Name</th>
-                        <th class="dethsize">Age Bracket</th>
-                        <th class="dethsize">BIB Number</th>
-                        <th class="dethsize">RFID Tag</th>
-                        <th class="dethsize">Start Time</th>
-                        <th class="dethsize">End Time</th>
-                        <th class="dethsize">Time Difference</th>
+                        <td class="detdsize"><%= row.boatnumber %></td>
+                        <td class="detdsize"><%= row.fname %></td>
+                        <td class="detdsize"><%= row.lname %></td>
+                        <td class="detdsize"><%= row.age %></td>
+                        <td class="detdsize"><%= row.bibnumber %></td>
+                        <td class="detdsize"><%= row.tag_id %></td>
+                        <td class="detdsize"><%= row.first_timestamp %></td>
+                        <td class="detdsize"><%= row.last_timestamp %></td>
+                        <td class="detdsize">
+                            <% 
+                                // Declare formattedTimeDiff before the if block
+                                let formattedTimeDiff = 'Invalid timestamps';
+            
+                                // Function to parse the custom timestamp format
+                                function parseCustomTimestamp(timestamp) {
+                                    if (!timestamp) return null; // Check if timestamp is valid
+                                    const [datePart, timePart] = timestamp.split('|');
+                                    const [year, month, day] = datePart.split('-');
+                                    const [hours, minutes, seconds] = timePart.split(':');
+                                    const [sec, millis] = seconds.split('.');
+                                    return new Date(Date.UTC(year, month - 1, day, hours, minutes, sec, millis.replace('Z', '')));
+                                }
+            
+                                // Parse the timestamps
+                                const startTime = parseCustomTimestamp(row.first_timestamp);
+                                const endTime = parseCustomTimestamp(row.last_timestamp);
+            
+                                if (startTime && endTime && !isNaN(startTime) && !isNaN(endTime)) {
+                                    // Calculate the time difference in milliseconds
+                                    const timeDiff = endTime - startTime;
+            
+                                    // Convert the time difference to a readable format (hours, minutes, seconds)
+                                    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                                    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                                    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            
+                                    // Assign the formatted time difference
+                                    formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
+                                }
+                            %>
+                            <%= formattedTimeDiff %>
+                        </td>
                     </tr>
-    
-                    <% allTogether.forEach(function(row) { %>
-                        <tr>
-                            <td class="detdsize"><%= row.boatnumber %></td>
-                            <td class="detdsize"><%= row.fname %></td>
-                            <td class="detdsize"><%= row.lname %></td>
-                            <td class="detdsize"><%= row.age %></td>
-                            <td class="detdsize"><%= row.bibnumber %></td>
-                            <td class="detdsize"><%= row.tag_id %></td>
-                            <td class="detdsize"><%= row.first_timestamp %></td>
-                            <td class="detdsize"><%= row.last_timestamp %></td>
-                            <td class="detdsize">
-                                <% 
-                                    // Declare formattedTimeDiff before the if block
-                                    let formattedTimeDiff;
-                
-                                    // Function to parse the custom timestamp format
-                                    function parseCustomTimestamp(timestamp) {
-                                        const [datePart, timePart] = timestamp.split('|');
-                                        const [month, day, year] = datePart.split('-');
-                                        const [hours, minutes, seconds, milliseconds] = timePart.split(/[:.]/);
-                                        return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
-                                    }
-                
-                                    // Parse the timestamps
-                                    const startTime = parseCustomTimestamp(row.first_timestamp);
-                                    const endTime = parseCustomTimestamp(row.last_timestamp);
-                
-                                    if (!isNaN(startTime) && !isNaN(endTime)) {
-                                        // Calculate the time difference in milliseconds
-                                        const timeDiff = endTime - startTime;
-                
-                                        // Convert the time difference to a readable format (hours, minutes, seconds)
-                                        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                                        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                                        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-                
-                                        // Assign the formatted time difference
-                                        formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
-                                    } else {
-                                        formattedTimeDiff = 'Invalid timestamps';
-                                    }
-                                %>
-                                <%= formattedTimeDiff %>
-                            </td>
-                        </tr>
-                    <% }); %>
+                <% }); %>
+            </table>
+            <h1>Boat Timestamps</h1>
+            <table>
+                <tr>
+                    <th class="dethsize">Boat Number</th>
+                    <th class="dethsize">First Timestamp</th>
+                    <th class="dethsize">Last Timestamp</th>
+                    <th class="dethsize">Time Difference</th>
+                </tr>
+                <% boatTime.forEach(function(row) { %>
+                    <tr>
+                        <td class="detdsize"><%= row.boatnumber %></td>
+                        <td class="detdsize"><%= row.first_timestamp %></td>
+                        <td class="detdsize"><%= row.last_timestamp %></td>
+                        <td class="detdsize">
+                            <% 
+                                // Declare formattedTimeDiff before the if block
+                                let formattedTimeDiff = 'Invalid timestamps';
+        
+                                // Function to parse the custom timestamp format
+                                function parseCustomTimestamp(timestamp) {
+                                    if (!timestamp) return null; // Check if timestamp is valid
+                                    const [datePart, timePart] = timestamp.split('|');
+                                    const [month, day, year] = datePart.split('-');
+                                    const [hours, minutes, seconds] = timePart.split(':');
+                                    const [sec, millis] = seconds.split('.');
+                                    return new Date(Date.UTC(year, month - 1, day, hours, minutes, sec, millis.replace('Z', '')));
+                                }
+        
+                                // Parse the timestamps
+                                const startTime = parseCustomTimestamp(row.first_timestamp);
+                                const endTime = parseCustomTimestamp(row.last_timestamp);
+        
+                                if (startTime && endTime && !isNaN(startTime) && !isNaN(endTime)) {
+                                    // Calculate the time difference in milliseconds
+                                    const timeDiff = endTime - startTime;
+        
+                                    // Convert the time difference to a readable format (hours, minutes, seconds)
+                                    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                                    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                                    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+        
+                                    // Assign the formatted time difference
+                                    formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
+                                }
+                            %>
+                            <%= formattedTimeDiff %>
+                        </td>
+                    </tr>
+                <% }); %>
             </table>
             <table>
                 <tr>
@@ -244,22 +294,30 @@
                                 <% 
                                     // Function to parse the custom timestamp format
                                     function parseCustomTimestamp(timestamp) {
+                                        if (!timestamp) return null; // Check if timestamp is valid
                                         const [datePart, timePart] = timestamp.split('|');
                                         const [month, day, year] = datePart.split('-');
-                                        const [hours, minutes, seconds, milliseconds] = timePart.split(/[:.]/);
-                                        return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+                                        const [hours, minutes, seconds] = timePart.split(':');
+                                        const [sec, millis] = seconds.split('.');
+                                        return new Date(Date.UTC(year, month - 1, day, hours, minutes, sec, millis.replace('Z', '')));
                                     }
-    
+        
+                                    // Parse the timestamps
+                                    const minTime = parseCustomTimestamp(row.min_timestamp);
+                                    const maxTime = parseCustomTimestamp(row.max_timestamp);
+        
                                     let formattedTimeDiff = 'Invalid timestamps';
-    
-                                    const startTime = parseCustomTimestamp(row.min_timestamp);
-                                    const endTime = parseCustomTimestamp(row.max_timestamp);
-    
-                                    if (!isNaN(startTime) && !isNaN(endTime)) {
-                                        const timeDiff = endTime - startTime;
+        
+                                    if (minTime && maxTime && !isNaN(minTime) && !isNaN(maxTime)) {
+                                        // Calculate the time difference in milliseconds
+                                        const timeDiff = maxTime - minTime;
+        
+                                        // Convert the time difference to a readable format (hours, minutes, seconds)
                                         const hours = Math.floor(timeDiff / (1000 * 60 * 60));
                                         const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
                                         const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+        
+                                        // Assign the formatted time difference
                                         formattedTimeDiff = `${hours}h ${minutes}m ${seconds}s`;
                                     }
                                 %>
@@ -269,7 +327,7 @@
                     <% }); %>
                 <% } else { %>
                     <tr>
-                        <td colspan="4">No data available</td>
+                        <td colspan="4" class="centered-text">No data available</td>
                     </tr>
                 <% } %>
             </table>
