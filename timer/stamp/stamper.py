@@ -7,7 +7,8 @@ from datetime import datetime
 import threading
 
 # Configuration
-SERIAL_PORTS = ['/dev/ttyUSB0', '/dev/ttyUSB1']
+#SERIAL_PORTS = ['/dev/ttyUSB0', '/dev/ttyUSB1']
+SERIAL_PORTS = ['/dev/rfid0', '/dev/rfid1']
 BAUD_RATE = 57600
 DWELL_TIME = 2  # Dwell time in seconds, configurable
 OUTPUT_DIR = '/var/www/html/timer/uploads/'  # Configurable output directory
