@@ -442,3 +442,345 @@ you will have to update the pg_hba.conf file to allow for exports
 the line local/all/postgres/peer changes to local/all/postgres/md5
 
 https://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge
+
+
+# Meshtastic Radio Communication Setup
+
+## Overview
+This guide adds LoRa mesh radio communication to the RFID timing system using Heltec WiFi LoRa V3 devices. This enables real-time communication between start and finish line timing stations without cellular coverage.
+
+## Hardware Requirements
+
+### Per Timer Station
+- 1× Raspberry Pi 4
+- 2× RFID readers (FT232 USB - `0403:6001`)
+- 1× Heltec WiFi LoRa 32 V3 (CP210x USB - `10c4:ea60`)
+- USB cables for all devices
+
+### Expected USB Device Layout
+When all devices are connected:
+- `/dev/ttyUSB0` → RFID Reader 1 (FT232)
+- `/dev/ttyUSB1` → RFID Reader 2 (FT232)
+- `/dev/ttyUSB2` → Heltec V3 Meshtastic (CP210x)
+
+---
+
+## Installation Steps
+
+### 1. Install System Dependencies
+
+```bash
+sudo apt update
+sudo apt install -y python3 python3-pip python3-venv usbutils
+```
+
+### 2. Create Meshtastic Virtual Environment
+
+```bash
+sudo python3 -m venv /opt/meshtastic-venv
+sudo /opt/meshtastic-venv/bin/pip install meshtastic pyserial pypubsub
+```
+
+### 3. Create Meshtastic Command Symlink
+
+```bash
+sudo ln -sf /opt/meshtastic-venv/bin/meshtastic /usr/local/bin/meshtastic
+```
+
+### 4. Configure USB Permissions
+
+```bash
+# Add pi user to dialout group for USB serial access
+sudo usermod -aG dialout pi
+
+# Log out and back in for group changes to take effect
+```
+
+---
+
+## USB Device Persistent Naming
+
+### 5. Create udev Rules for Consistent Device Names
+
+This ensures devices always get the same names regardless of boot order:
+
+```bash
+sudo tee /etc/udev/rules.d/99-usb-serial.rules > /dev/null << 'EOF'
+# RFID Readers (FT232)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="rfid%n"
+
+# Meshtastic Heltec V3 (CP210x)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="meshtastic"
+EOF
+```
+
+### 6. Apply udev Rules
+
+```bash
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+### 7. Verify Persistent Device Names
+
+```bash
+ls -la /dev/rfid* /dev/meshtastic
+```
+
+Expected output:
+```
+lrwxrwxrwx 1 root root 7 Oct  7 23:19 /dev/meshtastic -> ttyUSB2
+lrwxrwxrwx 1 root root 7 Oct  7 23:19 /dev/rfid0 -> ttyUSB0
+lrwxrwxrwx 1 root root 7 Oct  7 23:19 /dev/rfid1 -> ttyUSB1
+```
+
+---
+
+## Meshtastic Device Configuration
+
+### 8. Configure Heltec Devices
+
+Run on each timer after connecting the Heltec V3:
+
+```bash
+# Set region to US (915 MHz)
+meshtastic --port /dev/meshtastic --set lora.region US
+
+# Set device role to CLIENT (endpoint device)
+meshtastic --port /dev/meshtastic --set device.role CLIENT
+
+# Set modem preset for long range
+meshtastic --port /dev/meshtastic --set lora.modem_preset LONG_FAST
+
+# Set hop limit for mesh routing
+meshtastic --port /dev/meshtastic --set lora.hop_limit 3
+
+# Disable GPS (not needed)
+meshtastic --port /dev/meshtastic --set position.gps_enabled false
+
+# Set node name to hostname
+meshtastic --port /dev/meshtastic --set-owner "$(hostname)"
+```
+
+### 9. Verify Configuration
+
+```bash
+meshtastic --port /dev/meshtastic --info
+```
+
+Should show:
+- Region: US
+- Role: CLIENT
+- Modem Preset: LONG_FAST
+- Hop Limit: 3
+- GPS: Disabled
+- Other timer visible in "Nodes in mesh"
+
+---
+
+## Update RFID System Configuration
+
+### 10. Update stamper.py to Use Persistent Device Names
+
+Edit your RFID reader script (e.g., `~/rfidsystem/timer/stamper.py`):
+
+**Change from:**
+```python
+SERIAL_PORTS = ['/dev/ttyUSB0', '/dev/ttyUSB1']
+```
+
+**Change to:**
+```python
+SERIAL_PORTS = ['/dev/rfid0', '/dev/rfid1']
+```
+
+This ensures the RFID system uses the correct devices and doesn't conflict with Meshtastic.
+
+---
+
+## Testing Meshtastic Communication
+
+### 11. Send Test Message
+
+From any timer:
+```bash
+meshtastic --port /dev/meshtastic --sendtext "Test from timer1"
+```
+
+### 12. Listen for Messages
+
+On another timer:
+```bash
+meshtastic --port /dev/meshtastic --listen
+```
+
+### 13. Check Mesh Status
+
+View all nodes in the mesh network:
+```bash
+meshtastic --port /dev/meshtastic --nodes
+```
+
+Expected signal strength (SNR) between direct devices: 5-10 dB is good
+
+---
+
+## Verification Checklist
+
+After setup, verify:
+
+- [ ] All USB devices detected: `lsusb` shows FT232 and CP210x devices
+- [ ] Persistent device names exist: `/dev/rfid0`, `/dev/rfid1`, `/dev/meshtastic`
+- [ ] RFID system runs without errors using `/dev/rfid0` and `/dev/rfid1`
+- [ ] Meshtastic device configured: `meshtastic --port /dev/meshtastic --info`
+- [ ] Both timers see each other in mesh network
+- [ ] Test messages successfully sent/received between timers
+- [ ] No port conflicts between RFID readers and Meshtastic
+
+---
+
+## Common Commands Reference
+
+```bash
+# Identify USB devices
+lsusb
+
+# Check which device is which port
+for port in /dev/ttyUSB*; do
+  echo "=== $port ==="
+  udevadm info --name=$port --attribute-walk | grep -E "ATTRS{idVendor}|ATTRS{idProduct}" | head -2
+  echo ""
+done
+
+# Send message
+meshtastic --port /dev/meshtastic --sendtext "MESSAGE"
+
+# View device info
+meshtastic --port /dev/meshtastic --info
+
+# View mesh nodes
+meshtastic --port /dev/meshtastic --nodes
+
+# Listen for messages
+meshtastic --port /dev/meshtastic --listen
+
+# Check device configuration
+meshtastic --port /dev/meshtastic --info | grep -A 20 "lora"
+```
+
+---
+
+## Troubleshooting
+
+### Device Port Conflicts
+**Symptom:** `[Errno 11] Could not exclusively lock port`
+
+**Solution:** Check what's using the port:
+```bash
+sudo lsof /dev/meshtastic
+sudo lsof /dev/rfid0
+sudo lsof /dev/rfid1
+```
+
+### Devices Not Detecting Each Other
+**Symptom:** No nodes visible in mesh
+
+**Solution:**
+1. Verify both devices configured: `meshtastic --port /dev/meshtastic --info`
+2. Check region is US on both: `--set lora.region US`
+3. Ensure devices powered on and antennas connected
+4. Check battery level in device info (should be >20%)
+
+### udev Rules Not Working After Reboot
+**Symptom:** Device names revert to `/dev/ttyUSB*`
+
+**Solution:**
+```bash
+# Verify rules file exists
+cat /etc/udev/rules.d/99-usb-serial.rules
+
+# Reload and trigger
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+### Wrong Device Assigned to RFID/Meshtastic
+**Symptom:** RFID system doesn't work or Meshtastic fails
+
+**Solution:** Verify vendor/product IDs match your hardware:
+```bash
+lsusb
+# Look for:
+# 0403:6001 = FT232 (RFID readers)
+# 10c4:ea60 = CP210x (Heltec V3)
+```
+
+---
+
+## Network Specifications
+
+**Configuration:**
+- Frequency: 915 MHz (US ISM band)
+- Modem Preset: LONG_FAST
+- Hop Limit: 3 hops
+- Role: CLIENT (endpoint devices)
+- Expected Range: 1-3 miles per hop (rural/river environment)
+- Latency: 2-5 seconds end-to-end
+
+**Message Format for Race Timing:**
+```
+START,BoatID,Timestamp
+Example: "START,042,08:15:23.456"
+```
+
+---
+
+## Integration with RFID Timing System
+
+### Sending Start Notifications from Node.js/Python
+
+**Option 1: CLI from Node.js (stamper.js)**
+```javascript
+const { exec } = require('child_process');
+
+function sendStartNotification(boatId, timestamp) {
+    const message = `START,${boatId},${timestamp}`;
+    exec(`meshtastic --port /dev/meshtastic --sendtext "${message}"`, 
+        (error, stdout, stderr) => {
+            if (error) console.error('Meshtastic error:', error);
+        });
+}
+```
+
+**Option 2: CLI from Python**
+```python
+import subprocess
+
+def send_start_notification(boat_id, timestamp):
+    message = f"START,{boat_id},{timestamp}"
+    subprocess.run(['meshtastic', '--port', '/dev/meshtastic', '--sendtext', message])
+```
+
+---
+
+## Hardware Notes
+
+**Heltec WiFi LoRa 32 V3:**
+- Processor: ESP32-S3
+- Radio: SX1262 LoRa
+- Power: ~100mA active (USB powered from RPi)
+- Display: Built-in OLED shows status
+- USB: CP210x UART Bridge (10c4:ea60)
+
+**RFID Readers:**
+- Chipset: FTDI FT232
+- USB ID: 0403:6001
+- Baud: 57600
+
+---
+
+## Additional Resources
+
+- Meshtastic Documentation: https://meshtastic.org
+- Python API Reference: https://python.meshtastic.org
+- Device Flasher (if needed): https://flasher.meshtastic.org
