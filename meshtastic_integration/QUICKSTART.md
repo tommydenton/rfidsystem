@@ -33,17 +33,17 @@ DB_PASSWORD = 'your_password'
 
 ## Running (1 minute)
 
-### Start Line Station
+### Start Line Station (Safety Monitoring Hub)
 ```bash
-python3 start_line_sender.py
+python3 start_line_monitor.py
 ```
 
-### Finish Line Station
+### Finish Line Station (Data Transmitter)
 ```bash
-python3 finish_line_receiver.py
+python3 finish_line_sender.py
 ```
 
-### Monitor Queue
+### Monitor Queue (at Finish Line)
 ```bash
 python3 queue_monitor.py
 ```
@@ -94,21 +94,39 @@ psql -h localhost -U postgres -d rfid_system -c "SELECT 1"
 ## Message Flow
 
 ```
-RFID Read
-    ↓
-5-Minute Wait
-    ↓
-Redis Queue
-    ↓
-Rate Limiter (2-3 sec/msg)
-    ↓
-Meshtastic LoRa
-    ↓
-Relay Nodes
-    ↓
-Finish Line Receiver
-    ↓
-Database + Dashboard
+START LINE:
+  RFID Read (START)
+      ↓
+  5-Minute Wait
+      ↓
+  Local Database
+      ↓
+  Track "On Water"
+
+... Paddler travels down river ...
+
+FINISH LINE:
+  RFID Read (FINISH)
+      ↓
+  Local Database
+      ↓
+  Redis Queue
+      ↓
+  Rate Limiter (2-3 sec/msg)
+      ↓
+  Meshtastic LoRa
+      ↓
+  Relay Nodes (mesh back to start)
+      ↓
+
+START LINE:
+  Receive FINISH via LoRa
+      ↓
+  Match with local START
+      ↓
+  Update "On Water" tracking
+      ↓
+  Safety Dashboard
 ```
 
 ## Queue Behavior
@@ -133,14 +151,19 @@ Database + Dashboard
 ## Production Deployment
 
 ```bash
-# Create systemd service
+# Start Line (Monitoring Hub)
 sudo cp rfid-meshtastic-start.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable rfid-meshtastic-start
 sudo systemctl start rfid-meshtastic-start
-
-# View logs
 sudo journalctl -u rfid-meshtastic-start -f
+
+# Finish Line (Data Transmitter)
+sudo cp rfid-meshtastic-finish.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable rfid-meshtastic-finish
+sudo systemctl start rfid-meshtastic-finish
+sudo journalctl -u rfid-meshtastic-finish -f
 ```
 
 ## Files Reference
@@ -148,8 +171,8 @@ sudo journalctl -u rfid-meshtastic-start -f
 | File | Purpose |
 |------|---------|
 | `config.py` | All tunable parameters |
-| `start_line_sender.py` | Start line operations |
-| `finish_line_receiver.py` | Finish line operations |
+| `start_line_monitor.py` | Start line (receives FINISH msgs) |
+| `finish_line_sender.py` | Finish line (sends FINISH msgs) |
 | `redis_queue.py` | Queue management |
 | `meshtastic_interface.py` | LoRa communication |
 | `queue_monitor.py` | Health monitoring |

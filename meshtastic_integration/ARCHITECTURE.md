@@ -3,73 +3,75 @@
 ## Physical Layout
 
 ```
-┌─────────────────────────────────────────┐
-│         START LINE STATION              │
-│                                         │
-│  ┌────────────┐      ┌──────────────┐  │
-│  │   RFID     │──USB─│ Raspberry Pi │  │
-│  │   Reader   │      │              │  │
-│  └────────────┘      │  PostgreSQL  │  │
-│                      │  Redis       │  │
-│                      │  Python      │  │
-│                      └───────┬──────┘  │
-│                              │ USB     │
-│                      ┌───────▼──────┐  │
-│                      │  Heltec V3   │  │
-│                      │  LoRa Radio  │  │
-│                      └──────────────┘  │
-└─────────────────────────────────────────┘
-                       │
+┌──────────────────────────────────────────┐
+│    START LINE STATION (Monitoring Hub)   │
+│                                          │
+│  ┌────────────┐      ┌──────────────┐   │
+│  │   RFID     │──USB─│ Raspberry Pi │   │
+│  │   Reader   │      │              │   │
+│  └────────────┘      │  PostgreSQL  │   │
+│                      │  Python      │   │
+│                      └───────┬──────┘   │
+│                              │ USB      │
+│                      ┌───────▼──────┐   │
+│                      │  Heltec V3   │   │
+│                      │  LoRa Radio  │   │
+│                      │  (RECEIVES)  │   │
+│                      └──────────────┘   │
+│                                          │
+│         Safety Dashboard Here            │
+└──────────────────────────────────────────┘
+                       ▲
                        │ LoRa Mesh
+                       │ (FINISH msgs)
+             ┌─────────┴─────────┐
+             │  Relay Node 1     │
+             │  (RAK WisMesh)    │
+             └─────────┬─────────┘
+                       │
                        ▼
-             ┌──────────────────┐
-             │  Relay Node 1    │
-             │  (RAK WisMesh)   │
-             └────────┬─────────┘
-                      │
-                      ▼
              ┌──────────────────┐
              │  Relay Node 2-6  │
              │  (~1.5 mi apart) │
              └────────┬─────────┘
                       │
                       ▼
-┌─────────────────────────────────────────┐
-│        FINISH LINE STATION              │
-│                                         │
-│                      ┌──────────────┐  │
-│                      │  Heltec V3   │  │
-│                      │  LoRa Radio  │  │
-│                      └───────┬──────┘  │
-│                              │ USB     │
-│  ┌────────────┐      ┌──────▼───────┐  │
-│  │   RFID     │──USB─│ Raspberry Pi │  │
-│  │   Reader   │      │              │  │
-│  └────────────┘      │  PostgreSQL  │  │
-│                      │  Python      │  │
-│                      └──────┬───────┘  │
-│                             │ Internet │
-└─────────────────────────────┼──────────┘
-                              │
-                              ▼
-                     ┌─────────────────┐
-                     │ Safety Dashboard│
-                     │   at Race HQ    │
-                     └─────────────────┘
+┌──────────────────────────────────────────┐
+│   FINISH LINE STATION (Data Transmitter) │
+│                                          │
+│                      ┌──────────────┐   │
+│                      │  Heltec V3   │   │
+│                      │  LoRa Radio  │   │
+│                      │  (SENDS)     │   │
+│                      └───────┬──────┘   │
+│                              │ USB      │
+│  ┌────────────┐      ┌──────▼───────┐   │
+│  │   RFID     │──USB─│ Raspberry Pi │   │
+│  │   Reader   │      │              │   │
+│  └────────────┘      │  PostgreSQL  │   │
+│                      │  Redis       │   │
+│                      │  Python      │   │
+│                      └──────┬───────┘   │
+│                             │ Internet  │
+│                      ┌──────▼───────┐   │
+│                      │   Starlink   │   │
+│                      └──────────────┘   │
+└──────────────────────────────────────────┘
 ```
 
 ## Software Architecture
 
-### Start Line Station
+### Start Line Station (Monitoring Hub)
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│            start_line_sender.py                      │
+│            start_line_monitor.py                     │
 ├──────────────────────────────────────────────────────┤
 │                                                      │
 │  ┌────────────────────────────────────────────┐    │
-│  │  Monitor RFID JSON File                    │    │
+│  │  Monitor Local RFID JSON File              │    │
 │  │  (/var/www/html/timer/uploads/...)         │    │
+│  │  • Read START times from local reader      │    │
 │  └────────────────┬───────────────────────────┘    │
 │                   │                                  │
 │                   ▼                                  │
@@ -78,13 +80,68 @@
 │  │  • Record each RFID read                   │    │
 │  │  • Track last seen time                    │    │
 │  │  • Wait DEPARTURE_WAIT_TIME (5 min)        │    │
-│  │  • Confirm if not re-read                  │    │
+│  │  • Confirm departure (local only)          │    │
+│  │  • Save to PostgreSQL (timeresults)        │    │
+│  └────────────────┬───────────────────────────┘    │
+│                   │                                  │
+│                   ▼                                  │
+│       [No transmission - local tracking only]       │
+│                                                      │
+│           ┌──────────────────────────┐              │
+│           │  MeshtasticInterface     │              │
+│           │  • RECEIVE mode          │              │
+│           │  • Listen for FINISH msg │              │
+│           └──────────┬───────────────┘              │
+│                      │                               │
+│                      ▼                               │
+│  ┌────────────────────────────────────────────┐    │
+│  │  OnWaterTracker                            │    │
+│  │  • Match START (local) with FINISH (rcvd)  │    │
+│  │  • Track RFIDs on water                    │    │
+│  │  • Calculate time on water                 │    │
+│  │  • Generate safety alerts                  │    │
+│  └────────────────┬───────────────────────────┘    │
+│                   │                                  │
+│                   ▼                                  │
+│  ┌────────────────────────────────────────────┐    │
+│  │  PostgreSQL Database                       │    │
+│  │  • timeresults (local STARTs)              │    │
+│  │  • meshtastic_finishes (received)          │    │
+│  └────────────────┬───────────────────────────┘    │
+│                   │                                  │
+└───────────────────┼──────────────────────────────────┘
+                    │
+                    ▼
+         [Safety Dashboard Queries]
+                    ▲
+                    │ LoRa Mesh (receives FINISH)
+```
+
+### Finish Line Station (Data Transmitter)
+
+```
+┌──────────────────────────────────────────────────────┐
+│            finish_line_sender.py                     │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  ┌────────────────────────────────────────────┐    │
+│  │  Monitor Local RFID JSON File              │    │
+│  │  (/var/www/html/timer/uploads/...)         │    │
+│  │  • Read FINISH times from local reader     │    │
+│  └────────────────┬───────────────────────────┘    │
+│                   │                                  │
+│                   ▼                                  │
+│  ┌────────────────────────────────────────────┐    │
+│  │  FinishTracker                             │    │
+│  │  • Record each RFID finish                 │    │
+│  │  • Dwell time check (prevent duplicates)   │    │
+│  │  • Save to PostgreSQL (timeresults)        │    │
 │  └────────────────┬───────────────────────────┘    │
 │                   │                                  │
 │                   ▼                                  │
 │  ┌────────────────────────────────────────────┐    │
 │  │  RedisQueue                                │    │
-│  │  • Enqueue confirmed departures            │    │
+│  │  • Enqueue FINISH messages                 │    │
 │  │  • Persist messages                        │    │
 │  │  • Handle bursts (30+ RFIDs)               │    │
 │  └────────────────┬───────────────────────────┘    │
@@ -100,63 +157,15 @@
 │                   ▼                                  │
 │  ┌────────────────────────────────────────────┐    │
 │  │  MeshtasticInterface                       │    │
-│  │  • Send JSON message                       │    │
+│  │  • SEND mode                               │    │
+│  │  • Transmit FINISH messages                │    │
 │  │  • Retry on failure                        │    │
-│  │  • Log transmission                        │    │
 │  └────────────────┬───────────────────────────┘    │
 │                   │                                  │
 └───────────────────┼──────────────────────────────────┘
                     │
                     ▼
            [LoRa Mesh Network]
-```
-
-### Finish Line Station
-
-```
-           [LoRa Mesh Network]
-                    │
-                    ▼
-┌──────────────────────────────────────────────────────┐
-│           finish_line_receiver.py                    │
-├──────────────────────────────────────────────────────┤
-│                                                      │
-│  ┌────────────────────────────────────────────┐    │
-│  │  MeshtasticInterface                       │    │
-│  │  • Receive messages                        │    │
-│  │  • Parse JSON                              │    │
-│  │  • Extract RFID + timestamp                │    │
-│  └────────────────┬───────────────────────────┘    │
-│                   │                                  │
-│                   ▼                                  │
-│  ┌────────────────────────────────────────────┐    │
-│  │  OnWaterTracker                            │    │
-│  │  • Record START messages                   │    │
-│  │  • Track RFIDs on water                    │    │
-│  │  • Calculate time on water                 │    │
-│  │  • Generate alerts                         │    │
-│  └────────────────┬───────────────────────────┘    │
-│                   │                                  │
-│                   ▼                                  │
-│  ┌────────────────────────────────────────────┐    │
-│  │  PostgreSQL Database                       │    │
-│  │  • meshtastic_starts table                 │    │
-│  │  • Store start messages                    │    │
-│  │  • Link with finish reads                  │    │
-│  └────────────────┬───────────────────────────┘    │
-│                   │                                  │
-│  ┌────────────────▼───────────────────────────┐    │
-│  │  Monitor Local RFID Reads                  │    │
-│  │  • timeresults table                       │    │
-│  │  • Match RFIDs                             │    │
-│  │  • Calculate durations                     │    │
-│  │  • Remove from "on water"                  │    │
-│  └────────────────┬───────────────────────────┘    │
-│                   │                                  │
-└───────────────────┼──────────────────────────────────┘
-                    │
-                    ▼
-         [Safety Dashboard Queries]
 ```
 
 ## Message Flow
@@ -167,22 +176,29 @@
 Time   Event
 ─────  ────────────────────────────────────────────────
 08:15  Paddler enters start area with RFID
-08:15  RFID Reader detects tag → Write to JSON
-08:15  start_line_sender reads JSON
-08:15  DepartureTracker records RFID (first_seen: 08:15)
-08:16  RFID detected again (last_seen: 08:16)
-08:17  RFID detected again (last_seen: 08:17)
-08:18  Paddler leaves start area (no more reads)
-08:23  5 minutes elapsed since last_seen (08:18)
-08:23  DepartureTracker confirms departure
-08:23  Message queued to Redis
-08:23  Queue depth: 1, delay: 3 seconds
-08:23  Message sent via Meshtastic
-08:23  LoRa transmission (~1-2 seconds)
-08:24  Relay nodes forward message
-08:25  Finish line receives message
-08:25  OnWaterTracker records start
-08:25  Database updated (meshtastic_starts)
+08:15  START LINE: RFID Reader detects tag → Write to JSON
+08:15  START LINE: start_line_monitor reads JSON
+08:15  START LINE: DepartureTracker records RFID (first_seen: 08:15)
+08:16  START LINE: RFID detected again (last_seen: 08:16)
+08:17  START LINE: RFID detected again (last_seen: 08:17)
+08:18  START LINE: Paddler leaves start area (no more reads)
+08:23  START LINE: 5 minutes elapsed since last_seen (08:18)
+08:23  START LINE: DepartureTracker confirms departure
+08:23  START LINE: Saved to timeresults table (local only)
+08:23  START LINE: RFID now tracked as "on water"
+       ... paddler travels down river ...
+14:22  FINISH LINE: RFID detected at finish
+14:22  FINISH LINE: Saved to timeresults table (local)
+14:22  FINISH LINE: Message queued to Redis
+14:22  FINISH LINE: Queue depth: 1, delay: 3 seconds
+14:22  FINISH LINE: FINISH message sent via Meshtastic
+14:22  LoRa transmission (~1-2 seconds)
+14:23  Relay nodes forward message back to start
+14:25  START LINE: Receives FINISH message
+14:25  START LINE: OnWaterTracker matches with local START
+14:25  START LINE: Calculates duration: 6.03 hours
+14:25  START LINE: Database updated (meshtastic_finishes)
+14:25  START LINE: RFID removed from "on water" tracking
 ```
 
 ### Burst Flow (30 RFIDs)
@@ -191,24 +207,30 @@ Time   Event
 Time   Event
 ─────  ────────────────────────────────────────────────
 08:00  30 paddlers stage in start area
-08:00  All 30 RFIDs detected repeatedly
+08:00  START LINE: All 30 RFIDs detected repeatedly
 08:05  Race starts, all 30 paddlers depart
-08:05  Last RFID reads at ~08:05:20
-08:10  5 minutes elapsed for all RFIDs
-08:10  All 30 departures confirmed simultaneously
-08:10  All 30 messages queued to Redis (< 1 second)
-08:10  Queue depth: 30, switch to fast mode (2 sec/msg)
-08:10  Start transmitting messages
-08:11  Queue depth: 25 (5 transmitted)
-08:11  Still in fast mode
-08:12  Queue depth: 15 (15 transmitted)
-08:12  Queue depth < 20, switch to medium (2.5 sec)
-08:13  Queue depth: 5 (25 transmitted)
-08:13  Queue depth < 20, use normal delay (3 sec)
-08:14  Queue empty (all 30 transmitted)
-08:14  Total time: ~90 seconds for 30 messages
-08:14  All messages received at finish line
-08:14  Dashboard shows 30 RFIDs on water
+08:05  START LINE: Last RFID reads at ~08:05:20
+08:10  START LINE: 5 minutes elapsed for all RFIDs
+08:10  START LINE: All 30 departures confirmed simultaneously
+08:10  START LINE: All saved to local database
+08:10  START LINE: Dashboard shows 30 RFIDs on water
+       ... paddlers travel down river ...
+14:20  FINISH LINE: First finisher arrives
+14:20  FINISH LINE: RFIDs start arriving rapidly
+14:35  FINISH LINE: 30 RFIDs detected in ~15 minutes
+14:35  FINISH LINE: All 30 FINISH messages queued to Redis (< 1 second)
+14:35  FINISH LINE: Queue depth: 30, switch to fast mode (2 sec/msg)
+14:35  FINISH LINE: Start transmitting messages
+14:36  FINISH LINE: Queue depth: 25 (5 transmitted)
+14:36  FINISH LINE: Still in fast mode
+14:37  FINISH LINE: Queue depth: 15 (15 transmitted)
+14:37  FINISH LINE: Queue depth < 20, switch to medium (2.5 sec)
+14:38  FINISH LINE: Queue depth: 5 (25 transmitted)
+14:38  FINISH LINE: Queue depth < 20, use normal delay (3 sec)
+14:39  FINISH LINE: Queue empty (all 30 transmitted)
+14:39  Total time: ~90 seconds for 30 messages
+14:39  START LINE: All messages received via LoRa mesh
+14:39  START LINE: Dashboard updated - 0 RFIDs on water
 ```
 
 ## Data Structures
@@ -218,29 +240,28 @@ Time   Event
 ```json
 {
   "rfid": "2302",
-  "timestamp": 1696155323.456,
-  "timestamp_h": "2025-10-01 08:15:23.456",
-  "last_seen": 1696155383.789,
-  "message_type": "START",
-  "station_id": "START_LINE_1",
+  "timestamp": 1696162123.456,
+  "timestamp_h": "2025-10-01 14:22:03.456",
+  "message_type": "FINISH",
+  "station_id": "FINISH_LINE_1",
   "priority": "normal",
   "tag_type": "E2001234567890AB",
   "tag_position": "A001",
-  "queue_time": "2025-10-01T08:20:23Z",
-  "sent_at": "2025-10-01T08:20:25Z",
-  "sent_by": "START_LINE_1"
+  "queue_time": "2025-10-01T14:22:03Z",
+  "sent_at": "2025-10-01T14:22:05Z",
+  "sent_by": "FINISH_LINE_1"
 }
 ```
 
 ### Database Tables
 
-#### meshtastic_starts (Finish Line)
+#### meshtastic_finishes (Start Line)
 ```sql
-CREATE TABLE meshtastic_starts (
+CREATE TABLE meshtastic_finishes (
     id SERIAL PRIMARY KEY,
     rfid VARCHAR(255) NOT NULL,
-    start_timestamp DOUBLE PRECISION,
-    start_timestamp_h VARCHAR(255),
+    finish_timestamp DOUBLE PRECISION,
+    finish_timestamp_h VARCHAR(255),
     received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     station_id VARCHAR(255),
     tag_type VARCHAR(255),

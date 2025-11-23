@@ -6,19 +6,22 @@ This system integrates RFID timing data with Meshtastic LoRa mesh network for re
 
 The system consists of two main stations:
 
-### START LINE STATION
+### START LINE STATION (Safety Monitoring Hub)
 - Raspberry Pi with RFID reader
-- PostgreSQL database (local timing record)
+- PostgreSQL database (local START records)
 - 5-minute wait logic (ensures paddlers have departed)
-- Redis queue (handles burst scenarios)
 - Meshtastic LoRa radio (Heltec WiFi LoRa 32 V3)
-
-### FINISH LINE STATION
-- Raspberry Pi with RFID reader
-- PostgreSQL database (finish records)
-- Meshtastic LoRa radio (receives start messages)
+- **RECEIVES FINISH messages from finish line**
 - "On Water" tracking system
 - Safety dashboard integration
+
+### FINISH LINE STATION (Data Transmitter)
+- Raspberry Pi with RFID reader
+- PostgreSQL database (local FINISH records)
+- Redis queue (handles burst scenarios)
+- Meshtastic LoRa radio (Heltec WiFi LoRa 32 V3)
+- **SENDS FINISH messages back to start line**
+- Starlink internet connection
 
 ### RELAY NODES
 - 6× RAK WisMesh Mini repeaters
@@ -40,8 +43,8 @@ meshtastic_integration/
 ├── config.py                    # All tunable parameters
 ├── redis_queue.py               # Queue management and rate limiting
 ├── meshtastic_interface.py     # LoRa communication
-├── start_line_sender.py         # Start line operations
-├── finish_line_receiver.py      # Finish line operations
+├── start_line_monitor.py        # Start line operations (receives FINISH messages)
+├── finish_line_sender.py        # Finish line operations (sends FINISH messages)
 ├── queue_monitor.py             # Health monitoring and alerts
 ├── requirements.txt             # Python dependencies
 └── README.md                    # This file
@@ -161,57 +164,61 @@ All configurable parameters are in `config.py`:
 
 ## Usage
 
-### Start Line Station
+### Start Line Station (Safety Monitoring Hub)
 
-Run the start line sender:
+Run the start line monitor:
 
 ```bash
 cd /home/user/rfidsystem/meshtastic_integration
-python3 start_line_sender.py
+python3 start_line_monitor.py
 ```
 
 **What it does**:
-1. Monitors RFID reads from the existing stamper.py system
-2. Tracks each RFID for 5 minutes
-3. If RFID is not re-read within 5 minutes, confirms departure
-4. Queues confirmed departures to Redis
-5. Transmits messages via Meshtastic with rate limiting
+1. Monitors local RFID reads from the existing stamper.py system
+2. Tracks each RFID for 5 minutes to confirm departure
+3. Saves all START times to local database
+4. **RECEIVES FINISH messages via Meshtastic from finish line**
+5. Matches START/FINISH to track who is on water
+6. Generates safety alerts for long times on water
 
 **Expected output**:
 ```
-INFO - Starting Start Line Sender
+INFO - Starting Start Line Monitor
 INFO - Departure wait time: 5.0 minutes
-INFO - Connected to Redis at localhost:6379
+INFO - Listening for FINISH messages from finish line
 INFO - Connected to Meshtastic via serial: /dev/ttyUSB2
 INFO - New RFID detected: 2302 at 2025-10-01 08:15:23
 INFO - Confirmed departure for RFID 2302 after 5.0 minute wait
-INFO - Queued departure for RFID 2302
-INFO - Transmitted RFID 2302 (queue depth: 0)
+INFO - RFID 2302 confirmed on water at 2025-10-01 08:15:23
+INFO - Received FINISH for RFID 2302 from FINISH_LINE_1
+INFO - RFID 2302 finished - duration 3.45 hours (0 remaining on water)
 ```
 
-### Finish Line Station
+### Finish Line Station (Data Transmitter)
 
-Run the finish line receiver:
+Run the finish line sender:
 
 ```bash
 cd /home/user/rfidsystem/meshtastic_integration
-python3 finish_line_receiver.py
+python3 finish_line_sender.py
 ```
 
 **What it does**:
-1. Listens for START messages via Meshtastic
-2. Monitors local RFID reads for finishes
-3. Tracks which RFIDs are currently on water
-4. Generates safety alerts for long times on water
+1. Monitors local RFID reads for finishes
+2. Saves all FINISH times to local database
+3. Queues FINISH messages to Redis
+4. **SENDS FINISH messages via Meshtastic back to start line**
+5. Handles burst scenarios with rate limiting
 
 **Expected output**:
 ```
-INFO - Starting Finish Line Receiver
-INFO - Listening for messages on station: FINISH_LINE_1
+INFO - Starting Finish Line Sender
+INFO - Sending FINISH messages back to start line
+INFO - Connected to Redis at localhost:6379
 INFO - Connected to Meshtastic via serial: /dev/ttyUSB2
-INFO - Received START for RFID 2302 from START_LINE_1
-INFO - RFID 2302 started - now on water (1 total on water)
-INFO - RFID 2302 finished - duration 3.45 hours (0 remaining on water)
+INFO - RFID 2302 detected at finish line
+INFO - Queued FINISH for RFID 2302
+INFO - Transmitted RFID 2302 (queue depth: 0)
 ```
 
 ### Queue Monitor (Optional)
@@ -230,22 +237,21 @@ python3 queue_monitor.py
 
 ## Message Format
 
-Messages transmitted via Meshtastic use this JSON format:
+FINISH messages transmitted via Meshtastic use this JSON format:
 
 ```json
 {
   "rfid": "2302",
-  "timestamp": 1696155323.456,
-  "timestamp_h": "2025-10-01 08:15:23.456",
-  "last_seen": 1696155323.456,
-  "message_type": "START",
-  "station_id": "START_LINE_1",
+  "timestamp": 1696162123.456,
+  "timestamp_h": "2025-10-01 14:22:03.456",
+  "message_type": "FINISH",
+  "station_id": "FINISH_LINE_1",
   "priority": "normal",
   "tag_type": "E2001234567890AB",
   "tag_position": "A001",
-  "queue_time": "2025-10-01T08:20:23Z",
-  "sent_at": "2025-10-01T08:20:25Z",
-  "sent_by": "START_LINE_1"
+  "queue_time": "2025-10-01T14:22:03Z",
+  "sent_at": "2025-10-01T14:22:05Z",
+  "sent_by": "FINISH_LINE_1"
 }
 ```
 
@@ -293,23 +299,22 @@ EOF
    python3 queue_monitor.py
    ```
 
-2. **Start sender in terminal 2**:
+2. **Start sender in terminal 2** (finish line):
    ```bash
-   python3 start_line_sender.py
+   python3 finish_line_sender.py
    ```
 
-3. **Start receiver in terminal 3**:
+3. **Start monitor in terminal 3** (start line):
    ```bash
-   python3 finish_line_receiver.py
+   python3 start_line_monitor.py
    ```
 
-4. **Simulate RFID read** (from test 2)
+4. **Simulate RFID finish read** at finish line
 
-5. **Wait 5 minutes** and observe:
-   - Sender: "Confirmed departure for RFID TEST001"
-   - Sender: "Queued departure for RFID TEST001"
-   - Sender: "Transmitted RFID TEST001"
-   - Receiver: "Received START for RFID TEST001"
+5. **Observe**:
+   - Finish Sender: "Queued FINISH for RFID TEST001"
+   - Finish Sender: "Transmitted RFID TEST001"
+   - Start Monitor: "Received FINISH for RFID TEST001"
    - Monitor: Shows queue depth changes
 
 ## Troubleshooting
@@ -429,14 +434,14 @@ MAX_QUEUE_SIZE = 500
 
 ```ini
 [Unit]
-Description=RFID Meshtastic Start Line Sender
-After=network.target redis.target postgresql.target
+Description=RFID Meshtastic Start Line Monitor
+After=network.target postgresql.target
 
 [Service]
 Type=simple
 User=pi
 WorkingDirectory=/home/user/rfidsystem/meshtastic_integration
-ExecStart=/usr/bin/python3 start_line_sender.py
+ExecStart=/usr/bin/python3 start_line_monitor.py
 Restart=always
 RestartSec=10
 
@@ -448,14 +453,14 @@ WantedBy=multi-user.target
 
 ```ini
 [Unit]
-Description=RFID Meshtastic Finish Line Receiver
+Description=RFID Meshtastic Finish Line Sender
 After=network.target redis.target postgresql.target
 
 [Service]
 Type=simple
 User=pi
 WorkingDirectory=/home/user/rfidsystem/meshtastic_integration
-ExecStart=/usr/bin/python3 finish_line_receiver.py
+ExecStart=/usr/bin/python3 finish_line_sender.py
 Restart=always
 RestartSec=10
 
@@ -477,17 +482,17 @@ sudo systemctl status rfid-meshtastic-start
 ### View Logs
 
 ```bash
-# Start line logs
+# Start line logs (monitoring hub)
 sudo journalctl -u rfid-meshtastic-start -f
 
-# Finish line logs
+# Finish line logs (sender)
 sudo journalctl -u rfid-meshtastic-finish -f
 ```
 
 ### Check Queue Status
 
 ```bash
-# Queue depths
+# Queue depths (at finish line)
 redis-cli << EOF
 LLEN rfid:queue:start
 LLEN rfid:queue:finish
@@ -498,13 +503,13 @@ EOF
 ### Check Database
 
 ```bash
-# Count start messages received
-psql -U postgres -d rfid_system -c "SELECT COUNT(*) FROM meshtastic_starts"
+# Count finish messages received (at start line)
+psql -U postgres -d rfid_system -c "SELECT COUNT(*) FROM meshtastic_finishes"
 
-# View recent starts
+# View recent finishes (at start line)
 psql -U postgres -d rfid_system -c "
-  SELECT rfid, start_timestamp_h, station_id
-  FROM meshtastic_starts
+  SELECT rfid, finish_timestamp_h, station_id
+  FROM meshtastic_finishes
   ORDER BY received_at DESC
   LIMIT 10
 "
@@ -512,35 +517,36 @@ psql -U postgres -d rfid_system -c "
 
 ## Safety Dashboard Integration
 
-The finish line receiver creates a `meshtastic_starts` table that can be used by a safety dashboard:
+The start line monitor creates a `meshtastic_finishes` table that can be used by a safety dashboard:
 
 ```sql
 -- Get RFIDs currently on water
+-- (Started locally but not yet finished based on received FINISH messages)
 SELECT
-  ms.rfid,
-  ms.start_timestamp,
-  ms.start_timestamp_h,
-  EXTRACT(EPOCH FROM (NOW() - ms.received_at)) as seconds_on_water
-FROM meshtastic_starts ms
-LEFT JOIN timeresults tr ON ms.rfid = tr.tag_id
-WHERE tr.tag_id IS NULL  -- Not yet finished
-ORDER BY ms.start_timestamp;
+  tr.tag_id as rfid,
+  tr.timestamp as start_timestamp,
+  tr.timestamp_h as start_timestamp_h,
+  EXTRACT(EPOCH FROM (NOW() - to_timestamp(tr.timestamp))) as seconds_on_water
+FROM timeresults tr
+LEFT JOIN meshtastic_finishes mf ON tr.tag_id = mf.rfid
+WHERE mf.rfid IS NULL  -- Not yet finished
+ORDER BY tr.timestamp;
 
 -- Get alerts (> 4 hours on water)
 SELECT
-  ms.rfid,
-  ms.start_timestamp_h,
-  EXTRACT(EPOCH FROM (NOW() - ms.received_at))/3600 as hours_on_water,
+  tr.tag_id as rfid,
+  tr.timestamp_h,
+  EXTRACT(EPOCH FROM (NOW() - to_timestamp(tr.timestamp)))/3600 as hours_on_water,
   CASE
-    WHEN EXTRACT(EPOCH FROM (NOW() - ms.received_at)) > 28800 THEN 'CRITICAL'
-    WHEN EXTRACT(EPOCH FROM (NOW() - ms.received_at)) > 21600 THEN 'RED'
-    WHEN EXTRACT(EPOCH FROM (NOW() - ms.received_at)) > 14400 THEN 'YELLOW'
+    WHEN EXTRACT(EPOCH FROM (NOW() - to_timestamp(tr.timestamp))) > 28800 THEN 'CRITICAL'
+    WHEN EXTRACT(EPOCH FROM (NOW() - to_timestamp(tr.timestamp))) > 21600 THEN 'RED'
+    WHEN EXTRACT(EPOCH FROM (NOW() - to_timestamp(tr.timestamp))) > 14400 THEN 'YELLOW'
     ELSE 'NORMAL'
   END as alert_level
-FROM meshtastic_starts ms
-LEFT JOIN timeresults tr ON ms.rfid = tr.tag_id
-WHERE tr.tag_id IS NULL
-  AND EXTRACT(EPOCH FROM (NOW() - ms.received_at)) > 14400
+FROM timeresults tr
+LEFT JOIN meshtastic_finishes mf ON tr.tag_id = mf.rfid
+WHERE mf.rfid IS NULL
+  AND EXTRACT(EPOCH FROM (NOW() - to_timestamp(tr.timestamp))) > 14400
 ORDER BY hours_on_water DESC;
 ```
 
