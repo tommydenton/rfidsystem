@@ -1,0 +1,25 @@
+# RFID Meshtastic Integration - Python Dependencies
+
+# Redis for message queueing
+redis>=4.5.0
+
+# Meshtastic Python library for LoRa communication
+meshtastic>=2.2.0
+
+# PostgreSQL database adapter
+psycopg2-binary>=2.9.0
+
+# Serial communication (required by meshtastic)
+pyserial>=3.5
+
+# Protobuf (required by meshtastic)
+protobuf>=4.21.0
+
+# Date/time utilities
+python-dateutil>=2.8.0
+
+# Optional: For enhanced logging
+colorlog>=6.7.0
+
+# Optional: For configuration file support (YAML/TOML)
+pyyaml>=6.0
