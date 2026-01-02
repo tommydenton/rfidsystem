@@ -1,16 +1,135 @@
-# Compiled source #
-###################
+# ============================================================================
+# RFID SYSTEM GITIGNORE
+# ============================================================================
+# This gitignore protects sensitive data and excludes generated/cache files
+# from the RFID timer system repository.
+#
+# Last updated: 2026-01-01
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# SECTION 1: OPERATING SYSTEM FILES
+# ----------------------------------------------------------------------------
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ----------------------------------------------------------------------------
+# SECTION 2: IDE AND EDITOR FILES
+# ----------------------------------------------------------------------------
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains (IntelliJ, PyCharm, etc.)
+.idea/
+
+# Vim/Neovim
+*.swp
+*.swo
+*.swn
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+.#*
+
+# ----------------------------------------------------------------------------
+# SECTION 3: BACKUP AND TEMPORARY FILES
+# ----------------------------------------------------------------------------
+*.bak
+*.backup
+*.backup.*
+*.old
+*.orig
+*.tmp
+tmp/
+.tmp/
+
+# ----------------------------------------------------------------------------
+# SECTION 4: LOGS
+# ----------------------------------------------------------------------------
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ----------------------------------------------------------------------------
+# SECTION 5: CACHE DIRECTORIES
+# ----------------------------------------------------------------------------
+cache/
+.cache/
+.npm/
+
+# ----------------------------------------------------------------------------
+# SECTION 6: SECRETS AND SENSITIVE DATA
+# ----------------------------------------------------------------------------
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Private keys and certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ----------------------------------------------------------------------------
+# SECTION 7: PYTHON
+# ----------------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+env/
+
+# ----------------------------------------------------------------------------
+# SECTION 8: NODE.JS
+# ----------------------------------------------------------------------------
+node_modules/
+package-lock.json
+yarn.lock
+
+# ----------------------------------------------------------------------------
+# SECTION 9: BUILD ARTIFACTS
+# ----------------------------------------------------------------------------
+# Compiled objects
+*.o
+*.obj
+*.so
 *.com
 *.class
 *.dll
 *.exe
-*.o
-*.so
+*.a
+*.lib
 
-# Packages #
-############
-# it's better to unpack these files and commit the raw source because
-# git has its own built in compression methods
+# Archives
 *.7z
 *.dmg
 *.gz
@@ -19,23 +138,34 @@
 *.rar
 *.tar
 *.zip
-node_modules/
+*.tar.gz
+*.tgz
 
-# Logs and databases #
-######################
-*.log
-*.sql
+# ----------------------------------------------------------------------------
+# SECTION 10: DATABASES
+# ----------------------------------------------------------------------------
+*.sqlite3
 *.sqlite
+*.db
+*.db-shm
+*.db-wal
 
-# OS generated files #
-######################
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# SQL dumps (keep schema files)
+# *.sql  # Commented out - schema files are tracked intentionally
 
+# ----------------------------------------------------------------------------
+# SECTION 11: RUNTIME FILES
+# ----------------------------------------------------------------------------
+*.pid
+*.socket
+*.sock
 
-timer.code-workspace
+# ----------------------------------------------------------------------------
+# SECTION 12: PROJECT-SPECIFIC EXCLUSIONS
+# ----------------------------------------------------------------------------
+# CSV data files (generated during timing events)
+timer/data/*.csv
+timer/*.csv
+
+# Timer output files
+timer/output/
